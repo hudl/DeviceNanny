@@ -94,3 +94,6 @@ web/secretInfo.php
 
 #Pycharm
 *.idea
+
+#Mac
+.DS_Store
