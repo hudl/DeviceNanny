@@ -1,8 +1,7 @@
-DeviceNanny is a checkout system for your mobile devices. It was designed with one goal in mind: create a system as reliable as possible.
-
+DeviceNanny is a device lab checkout system. It was designed with one goal in mind: be as reliable as possible. In fact, it's so reliable that you can't not use it. Devices are connected to the system via USB, and USB actions trigger the check-in, checkout, or device addition processes. Say hello to a fully charged device lab with an accurate inventory of available devices.
 
 Features:
-- Super simple checkout and check-in process
+- Super simple checkout and check-in process triggered by USB connections/disconnections
 - Every device is fully charged and ready
 - Renew your expired checkouts through your browser
 - Slackbot notifications when you check out/in a device
@@ -12,6 +11,7 @@ Features:
 - Monitor device checkout activity in a Slack channel
 - Easily add devices to the database by plugging them in
 - RFID for devices not plugged in via USB
+- Smart script to fix situations where devices could be taken/returned without being checked in/out
 
 
 Hardware Requirements:
