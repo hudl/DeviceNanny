@@ -1,4 +1,28 @@
-New device checkout system.
+DeviceNanny is a checkout system for your mobile devices. It was designed with one goal in mind: create a system as reliable as possible.
+
+
+Features:
+- Super simple checkout and check-in process
+- Every device is fully charged and ready
+- Renew your expired checkouts through your browser
+- Slackbot notifications when you check out/in a device
+- Slackbot reminders to check in a device
+- Monitor available devices, reliably, through your browser
+- Channel alerts when a device is taken without being checked out
+- Monitor device checkout activity in a Slack channel
+- Easily add devices to the database by plugging them in
+- RFID for devices not plugged in via USB
+
+
+Hardware Requirements:
+- Raspberry Pi (version 3 recommended)
+- Raspberry Pi power supply
+- Cool Raspberry Pi case
+- USB hubs for power and data (must be able to power all connected devices)
+- USB cords for all devices
+- RFID reader (optional for devices that won't connect via USB)
+- RFID tags (optional for devices that won't connect via USB)
+
 
 **Configuring the Raspberry Pi from First Install**
 
