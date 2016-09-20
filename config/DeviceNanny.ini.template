@@ -1,0 +1,14 @@
+[DEFAULT]
+ReminderInterval = 14400
+CheckoutExpires = 259200
+
+[DATABASE]
+name = DeviceNanny
+host = localhost
+user = root
+password = YourPassword
+
+[SLACK]
+ApiKey = YourApiKey
+channel = YourNannySlackChannelID
+team_channel = ChannelForEntireTeamSlackID

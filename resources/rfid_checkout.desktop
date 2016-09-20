@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=Device Checkout
+Comment=Device checkout for devicenanny.
+Icon=/usr/share/pixmaps/xarchiver/xarchiver-extract.png
+Exec=/home/pi/devicenannyv2/rfid_checkout.py
+Path=/home/pi/devicenannyv2
+Type=Application
+Encoding=UTF-8
+Terminal=true
+Categories=None;
