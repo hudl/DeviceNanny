@@ -5,4 +5,4 @@
 #
 # Created by Ethan Seyl 2016
 #
-export DISPLAY=:0.0; export XAUTHORITY='/var/run/lightdm/root/:0'; sudo /home/pi/devicenannyv2/usb_checkout.py
+export DISPLAY=:0.0; export XAUTHORITY='/var/run/lightdm/root/:0'; sudo /home/pi/DeviceNanny/usb_checkout.py
