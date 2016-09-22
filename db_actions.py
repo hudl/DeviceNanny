@@ -68,10 +68,11 @@ class MyDB(object):
         """
         :return: Highest DeviceID in Devices table + 1
         """
-        id_number = self._db_cur.execute(
-            "SELECT DeviceID from Devices where DeviceID="
-            "(SELECT max(DeviceID) FROM Devices)")
-        return id_number + 1
+        last_id_num = self.db_fetch(
+            "SELECT DeviceID from Devices where DeviceID=(SELECT max(DeviceID) FROM Devices)")
+        id_number = last_id_num.get('DeviceID') + 1
+        logging.debug("[db_actions][new_device_id] {}".format(id_number))
+        return id_number
 
     def device_ids(self):
         """

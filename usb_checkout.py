@@ -346,7 +346,7 @@ def to_db(serial):
     Combines device info provided by user with USB port and serial number.
     """
     device_info = get_new_device_info(serial)
-    new_device_id = db.new_device_id
+    new_device_id = db.new_device_id()
     device_info.extend([new_device_id, get_serial(port), port])
     db.add_to_db(device_info)
     logging.info("[usb_checkout][to_db] Device added: {}".format(device_info))
