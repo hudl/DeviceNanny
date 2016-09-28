@@ -42,8 +42,8 @@ if($response){
 	<thead>
 	<tr>
 	<th>Type</th>
-	<th>Device Name</th>
 	<th>Manufacturer</th>
+	<th>Device Name</th>
 	<th>Model</th>
 	<th>OS</th>
 	<th>Checked Out By</th>
@@ -62,14 +62,14 @@ if($response){
 			echo "<td style='background-color: #916c00;'>".$row['Type']."</td>";
 		else
 			echo "<td style='background-color: #edc54d;'>".$row['Type']."</td>";
-		if($row['CheckedOutBy']!='0')
-			echo "<td style='background-color: #ff523d;'>".$row['DeviceName']."</td>";
-		else
-			echo "<td align='left'; style='background-color: #a9c94d;'>".$row['DeviceName']."</td>";
 		if($row['Manufacturer'] =='Apple')
 			echo "<td style='background-color: #007cb5;'>".$row['Manufacturer']."</td>";
 		else
 			echo "<td align='left'; style='background-color: #4db9eb;'>".$row['Manufacturer']."</td>";
+		if($row['CheckedOutBy']!='0')
+			echo "<td style='background-color: #ff523d;'>".$row['DeviceName']."</td>";
+		else
+			echo "<td align='left'; style='background-color: #a9c94d;'>".$row['DeviceName']."</td>";
 		echo '<td>' .
 		$row['Model'] . '</td><td>' .
 		$row['OS'] . '</td>';
