@@ -61,8 +61,9 @@ def check_out_notice(user_info, device):
     """
     slack.chat.post_message(
         user_info.get('SlackID'),
-        "You checked out `{}`. Checkout will expire after 7 days. Remember to plug the "
-        "device back in when you return it to the lab.".format(device),
+        "You checked out `{}`. Checkout will expire after 3 days. Remember to plug the "
+        "device back in when you return it to the lab. You can renew your checkout from "
+        "the DeviceNanny web page.".format(device),
         as_user=False,
         username="DeviceNanny")
     slack.chat.post_message(channel,
