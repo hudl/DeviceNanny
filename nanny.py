@@ -285,8 +285,7 @@ def missing_device_ids(missing_devices):
     :param missing_devices: List of ports that are registered but are no longer in use (device is gone)
     :return: The missing device's device IDs
     """
-    device_ids = [db.get_device_id_from_port(x) for x in missing_devices]
-    return device_ids
+    return [db.get_device_id_from_port(x) for x in missing_devices]
 
 
 def verify_registered_connections():
@@ -339,7 +338,7 @@ def main():
     have expired checkouts.
     :return:
     """
-    if is_checkout_running() is False:
+    if not is_checkout_running():
         clean_tmp_file()
         check_usb_connections()
         verify_registered_connections()

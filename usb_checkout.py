@@ -35,7 +35,6 @@ def get_lock(process_name):
         popups('USB Connection')
     except socket.error:
         logging.warning("[usb_checkout][get_lock] Process already locked.")
-        sys.exit()
 
 
 def create_tempfile(port):
@@ -46,8 +45,8 @@ def create_tempfile(port):
     """
     filename = '/tmp/{}.nanny'.format(port)
     check_for_tempfile(filename)
-    open(filename, 'w+b')
-    return filename
+    with open(filename, 'w+b'):
+        return filename
 
 
 def delete_tempfile(filename):
@@ -56,9 +55,9 @@ def delete_tempfile(filename):
     :param filename: /tmp/*kernel*.nanny
     """
     try:
-        os.remove("{}".format(filename))
+        os.remove(filename)
         logging.debug("[usb_checkout][delete_tempfile] Temp file deleted.")
-    except Exception as e:
+    except IOError as e:
         logging.debug(
             "[usb_checkout][delete_tempfile] Temp file doesn't exist. {}".format(
                 str(e)))
@@ -81,7 +80,7 @@ def cancelled():
     it will be checked out as missing. Also, if multiple devices were taken, cancelling one
     won't close all checkout processes.
     """
-    if is_device_connected(port) is False:
+    if not is_device_connected(port):
         db.check_out('1', device_id)
         slack.help_message(device_name)
     if multiple_checkouts():
@@ -124,8 +123,7 @@ def timeout(x):
     before timeout ends, calls cancelled().
     :param x: 30
     """
-    for i in range(0, x):
-        time.sleep(1)
+    time.sleep(x)
     logging.warning("[usb_checkout][timeout] TIMEOUT")
     cancelled()
 
@@ -217,17 +215,14 @@ def get_serial(port):
     :return: Serial number for USB device
     """
     try:
-        f = open("/sys/bus/usb/devices/{}/serial".format(port))
-        for line in f:
-            serial = line.rstrip()
-        f.close()
+        with open("/sys/bus/usb/devices/{}/serial".format(port)) as f:
+            for line in f:
+                serial = line.rstrip()
         logging.debug(
-            "[usb_checkout][get_serial] Serial number of device: {}".format(
-                serial))
+            "[usb_checkout][get_serial] Serial number of device: {}".format(serial))
         return serial
     except:
         logging.debug("[usb_checkout][get_serial] Serial number not found.")
-        return None
 
 
 def get_user_info():
@@ -341,15 +336,15 @@ def get_new_device_info(serial):
         sys.exit()
 
 
-def to_db(serial):
+def to_database(serial):
     """
     Combines device info provided by user with USB port and serial number.
     """
     device_info = get_new_device_info(serial)
     new_device_id = db.new_device_id()
     device_info.extend([new_device_id, get_serial(port), port])
-    db.add_to_db(device_info)
-    logging.info("[usb_checkout][to_db] Device added: {}".format(device_info))
+    db.add_to_database(device_info)
+    logging.info("[usb_checkout][to_database] Device added: {}".format(device_info))
 
 
 def check_if_out(port):
@@ -428,7 +423,7 @@ def main():
     filename = create_tempfile(port)
     play_sound()
     if device_id is None and serial is not None:
-        to_db(serial)
+        to_database(serial)
     else:
         checked_out = check_if_out(port)
         if checked_out:
