@@ -229,7 +229,7 @@ class MyDB(object):
             "UPDATE Devices set Port = NULL where DeviceID = {}".format(
                 device_id))
 
-    def add_to_db(self, device_info):
+    def add_to_database(self, device_info):
         """
         Adds info for a new device to the database.
         :param device_info:
