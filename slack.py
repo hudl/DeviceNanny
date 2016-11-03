@@ -44,7 +44,7 @@ def user_reminder(slack_id, time_difference, device_name):
     try:
         slack.chat.post_message(
             slack_id,
-            "It's been *{}* since you checked out `{}`. Please check it out again or return it "
+            "It's been *{}* since you checked out `{}`. Please renew your checkout online or return it "
             "to the device lab.".format(time_difference, device_name),
             as_user=False,
             username="DeviceNanny")
