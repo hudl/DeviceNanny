@@ -23,6 +23,10 @@ Hardware Requirements:
 - RFID reader (optional for devices that won't connect via USB)
 - RFID tags (optional for devices that won't connect via USB)
 
+Required packages if not using Debian Jessie:
+-lightdm as default display manager
+-zenity
+
 
 **Configuring the Raspberry Pi from First Install**
 
@@ -54,6 +58,7 @@ Hardware Requirements:
     
     - Reboot `sudo reboot`
 
+NOTE: You might need to disable ModemManager as well, if you're using a different Linux distro.
 
 6. Install MySQL server:
     - `sudo apt-get install mysql-server -y`
@@ -102,14 +107,14 @@ Hardware Requirements:
 2. Install requirements:
     - `sudo pip3 install -r ~/DeviceNanny/requirements.txt`
 
-2. Copy file config/DeviceNanny.ini.template and add values:
-    - Copy the file and paste without .template extension
+2. Copy file config/DeviceNanny.ini.template:
+    - Paste and rename without .template extension
     - Add your database password
     - Add your Slack api key
     - Add your Slack device room ID
     
-3. Copy file web/secretInfo.php.template and add values:
-    - Copy file and paste without .template extension
+3. Copy file web/secretInfo.php.template:
+    - Paste and rename without .template extension
     - Add the username and password for the web user
     
 4. Import tables into database:
@@ -119,26 +124,30 @@ Hardware Requirements:
 
 **Add UDEV Rule and Cron Job**
 
-1. Copy /resources/device_nanny.rules to /etc/udev/rules.d/
+1. Copy file /resources/device_nanny.rules.template
+    - Paste file without .template extension
+    - Change the RUN= path to your DeviceNanny/start_checkout.sh location
+    - Copy /resources/device_nanny.rules to /etc/udev/rules.d/
     - `sudo cp ~/DeviceNanny/resources/device_nanny.rules /etc/udev/rules.d/`
 
 2. Add Cron job (needs sudo):
     - `sudo crontab -e`
-    - If you haven't picked out an editor, choose 2 for nano
-    - Add `*/3 * * * * cd /home/pi/DeviceNanny/ && ./nanny.py` to the end of the file
+    - If promted, choose your favorite text editor
+    - Add `*/1 * * * * cd /YOUR/PATH/TO/DeviceNanny/ && ./nanny.py` to the end of the file
     - Save and exit
     
 **Enable Front-End**
 
 1. Apache2 changes:
     - Open file `sudo nano /etc/apache2/sites-available/000-default.conf`
-    - Change DocumentRoot to `/home/pi/DeviceNanny/web/pages`
+    - Change DocumentRoot to `/YOUR/PATH/TO/DeviceNanny/web/pages`
     - On the line under DocumentRoot add `DirectoryIndex devicenanny.php`
     - Save and exit
     - Open file `sudo nano /etc/apache2/apache2.conf`
     - Scroll down to the `<Directory>` section and add this below the last `</Directory>`
+MAKE SURE TO CHANGE THE PATH
 ```
-<Directory /home/pi/DeviceNanny/web/pages/>
+<Directory /PATH/TO/YOUR/DeviceNanny/web/pages/>
     Options FollowSymLinks
     AllowOverride None
     Require all granted
