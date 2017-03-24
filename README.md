@@ -24,8 +24,8 @@ Hardware Requirements:
 - RFID tags (optional for devices that won't connect via USB)
 
 Required packages if not using Debian Jessie:
--lightdm as default display manager
--zenity
+- lightdm as default display manager
+- zenity
 
 
 **Configuring the Raspberry Pi from First Install**
