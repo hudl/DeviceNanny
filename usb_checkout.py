@@ -11,7 +11,6 @@ from db_actions import MyDB
 import logging.config
 import subprocess
 import logging
-import pygame
 import socket
 import slack
 import time
@@ -383,12 +382,7 @@ def play_sound():
     """
     Plays a beep sound.
     """
-    pygame.mixer.init()
-    pygame.mixer.music.load("{}/resources/beep.wav".format(working_dir))
-    logging.debug("Play sound.")
-    pygame.mixer.music.play()
-    while pygame.mixer.music.get_busy() is True:
-        continue
+    print("\a")
 
 
 def get_device_name(device_id, port):
