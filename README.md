@@ -117,7 +117,11 @@ NOTE: You might need to disable ModemManager as well, if you're using a differen
     - Paste and rename without .template extension
     - Add the username and password for the web user
     
-4. Import tables into database:
+4. Copy file start_checkout.sh.template:
+    - Paste and rename without .template extension
+    - Change the path to your DeviceNanny/usb_checkout.py location
+    
+5. Import tables into database:
     - Login to `http://localhost/phpmyadmin`
     - Click into the DeviceNanny database
     - Go to the Import tab and choose to import `DeviceNannyDB.sql` in the `/resources` directory
