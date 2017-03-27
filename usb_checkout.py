@@ -382,7 +382,7 @@ def play_sound():
     """
     Plays a beep sound.
     """
-    print("\a")
+    os.system('play --no-show-progress --null --channels 1 synth %s sine %f' % ( .75, 3000))
 
 
 def get_device_name(device_id, port):
