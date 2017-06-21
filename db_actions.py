@@ -105,7 +105,7 @@ class MyDB(object):
         """
         try:
             device = self.db_fetch(
-                "SELECT DeviceName from Devices WHERE Port = '{}', Location = '{}'".format(
+                "SELECT DeviceName from Devices WHERE Port = '{}' AND Location = '{}'".format(
                     location, port))
             return device.get("DeviceName")
         except Exception as e:
@@ -139,7 +139,7 @@ class MyDB(object):
         :return: DeviceID
         """
         device = self.db_fetch(
-            "SELECT DeviceID from Devices WHERE Location = '{}', Port = '{}'".format(location, port))
+            "SELECT DeviceID from Devices WHERE Location = '{}' AND Port = '{}'".format(location, port))
         try:
             return device.get("DeviceID")
         except AttributeError:
@@ -289,7 +289,7 @@ class MyDB(object):
         """
         device_status = self.db_fetch(
             "SELECT DeviceName, CheckedOutBy, TimeCheckedOut, LastReminded,"
-            "RFID from Devices where DeviceID = {}".format(device_id))
+            "Location, RFID from Devices where DeviceID = {}".format(device_id))
         return device_status
 
     def get_slack_id(self, user_id):
@@ -306,7 +306,7 @@ class MyDB(object):
         :return: USB Ports for each device in database
         """
         ports = self.db_fetch_all(
-            "SELECT Port from Devices where Port is not Null, Location = '{}'".format(location))
+            "SELECT Port from Devices where Port is not Null AND Location = '{}'".format(location))
         return ports
 
     def get_serial_number_from_port(self, location, port):
@@ -316,5 +316,5 @@ class MyDB(object):
         :return: Serial number
         """
         serial = self.db_fetch(
-            "SELECT SerialUDID from Devices where Port = '{}', Location = '{}'".format(port, location))
+            "SELECT SerialUDID from Devices where Port = '{}' AND Location = '{}'".format(port, location))
         return serial.get("SerialUDID")

@@ -406,23 +406,31 @@ def main():
     Assigns variables, checks if device is new or needs checked out/in.
     """
     global location
+    logging.info("HERE0")
     location = config['DEFAULT']['Location']
+    logging.info("LOCATION: {}".format(location))
+    logging.info("HERE1")
     global db
     db = MyDB()
+    logging.info("HERE11")
     global port
     port = find_port()
+    logging.info("HERE111")
     serial = get_serial(port)
+    logging.info("HERE1111")
     global device_id
     device_id = db.get_device_id_from_serial(serial)
+    logging.info("HERE11111")
     global device_name
-    device_name = get_device_name(device_id, port)
+    device_name = get_device_name(device_id, location, port)
+    logging.info("HERE2")
     global filename
     filename = create_tempfile(port)
     play_sound()
     if device_id is None and serial is not None:
         to_database(serial)
     else:
-        checked_out = check_if_out(port)
+        checked_out = check_if_out(location,port)
         if checked_out:
             logging.info("[usb_checkout][main]CHECK IN")
             device_name = db.get_device_name_from_id(device_id)
@@ -447,7 +455,7 @@ if __name__ == "__main__":
     global working_dir
     working_dir = os.path.dirname(__file__)
     config = configparser.ConfigParser()
-    config.read('config/DeviceNanny.ini')
+    config.read('{}/config/DeviceNanny.ini'.format(working_dir))
     logging.config.fileConfig('{}/config/usb_logging.conf'.format(working_dir))
     logging.debug("[usb_checkout] STARTED")
     timer = multiprocessing.Process(target=timeout, name="Timer", args=(30, ))
