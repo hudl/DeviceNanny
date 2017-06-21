@@ -97,15 +97,16 @@ class MyDB(object):
                 device_id, user_info.get("CheckedOutBy")))
         return user_info.get("CheckedOutBy")
 
-    def get_device_name(self, port):
+    def get_device_name(self, location, port):
         """
         :param port: USB port
+        :param location: Location
         :return: DeviceName
         """
         try:
             device = self.db_fetch(
-                "SELECT DeviceName from Devices WHERE Port = '{}'".format(
-                    port))
+                "SELECT DeviceName from Devices WHERE Port = '{}', Location = '{}'".format(
+                    location, port))
             return device.get("DeviceName")
         except Exception as e:
             logging.debug(
@@ -132,13 +133,13 @@ class MyDB(object):
                 "[db_actions][get_device_name_from_id] Exception - {}".format(
                     e))
 
-    def get_device_id_from_port(self, port):
+    def get_device_id_from_port(self, location, port):
         """
         :param port:
         :return: DeviceID
         """
         device = self.db_fetch(
-            "SELECT DeviceID from Devices WHERE Port = '{}'".format(port))
+            "SELECT DeviceID from Devices WHERE Location = '{}', Port = '{}'".format(location, port))
         try:
             return device.get("DeviceID")
         except AttributeError:
@@ -186,7 +187,7 @@ class MyDB(object):
     def user_info(self, user_input):
         """
         :param user_input: FirstName LastName OR UserID
-        :return: FirstName, LastName, SlackID, Office, UserID
+        :return: FirstName, LastName, SlackID, Location, UserID
         """
         logging.debug(
             "[db_actions][user_info] user_input = {}. Type = {}".format(
@@ -300,19 +301,20 @@ class MyDB(object):
             "SELECT SlackID from Users where UserID = {}".format(user_id))
         return slack_id
 
-    def get_registered_ports(self):
+    def get_registered_ports(self, location):
         """
         :return: USB Ports for each device in database
         """
         ports = self.db_fetch_all(
-            "SELECT Port from Devices where Port is not Null")
+            "SELECT Port from Devices where Port is not Null, Location = '{}'".format(location))
         return ports
 
-    def get_serial_number_from_port(self, port):
+    def get_serial_number_from_port(self, location, port):
         """
         :param port:
+        :param location:
         :return: Serial number
         """
         serial = self.db_fetch(
-            "SELECT SerialUDID from Devices where Port = '{}'".format(port))
+            "SELECT SerialUDID from Devices where Port = '{}', Location = '{}'".format(port, location))
         return serial.get("SerialUDID")

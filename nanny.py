@@ -80,20 +80,20 @@ def update_db(port):
             verify_match(serial, port, device_id)
 
 
-def was_port_registered(port):
+def was_port_registered(location, port):
     """
     Checks if the device is registered to the correct port in the database. If not, checks
     it out to be fixed on next nanny run.
     :param port: USB port
     """
-    device_id = db.get_device_id_from_port(port)
+    device_id = db.get_device_id_from_port(location, port)
     if device_id:
         logging.debug(
             "[nanny][update_db] Device was registered to a different port. Fixing.")
         db.check_out('1', device_id)
 
 
-def verify_match(serial, port, device_id):
+def verify_match(serial, location, port, device_id):
     """
     Compare serial number for the port in the database to serial number in the port's directory.
     If the serial number is different, check out that serial and clear the port. Register that
@@ -105,7 +105,7 @@ def verify_match(serial, port, device_id):
     """
     serial_from_file = serial
     try:
-        serial_from_db = db.get_serial_number_from_port(port)
+        serial_from_db = db.get_serial_number_from_port(location, port)
     except:
         serial_from_db = None
     logging.debug(
@@ -257,13 +257,13 @@ def checkout_reminders():
             send_reminder(device_status)
 
 
-def registered_ports():
+def registered_ports(location):
     """
     Gets all the ports registered in the database. If a device has a registered
     port, it's connected to the Pi.
     :return: Every port registered in database.
     """
-    ports = db.get_registered_ports()
+    ports = db.get_registered_ports(location)
     values = []
     for i in ports:
         values += i.values()
@@ -349,6 +349,8 @@ if __name__ == "__main__":
     logging.config.fileConfig("config/nanny_logging.conf")
     config = configparser.ConfigParser()
     config.read('config/DeviceNanny.ini')
+    global location
+    location = config['DEFAULT']['Location']
     logging.info("[nanny] Started")
     global db
     db = MyDB()

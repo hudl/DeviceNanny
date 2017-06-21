@@ -1,6 +1,7 @@
 [DEFAULT]
 ReminderInterval = 14400
 CheckoutExpires = 259200
+Location = OfficeLocation
 
 [DATABASE]
 name = DeviceNanny

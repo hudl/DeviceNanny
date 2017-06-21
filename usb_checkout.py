@@ -9,6 +9,7 @@
 import multiprocessing
 from db_actions import MyDB
 import logging.config
+import configparser
 import subprocess
 import logging
 import socket
@@ -346,13 +347,13 @@ def to_database(serial):
     logging.info("[usb_checkout][to_database] Device added: {}".format(device_info))
 
 
-def check_if_out(port):
+def check_if_out(location, port):
     """
     Checks to see if the port is registered for a device in the database.
     :param port: USB port
     :return: True or None
     """
-    device_id = db.get_device_id_from_port(port)
+    device_id = db.get_device_id_from_port(location, port)
     if device_id is None:
         logging.debug(
             "[usb_checkout][check_if_out] Port {} is not registered to a device.".format(
@@ -385,14 +386,14 @@ def play_sound():
     os.system('play --no-show-progress --null --channels 1 synth %s sine %f' % ( .75, 3000))
 
 
-def get_device_name(device_id, port):
+def get_device_name(device_id, location, port):
     """
     Tries to get the device name from the port and device ID.
     :param device_id: Device ID
     :param port: USB Port
     :return: Device Name
     """
-    device_name = db.get_device_name(port)
+    device_name = db.get_device_name(location, port)
     if device_name is None:
         logging.debug(
             "[usb_checkout][get_device_name] Unable to get device name from port - trying ID.")
@@ -404,6 +405,8 @@ def main():
     """
     Assigns variables, checks if device is new or needs checked out/in.
     """
+    global location
+    location = config['DEFAULT']['Location']
     global db
     db = MyDB()
     global port
@@ -428,7 +431,7 @@ def main():
             slack.check_in_notice(user_info, device_name)
         else:
             logging.info("[usb_checkout][main] CHECK OUT")
-            device_id = db.get_device_id_from_port(port)
+            device_id = db.get_device_id_from_port(location, port)
             timer.start()
             user_info = get_user_info()
             check_out(user_info, device_id)
@@ -443,6 +446,8 @@ def main():
 if __name__ == "__main__":
     global working_dir
     working_dir = os.path.dirname(__file__)
+    config = configparser.ConfigParser()
+    config.read('config/DeviceNanny.ini')
     logging.config.fileConfig('{}/config/usb_logging.conf'.format(working_dir))
     logging.debug("[usb_checkout] STARTED")
     timer = multiprocessing.Process(target=timeout, name="Timer", args=(30, ))
