@@ -172,17 +172,6 @@ class MyDB(object):
         except AttributeError:
             return None
 
-    def get_device_id_from_rfid(self, rfid_input):
-        """
-        :param rfid_input:
-        :return: DeviceID
-        """
-        device_id = self.db_fetch(
-            "SELECT DeviceID from Devices WHERE RFID = {}".format(rfid_input))
-        if device_id is None:
-            return False
-        else:
-            return device_id.get("DeviceID")
 
     def user_info(self, user_input):
         """
@@ -245,12 +234,6 @@ class MyDB(object):
                     3], device_info[4].rstrip(), device_info[5], device_info[
                         6], device_info[7]))
 
-    def rfid_check_in(self, device_id):
-        try:
-            self.db_commit("UPDATE Devices set CheckedOutBy = '0'"
-                           "where DeviceID = '{}'".format(device_id))
-        except Exception as e:
-            logging.debug("[db_actions][rfid_check_in] Exception - {}".format(e))
 
     def check_in(self, device_id, port):
         """
@@ -285,11 +268,11 @@ class MyDB(object):
         """
         Returns all columns for a device.
         :param device_id:
-        :return: DeviceName, CheckedOutBy, TimeCheckedOut, LastReminded, RFID
+        :return: DeviceName, CheckedOutBy, TimeCheckedOut, LastReminded
         """
         device_status = self.db_fetch(
             "SELECT DeviceName, CheckedOutBy, TimeCheckedOut, LastReminded,"
-            "Location, RFID from Devices where DeviceID = {}".format(device_id))
+            "Location from Devices where DeviceID = {}".format(device_id))
         return device_status
 
     def get_slack_id(self, user_id):
