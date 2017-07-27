@@ -286,7 +286,8 @@ def missing_device_ids(missing_devices):
     :param missing_devices: List of ports that are registered but are no longer in use (device is gone)
     :return: The missing device's device IDs
     """
-    return [db.get_device_id_from_port(x) for x in missing_devices]
+    print("Missing devices in function: {}".format(missing_devices))
+    return [db.get_device_id_from_port(location, port) for port in missing_devices]
 
 
 def verify_registered_connections():

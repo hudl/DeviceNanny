@@ -9,15 +9,15 @@ function timeRefresh(timeoutPeriod)
 
 function renew()
 {
-	var url=window.location.href+"renew.php?userID="+document.getElementById("url").value;
+	var url="renew.php?userID="+document.getElementById("url").value;
 	location.href=url;
 	return false;
 }
 
 function users()
 {
-	var url = window.location.href+"users.php"
-	location.href=url;
+        var url = "/users.php"
+        location.href=url;
 }
 </script>
 <title>Device Nanny</title>
