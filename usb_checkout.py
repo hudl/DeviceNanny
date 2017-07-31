@@ -397,7 +397,7 @@ def get_device_name(device_id, location, port):
     if device_name is None:
         logging.debug(
             "[usb_checkout][get_device_name] Unable to get device name from port - trying ID.")
-        device_name = db.get_device_name_from_id(device_id)
+        device_name = db.get_device_name_from_id(location, device_id)
     return device_name
 
 
@@ -425,14 +425,15 @@ def main():
     else:
         checked_out = check_if_out(location,port)
         if checked_out:
-            logging.info("[usb_checkout][main]CHECK IN")
-            device_name = db.get_device_name_from_id(device_id)
+            logging.info("[usb_checkout][main] CHECK IN")
+            device_name = db.get_device_name_from_id(location, device_id)
             user_info = get_user_info_from_db(device_id)
             check_in(device_id, port)
             slack.check_in_notice(user_info, device_name)
         else:
             logging.info("[usb_checkout][main] CHECK OUT")
             device_id = db.get_device_id_from_port(location, port)
+            device_name = db.get_device_name_from_id(location, device_id)
             timer.start()
             user_info = get_user_info()
             check_out(user_info, device_id)

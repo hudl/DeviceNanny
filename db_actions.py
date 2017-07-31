@@ -112,18 +112,18 @@ class MyDB(object):
             logging.debug(
                 "[db_actions][get_device_name] Exception - {}".format(e))
 
-    def get_device_name_from_id(self, device_id):
+    def get_device_name_from_id(self, location, device_id):
         """
         :param device_id:
         :return: DeviceName
         """
         logging.debug(
-            "[db_actions][get_device_name_from_id] Device ID = {}".format(
-                device_id))
+            "[db_actions][get_device_name_from_id] Device ID = {}, Location = {}".format(
+                device_id, location))
         try:
             device = self.db_fetch(
-                "SELECT DeviceName from Devices WHERE DeviceID = '{}'".format(
-                    device_id))
+                "SELECT DeviceName from Devices WHERE DeviceID = '{}' AND Location = '{}'".format(
+                    device_id, location))
             logging.debug(
                 "[db_actions][get_device_name_from_id] Device Name: {}".format(
                     device.get("DeviceName")))
@@ -136,6 +136,7 @@ class MyDB(object):
     def get_device_id_from_port(self, location, port):
         """
         :param port:
+        :param location:
         :return: DeviceID
         """
         device = self.db_fetch(
