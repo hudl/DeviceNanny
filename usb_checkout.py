@@ -31,7 +31,8 @@ def get_lock(process_name):
     try:
         get_lock._lock_socket.bind('\0' + process_name)
         logging.warning(
-            "[usb_checkout][get_lock] Prevented process from starting - already running.")
+            "[usb_checkout][get_lock] Prevented process from starting - already running."
+        )
         popups('USB Connection')
     except socket.error:
         logging.warning("[usb_checkout][get_lock] Process already locked.")
@@ -59,8 +60,8 @@ def delete_tempfile(filename):
         logging.debug("[usb_checkout][delete_tempfile] Temp file deleted.")
     except IOError as e:
         logging.debug(
-            "[usb_checkout][delete_tempfile] Temp file doesn't exist. {}".format(
-                str(e)))
+            "[usb_checkout][delete_tempfile] Temp file doesn't exist. {}".
+            format(str(e)))
 
 
 def check_for_tempfile(filename):
@@ -99,7 +100,8 @@ def is_device_connected(port):
     try:
         open("/sys/bus/usb/devices/{}/serial".format(port))
         logging.info(
-            "[usb_checkout][is_device_connected] Checkout cancelled - device still connected")
+            "[usb_checkout][is_device_connected] Checkout cancelled - device still connected"
+        )
         return True
     except:
         return False
@@ -113,7 +115,8 @@ def multiple_checkouts():
     pid = get_pid("[s]tart_checkout")
     if len(pid) > 1:
         logging.debug(
-            "[usb_checkout][multiple_checkouts] Multiple checkouts in progress.")
+            "[usb_checkout][multiple_checkouts] Multiple checkouts in progress."
+        )
         return True
 
 
@@ -137,8 +140,8 @@ def stop_program_if_running():
     print(pid)
     print(type(pid))
     pgid = os.getpgid(int(pid[0]))
-    logging.debug("[usb_checkout][stop_program_if_running] PGID: {}".format(
-        pgid))
+    logging.debug(
+        "[usb_checkout][stop_program_if_running] PGID: {}".format(pgid))
     delete_tempfile(filename)
     kill(pgid)
 
@@ -183,8 +186,8 @@ def return_log():
         fsize = f.tell()
         f.seek(max(fsize - 2000, 0, 0))
         log = f.readlines()
-    logging.debug("[usb_checkout][return_log] End of kern.log file: {}".format(
-        log))
+    logging.debug(
+        "[usb_checkout][return_log] End of kern.log file: {}".format(log))
     return log
 
 
@@ -204,7 +207,8 @@ def find_port():
         return port[0]
     except:
         logging.error(
-            "[usb_checkout][find_port] No USB actions found near the end of the log!")
+            "[usb_checkout][find_port] No USB actions found near the end of the log!"
+        )
         stop_program_if_running()
 
 
@@ -218,8 +222,8 @@ def get_serial(port):
         with open("/sys/bus/usb/devices/{}/serial".format(port)) as f:
             for line in f:
                 serial = line.rstrip()
-        logging.debug(
-            "[usb_checkout][get_serial] Serial number of device: {}".format(serial))
+        logging.debug("[usb_checkout][get_serial] Serial number of device: {}".
+                      format(serial))
         return serial
     except:
         logging.debug("[usb_checkout][get_serial] Serial number not found.")
@@ -252,12 +256,11 @@ def get_user_info_from_db(device_id):
     checked_out_by = []
     checked_out_by.append(db.checked_out_by(device_id))
     logging.debug(
-        "[usb_checkout][get_user_info_from_db] checked_out_by = {}. Type = {}".format(
-            checked_out_by, type(checked_out_by)))
+        "[usb_checkout][get_user_info_from_db] checked_out_by = {}. Type = {}".
+        format(checked_out_by, type(checked_out_by)))
     user_info = db.user_info(checked_out_by)
-    logging.debug(
-        "[usb_checkout][get_user_info_from_db] user_info = {}".format(
-            user_info))
+    logging.debug("[usb_checkout][get_user_info_from_db] user_info = {}".
+                  format(user_info))
     return user_info
 
 
@@ -273,13 +276,13 @@ def get_info_from_db(user_input):
             user_info.get('FirstName') == 'Missing'):
         popups('Name Error')
         logging.warning(
-            "[usb_checkout][get_info_from_db] {} is not a valid ID or name".format(
-                user_input))
+            "[usb_checkout][get_info_from_db] {} is not a valid ID or name".
+            format(user_input))
         return get_user_info()
     else:
         logging.debug(
-            "[usb_checkout][get_info_from_db] User {} checking out device {}".format(
-                user_info, device_name))
+            "[usb_checkout][get_info_from_db] User {} checking out device {}".
+            format(user_info, device_name))
         return user_info
 
 
@@ -292,30 +295,37 @@ def popups(msg):
     """
     if msg == 'Name Error':
         text = "Not a valid name or ID"
-        name_cmd = ["zenity", "--error", "--title='ERROR'",
-                    "--text='{}'".format(text)]
+        name_cmd = [
+            "zenity", "--error", "--title='ERROR'", "--text='{}'".format(text)
+        ]
         dialog(name_cmd)
     elif msg == 'checkout':
         text = "Enter your first and last name OR your user ID number:"
-        checkout_cmd = ["zenity", "--entry",
-                        "--title='Device Checkout: {}'".format(device_name),
-                        "--text='{}'".format(text)]
+        checkout_cmd = [
+            "zenity", "--entry",
+            "--title='Device Checkout: {}'".format(device_name),
+            "--text='{}'".format(text)
+        ]
         return dialog(checkout_cmd)
     elif msg == 'USB Connection':
         text = "Device {} detected more than once. Either you plugged " \
             "it back in without finishing checkout OR it's a bad USB cord.".format(device_name)
-        conn_cmd = ["zenity", "--error", "--title='ERROR'",
-                    "--text='{}'".format(text)]
+        conn_cmd = [
+            "zenity", "--error", "--title='ERROR'", "--text='{}'".format(text)
+        ]
         dialog(conn_cmd)
     elif msg == 'New Device':
         text = "Add device to database."
-        new_cmd = ["zenity", "--forms", "--title='New Device'",
-                   "--text='{}'".format(text),
-                   "--add-entry='Device Name ex: iPhone 001'",
-                   "--add-entry='Manufacturer ex: Samsung'",
-                   "--add-entry='Model ex: iPad Air 2 Black'",
-                   "--add-entry='Type (Tablet or Phone)'",
-                   "--add-entry='OS ex: Android 6'"]
+        new_cmd = [
+            "zenity", "--forms", "--title='New Device'",
+            "--text='{}'".format(text),
+            "--add-entry='Device Name ex: iPhone 001'",
+            "--add-entry='Manufacturer ex: Samsung'",
+            "--add-entry='Model ex: iPad Air 2 Black'",
+            "--add-entry='Type (Tablet or Phone)'",
+            "--add-entry='OS ex: Android 6'",
+            "--add-entry='Location ex: Lincoln'"
+        ]
         return dialog(new_cmd)
 
 
@@ -326,12 +336,13 @@ def get_new_device_info(serial):
     """
     try:
         logging.info(
-            "[usb_checkout][get_new_device_info] New device. Serial: {}".format(
-                serial))
+            "[usb_checkout][get_new_device_info] New device. Serial: {}".
+            format(serial))
         return popups('New Device').decode('utf-8').split('|')
     except:
         logging.info(
-            "[usb_checkout][get_new_device_info] User cancelled new device entry.")
+            "[usb_checkout][get_new_device_info] User cancelled new device entry."
+        )
         delete_tempfile(filename)
         sys.exit()
 
@@ -344,7 +355,8 @@ def to_database(serial):
     new_device_id = db.new_device_id()
     device_info.extend([new_device_id, get_serial(port), port])
     db.add_to_database(device_info)
-    logging.info("[usb_checkout][to_database] Device added: {}".format(device_info))
+    logging.info(
+        "[usb_checkout][to_database] Device added: {}".format(device_info))
 
 
 def check_if_out(location, port):
@@ -356,8 +368,8 @@ def check_if_out(location, port):
     device_id = db.get_device_id_from_port(location, port)
     if device_id is None:
         logging.debug(
-            "[usb_checkout][check_if_out] Port {} is not registered to a device.".format(
-                port))
+            "[usb_checkout][check_if_out] Port {} is not registered to a device.".
+            format(port))
         return True
 
 
@@ -383,7 +395,8 @@ def play_sound():
     """
     Plays a beep sound.
     """
-    os.system('play --no-show-progress --null --channels 1 synth %s sine %f' % ( .75, 3000))
+    os.system('play --no-show-progress --null --channels 1 synth %s sine %f' %
+              (.75, 3000))
 
 
 def get_device_name(device_id, location, port):
@@ -396,7 +409,8 @@ def get_device_name(device_id, location, port):
     device_name = db.get_device_name(location, port)
     if device_name is None:
         logging.debug(
-            "[usb_checkout][get_device_name] Unable to get device name from port - trying ID.")
+            "[usb_checkout][get_device_name] Unable to get device name from port - trying ID."
+        )
         device_name = db.get_device_name_from_id(location, device_id)
     return device_name
 
@@ -423,7 +437,7 @@ def main():
     if device_id is None and serial is not None:
         to_database(serial)
     else:
-        checked_out = check_if_out(location,port)
+        checked_out = check_if_out(location, port)
         if checked_out:
             logging.info("[usb_checkout][main] CHECK IN")
             device_name = db.get_device_name_from_id(location, device_id)
@@ -440,8 +454,8 @@ def main():
             slack.check_out_notice(user_info, device_name)
             logging.info(
                 "[usb_checkout][main] {} checked out by {} {}.".format(
-                    device_name, user_info.get('FirstName'),
-                    user_info.get('LastName')))
+                    device_name,
+                    user_info.get('FirstName'), user_info.get('LastName')))
     delete_tempfile(filename)
 
 

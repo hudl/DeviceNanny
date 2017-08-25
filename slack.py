@@ -66,12 +66,12 @@ def check_out_notice(user_info, device):
         "the DeviceNanny web page.".format(device),
         as_user=False,
         username="DeviceNanny")
-    slack.chat.post_message(channel,
-                            "*{} {}* just checked out `{}`".format(
-                                user_info.get('FirstName'),
-                                user_info.get('LastName'), device),
-                            as_user=False,
-                            username="DeviceNanny")
+    slack.chat.post_message(
+        channel,
+        "*{} {}* just checked out `{}`".format(
+            user_info.get('FirstName'), user_info.get('LastName'), device),
+        as_user=False,
+        username="DeviceNanny")
     logging.debug("[slack][check_out_notice] Checkout message sent.")
 
 
@@ -90,16 +90,17 @@ def check_in_notice(user_info, device):
                 "You checked in `{}`. Thanks!".format(device),
                 as_user=False,
                 username="DeviceNanny")
-            slack.chat.post_message(channel,
-                                    "*{} {}* just checked in `{}`".format(
-                                        user_info.get('FirstName'),
-                                        user_info.get('LastName'), device),
-                                    as_user=False,
-                                    username="DeviceNanny")
+            slack.chat.post_message(
+                channel,
+                "*{} {}* just checked in `{}`".format(
+                    user_info.get('FirstName'),
+                    user_info.get('LastName'), device),
+                as_user=False,
+                username="DeviceNanny")
             logging.debug(
                 "[slack][check_in_notice] {} {} just checked in {}".format(
-                    user_info.get('FirstName'), user_info.get('LastName'),
-                    device))
+                    user_info.get('FirstName'),
+                    user_info.get('LastName'), device))
         except Exception as e:
             print(str(e))
 
@@ -112,12 +113,12 @@ def post_to_channel(device_id, time_difference, firstname, lastname):
     :param firstname: First name of user with expired checkout
     :param lastname: Last name of user with expired checkout
     """
-    slack.chat.post_message(channel,
-                            '`{}` was checked out *{}* ago by *{} {}*'.format(
-                                device_id, time_difference, firstname,
-                                lastname),
-                            as_user=False,
-                            username="DeviceNanny")
+    slack.chat.post_message(
+        channel,
+        '`{}` was checked out *{}* ago by *{} {}*'.format(
+            device_id, time_difference, firstname, lastname),
+        as_user=False,
+        username="DeviceNanny")
     logging.debug("[slack][post_to_channel] Posted to channel.")
 
 
@@ -151,5 +152,5 @@ def missing_device_message(device_name, time_difference):
         as_user=False,
         username="DeviceNanny")
     logging.info(
-        "[slack][missing_device_message] Slack reminder sent to team channel for {}".format(
-            device_name))
+        "[slack][missing_device_message] Slack reminder sent to team channel for {}".
+        format(device_name))

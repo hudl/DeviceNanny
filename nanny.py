@@ -9,7 +9,6 @@
 from datetime import datetime, timedelta
 from db_actions import MyDB
 import logging.config
-from os import walk
 import configparser
 import subprocess
 import logging
@@ -41,7 +40,7 @@ def usb_devices():
     to USB ports/kernels.
     :return: Directory names
     """
-    dir_names = next(walk('/sys/bus/usb/devices/'))
+    dir_names = next(os.walk('/sys/bus/usb/devices/'))
     return dir_names[1]
 
 
@@ -71,12 +70,11 @@ def update_db(port):
         if is_device_checked_out(device_id):
             db.check_in(device_id, port)
             slack.nanny_check_in(db.get_device_name_from_id(device_id))
-            logging.info("[nanny][update_db] Device {} checked in.".format(
-                device_id))
+            logging.info(
+                "[nanny][update_db] Device {} checked in.".format(device_id))
         else:
-            logging.debug(
-                "[nanny][update_db] Device {} isn't checked out.".format(
-                    device_id))
+            logging.debug("[nanny][update_db] Device {} isn't checked out.".
+                          format(device_id))
             print("{}".format(device_id))
             verify_match(serial, location, port, device_id)
 
@@ -90,7 +88,8 @@ def was_port_registered(location, port):
     device_id = db.get_device_id_from_port(location, port)
     if device_id:
         logging.debug(
-            "[nanny][update_db] Device was registered to a different port. Fixing.")
+            "[nanny][update_db] Device was registered to a different port. Fixing."
+        )
         db.check_out('1', device_id)
 
 
@@ -109,21 +108,19 @@ def verify_match(serial, location, port, device_id):
         serial_from_db = db.get_serial_number_from_port(location, port)
     except:
         serial_from_db = None
-    logging.debug(
-        "[nanny][verify_match] SN from File: {} SN From DB: {}".format(
-            serial_from_file, serial_from_db))
+    logging.debug("[nanny][verify_match] SN from File: {} SN From DB: {}".
+                  format(serial_from_file, serial_from_db))
     if serial_from_file != serial_from_db:
         logging.debug(
-            "[nanny][verify_match] Serial numbers don't match - fixing port {}".format(
-                port))
+            "[nanny][verify_match] Serial numbers don't match - fixing port {}".
+            format(port))
         db.check_out('1', device_id)
         logging.info(
             "[nanny][verify_match] Nanny checked out device {}. Will be checked in on the next "
             "Nanny run.".format(device_id))
     else:
-        logging.debug(
-            "[nanny][verify_match] Serial numbers match for port {}".format(
-                port))
+        logging.debug("[nanny][verify_match] Serial numbers match for port {}".
+                      format(port))
 
 
 def is_device_checked_out(device_id):
@@ -135,18 +132,18 @@ def is_device_checked_out(device_id):
     checked_out_by = db.checked_out_by(device_id)
     if checked_out_by is 1:
         logging.debug(
-            "[nanny][is_device_checked_out] Device {} is registered as missing".format(
-                device_id))
+            "[nanny][is_device_checked_out] Device {} is registered as missing".
+            format(device_id))
         return True
     elif checked_out_by is not 0:
         logging.debug(
-            "[nanny][is_device_checked_out] Device {} is checked out by {}".format(
-                device_id, checked_out_by))
+            "[nanny][is_device_checked_out] Device {} is checked out by {}".
+            format(device_id, checked_out_by))
         return True
     else:
         logging.debug(
-            "[nanny][is_device_checked_out] Device {} is not checked out".format(
-                device_id))
+            "[nanny][is_device_checked_out] Device {} is not checked out".
+            format(device_id))
         return False
 
 
@@ -160,8 +157,8 @@ def reminder_due(device_status):
     time_since_reminded = int(time.time()) - device_status.get("LastReminded")
     logging.debug("[nanny][reminder_due] Last reminded {} seconds ago.".format(
         time_since_reminded))
-    if time_since_reminded > int(config['DEFAULT'][
-            'ReminderInterval']) and checkout_expired(device_status):
+    if time_since_reminded > int(config['DEFAULT']['ReminderInterval']
+                                 ) and checkout_expired(device_status):
         if workday():
             logging.debug("[nanny][reminder_due] Device needs a reminder")
             return True
@@ -187,8 +184,8 @@ def checkout_expired(device_status):
     :param device_status: DeviceName, CheckedOutBy, TimeCheckedOut, LastReminded, RFID
     :return: True or None
     """
-    if int(time.time()) - device_status.get("TimeCheckedOut") > int(config[
-            'DEFAULT']['CheckoutExpires']):
+    if int(time.time()) - device_status.get("TimeCheckedOut") > int(
+            config['DEFAULT']['CheckoutExpires']):
         logging.debug(
             "[nanny][checkout_expired] Checkout expired for device {}".format(
                 device_status.get('DeviceName')))
@@ -226,12 +223,13 @@ def send_reminder(device_status):
     if reminder_due(device_status):
         logging.debug(
             "[nanny][send_reminder] Device checked out by {} type {}".format(
-                device_status.get('CheckedOutBy'), type(device_status.get(
-                    'CheckedOutBy'))))
+                device_status.get('CheckedOutBy'),
+                type(device_status.get('CheckedOutBy'))))
         if device_status.get('CheckedOutBy') is not 1:
             logging.debug("[nanny][send_reminder] User reminder...")
             slack.user_reminder(
-                slack_id(device_status), time_since_checkout(device_status),
+                slack_id(device_status),
+                time_since_checkout(device_status),
                 device_status.get("DeviceName"))
         else:
             slack.missing_device_message(
@@ -251,10 +249,11 @@ def checkout_reminders():
     print(devices)
     for x in devices:
         device_status = db.get_device_status(x)
-        if device_status.get("CheckedOutBy") is not 0 and device_status.get("Location") is location:
+        if device_status.get("CheckedOutBy") is not 0 and device_status.get(
+                "Location") is location:
             logging.debug(
-                "[nanny][checkout_reminders] Check if device {} needs a reminder.".format(
-                    x))
+                "[nanny][checkout_reminders] Check if device {} needs a reminder.".
+                format(x))
             send_reminder(device_status)
 
 
@@ -287,7 +286,9 @@ def missing_device_ids(missing_devices):
     :return: The missing device's device IDs
     """
     print("Missing devices in function: {}".format(missing_devices))
-    return [db.get_device_id_from_port(location, port) for port in missing_devices]
+    return [
+        db.get_device_id_from_port(location, port) for port in missing_devices
+    ]
 
 
 def verify_registered_connections():
@@ -301,8 +302,8 @@ def verify_registered_connections():
     for device in checked_out:
         db.check_out('1', device)
         logging.debug(
-            "[nanny][verify_registered_connections] Device {} not connected. Checked out.".format(
-                device))
+            "[nanny][verify_registered_connections] Device {} not connected. Checked out.".
+            format(device))
 
 
 def is_checkout_running():
@@ -311,9 +312,8 @@ def is_checkout_running():
     of the shell script called by UDEV.
     :return: True or False
     """
-    proc = subprocess.Popen(["pgrep -f [s]tart_usb_checkout"],
-                            stdout=subprocess.PIPE,
-                            shell=True)
+    proc = subprocess.Popen(
+        ["pgrep -f [s]tart_usb_checkout"], stdout=subprocess.PIPE, shell=True)
     (out, err) = proc.communicate()
     pid = (out.decode('utf-8')).splitlines()
     if pid:
