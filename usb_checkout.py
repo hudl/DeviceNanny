@@ -323,8 +323,7 @@ def popups(msg):
             "--add-entry='Manufacturer ex: Samsung'",
             "--add-entry='Model ex: iPad Air 2 Black'",
             "--add-entry='Type (Tablet or Phone)'",
-            "--add-entry='OS ex: Android 6'",
-            "--add-entry='Location ex: Lincoln'"
+            "--add-entry='OS ex: Android 6'"
         ]
         return dialog(new_cmd)
 
@@ -353,7 +352,7 @@ def to_database(serial):
     """
     device_info = get_new_device_info(serial)
     new_device_id = db.new_device_id()
-    device_info.extend([new_device_id, get_serial(port), port])
+    device_info.extend([location, new_device_id, get_serial(port), port])
     db.add_to_database(device_info)
     logging.info(
         "[usb_checkout][to_database] Device added: {}".format(device_info))
