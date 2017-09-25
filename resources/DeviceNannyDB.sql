@@ -28,7 +28,7 @@ CREATE TABLE IF NOT EXISTS `Devices` (
   `CheckedOutBy` int(11) DEFAULT '0',
   `TimeCheckedOut` int(11) DEFAULT '0',
   `LastReminded` int(11) DEFAULT '0',
-  `RFID` bigint(11) DEFAULT NULL,
+  `Location` text NOT NULL,
   `Port` text
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
