@@ -323,8 +323,7 @@ def popups(msg):
             "--add-entry='Manufacturer ex: Samsung'",
             "--add-entry='Model ex: iPad Air 2 Black'",
             "--add-entry='Type (Tablet or Phone)'",
-            "--add-entry='OS ex: Android 6'",
-            "--add-entry='Location ex: Omaha'"
+            "--add-entry='OS ex: Android 6'"
         ]
         return dialog(new_cmd)
 
