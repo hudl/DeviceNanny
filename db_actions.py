@@ -108,7 +108,7 @@ class MyDB(object):
         try:
             device = self.db_fetch(
                 "SELECT DeviceName from Devices WHERE Port = '{}' AND Location = '{}'".
-                format(location, port))
+                format(port, location))
             return device.get("DeviceName")
         except Exception as e:
             logging.debug(
