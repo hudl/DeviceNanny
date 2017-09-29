@@ -50,7 +50,6 @@ def check_usb_connections():
     """
     connections = usb_devices()
     for c in connections:
-        print("Checking port {}".format(c))
         update_db(c)
 
 
@@ -75,7 +74,6 @@ def update_db(port):
         else:
             logging.debug("[nanny][update_db] Device {} isn't checked out.".
                           format(device_id))
-            print("{}".format(device_id))
             verify_match(serial, location, port, device_id)
 
 
@@ -246,11 +244,9 @@ def checkout_reminders():
     devices = []
     for x in device_ids:
         devices += x.values()
-    print(devices)
     for x in devices:
         device_status = db.get_device_status(x)
-        if device_status.get("CheckedOutBy") is not 0 and device_status.get(
-                "Location") is location:
+        if device_status.get("CheckedOutBy") is not 0:
             logging.debug(
                 "[nanny][checkout_reminders] Check if device {} needs a reminder.".
                 format(x))
@@ -285,7 +281,6 @@ def missing_device_ids(missing_devices):
     :param missing_devices: List of ports that are registered but are no longer in use (device is gone)
     :return: The missing device's device IDs
     """
-    print("Missing devices in function: {}".format(missing_devices))
     return [
         db.get_device_id_from_port(location, port) for port in missing_devices
     ]
