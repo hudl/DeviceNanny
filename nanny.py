@@ -246,7 +246,7 @@ def checkout_reminders():
         devices += x.values()
     for x in devices:
         device_status = db.get_device_status(x)
-        if device_status.get("CheckedOutBy") is not 0:
+        if device_status.get("CheckedOutBy") is not 0 and device_status.get("Location") is location:
             logging.debug(
                 "[nanny][checkout_reminders] Check if device {} needs a reminder.".
                 format(x))
