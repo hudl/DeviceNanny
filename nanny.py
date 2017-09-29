@@ -246,11 +246,18 @@ def checkout_reminders():
         devices += x.values()
     for x in devices:
         device_status = db.get_device_status(x)
-        if device_status.get("CheckedOutBy") is not 0 and device_status.get("Location") is location:
+        if device_status.get("CheckedOutBy") is not 0 and device_status.get(
+                "Location") == location:
+            print(
+                "CHECKED OUT BY: {}".format(device_status.get("CheckedOutBy")))
+            print("DEVICE LOCATION: {}".format(device_status.get("Location")))
             logging.debug(
                 "[nanny][checkout_reminders] Check if device {} needs a reminder.".
                 format(x))
+            print("NEEDS REMINDER")
             send_reminder(device_status)
+        else:
+            print("NONONONONO")
 
 
 def registered_ports(location):
