@@ -9,15 +9,15 @@ function timeRefresh(timeoutPeriod)
 
 function renew()
 {
-	var url=window.location.href+"renew.php?userID="+document.getElementById("url").value;
+	var url="renew.php?userID="+document.getElementById("url").value;
 	location.href=url;
 	return false;
 }
 
 function users()
 {
-	var url = window.location.href+"users.php"
-	location.href=url;
+        var url = "/users.php"
+        location.href=url;
 }
 </script>
 <title>Device Nanny</title>
@@ -29,7 +29,7 @@ function users()
 
 require_once('../mysqli_connect.php');
 
-$query  = "SELECT DeviceName, Manufacturer, Model, Type, OS, CheckedOutBy, UserID, CONCAT(FirstName, ' ', LastName) AS fullname FROM Devices, Users WHERE Devices.CheckedOutBy = Users.UserID ORDER BY CheckedOutBy, Type, OS DESC, Manufacturer, Model";
+$query  = "SELECT DeviceName, Manufacturer, Model, Type, OS, CheckedOutBy, UserID, Location, CONCAT(FirstName, ' ', LastName) AS fullname FROM Devices, Users WHERE Devices.CheckedOutBy = Users.UserID ORDER BY CheckedOutBy, Type, OS DESC, Manufacturer, Model";
 
 $response = @mysqli_query($dbc, $query);
 
@@ -46,6 +46,7 @@ if($response){
 	<th>Device Name</th>
 	<th>Model</th>
 	<th>OS</th>
+	<th>Location</th>
 	<th>Checked Out By</th>
 	</tr>
 	</thead>
@@ -73,6 +74,10 @@ if($response){
 		echo '<td>' .
 		$row['Model'] . '</td><td>' .
 		$row['OS'] . '</td>';
+		if($row['Location'] =='Omaha')
+			echo "<td style='background-color: #007cb5;'>".$row['Location']."</td>";
+		else
+			echo "<td align='left'; style='background-color: #4db9eb;'>".$row['Location']."</td>";
 		if($row['fullname']!='- -')
 			echo "<td>".$row['fullname']."</td>";
 		else
