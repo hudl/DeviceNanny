@@ -1,2 +1,0 @@
-#UDEV rule for /etc/udev/rules.d/
-SUBSYSTEM=="usb" ENV{DEVTYPE}=="usb_device" RUN+="/home/hudl/DeviceNanny/start_checkout.sh"
