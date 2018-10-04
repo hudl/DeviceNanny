@@ -1,0 +1,19 @@
+{% extends 'home.html' %}
+
+{% block header %}
+  <h1>{% block title %}Add User{% endblock %}</h1>
+{% endblock %}
+
+{% block content %}
+  <form method="post">
+    <label for="first_name">First Name</label>
+    <input name="first_name" id="first_name" required>
+    <label for="last_name">Last Name</label>
+    <input name="last_name" id="last_name" required>
+    <label for="slack_id">Slack ID</label>
+    <input name="slack_id" id="slack_id" required>
+    <label for="office">Office Location</label>
+    <input name="office" id="office">
+    <input type="submit" value="Add">
+  </form>
+{% endblock %}

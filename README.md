@@ -1,5 +1,3 @@
-V3
-
 DeviceNanny is a device lab checkout system. It was designed with one goal in mind: be as reliable as possible. In fact, it's so reliable that you can't not use it. Devices are connected to the system via USB, and USB actions trigger the check-in, checkout, or device addition processes. Say hello to a fully charged device lab with an accurate inventory of available devices.
 
 Features:
