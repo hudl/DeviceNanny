@@ -42,7 +42,7 @@ def add():
 
         if error is None:
             db.execute(
-            'INSERT INTO devices (device_id, device_name, serial_udid, manufacturer, model, type, os, office) VALUES (?,?,?,?,?,?,?,?)',
+            'INSERT INTO devices (device_id, device_name, serial_udid, manufacturer, model, device_type, os, office) VALUES (?,?,?,?,?,?,?,?)',
                 (device_id, device_name, serial_udid, manufacturer, model, device_type, os, office)
             )
             db.commit()

@@ -1,3 +1,4 @@
 slacker
 Flask
 click
+flask-table
