@@ -10,10 +10,10 @@ CREATE TABLE devices (
     model TEXT NOT NULL,
     type TEXT NOT NULL,
     os TEXT NOT NULL,
-    checked_out_by INTEGER NOT NULL,
-    time_checked_out TIMESTAMP NOT NULL,
-    last_reminded TIMESTAMP NOT NULL,
-    location TEXT NOT NULL,
+    checked_out_by INTEGER,
+    time_checked_out TIMESTAMP,
+    last_reminded TIMESTAMP,
+    office TEXT NOT NULL,
     port INTEGER,
     FOREIGN KEY (checked_out_by) REFERENCES users (id)
 );

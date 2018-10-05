@@ -1,0 +1,118 @@
+{% extends 'home.html' %}
+
+{% block header %}
+  <h1>{% block title %}Add Device{% endblock %}</h1>
+{% endblock %}
+
+{% block page_header %}
+  <h2>Add Devices</h2>
+{% endblock %}
+
+{% block content %}
+  <div class="bs-docs-section">
+    <div class="row">
+      <div class="col-lg-4">
+        <form method="post">
+          <fieldset>
+            <div class="form-group">
+              <label for="device_id">Device ID</label>
+              <input class="form-control" id="device_id" name="device_id" placeholder="Device ID" required>
+            </div>
+
+
+             <div class="form-group">
+              <label for="device_name">Device Name</label>
+              <input class="form-control" name="device_name" id="device_name" placeholder="Device Name" required>
+            </div>
+
+
+            <div class="form-group">
+              <label for="serial_udid">Serial UDID</label>
+              <input class="form-control" name="serial_udid" id="serial_udid" placeholder="Serial UDID" required>
+            </div>
+
+            <div class="form-group">
+              <label for="model">Model</label>
+              <input class="form-control" name="model" id="model" placeholder="Model" required>
+            </div>
+
+            <fieldset class="form-group">
+              <legend>Manufacturer</legend>
+              <div class="form-check">
+                <label class="form-check-label">
+                  <input type="radio" class="form-check-input" name="manufacturer" id="apple" value="apple">
+                  Apple
+                </label>
+              </div>
+              <div class="form-check">
+              <label class="form-check-label">
+                  <input type="radio" class="form-check-input" name="manufacturer" id="google" value="google">
+                  Google
+                </label>
+              </div>
+              <div class="form-check disabled">
+              <label class="form-check-label">
+                  <input type="radio" class="form-check-input" name="manufacturer" id="samsung" value="samsung">
+                  Samsung
+                </label>
+              </div>
+            </fieldset>
+
+
+            <fieldset class="form-group">
+              <legend>Device Type</legend>
+              <div class="form-check">
+                <label class="form-check-label">
+                  <input type="radio" class="form-check-input" name="device_type" id="phone" value="phone">
+                  Phone
+                </label>
+              </div>
+              <div class="form-check">
+              <label class="form-check-label">
+                  <input type="radio" class="form-check-input" name="device_type" id="tablet" value="tablet">
+                  Tablet
+                </label>
+              </div>
+            </fieldset>
+
+
+            <fieldset class="form-group">
+              <legend>Operating System</legend>
+              <div class="form-check">
+                <label class="form-check-label">
+                  <input type="radio" class="form-check-input" name="os" id="ios" value="ios">
+                  iOS
+                </label>
+              </div>
+              <div class="form-check">
+              <label class="form-check-label">
+                  <input type="radio" class="form-check-input" name="os" id="android" value="android">
+                  Android
+                </label>
+              </div>
+            </fieldset>
+
+
+            <fieldset class="form-group">
+              <legend>Office Location</legend>
+              <div class="form-check">
+                <label class="form-check-label">
+                  <input type="radio" class="form-check-input" name="office" id="omaha" value="omaha">
+                  Omaha
+                </label>
+              </div>
+              <div class="form-check">
+              <label class="form-check-label">
+                  <input type="radio" class="form-check-input" name="office" id=liconln" value="omaha">
+                  Lincoln
+                </label>
+              </div>
+            </fieldset>
+
+            <button type="submit" class="btn btn-primary">Add</button>
+          </fieldset>
+        </form>
+      </div>
+    </div>
+  </div>
+{% endblock %}

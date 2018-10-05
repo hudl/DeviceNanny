@@ -30,4 +30,8 @@ def create_app(test_config=None):
     from . import user
     app.register_blueprint(user.bp)
 
+    # Add devices page
+    from . import devices
+    app.register_blueprint(devices.bp)
+
     return app
