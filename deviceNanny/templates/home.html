@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+
+{% block header %}
+  <h1>{% block title %}Home{% endblock %}</h1>
+{% endblock %}
+{% block page_header %}
+  <h2>Devices</h2>
+{% endblock %}
+{% block content %}
+    {{ table }}
+{% endblock %}
+

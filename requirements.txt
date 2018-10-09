@@ -1,2 +1,4 @@
 slacker
-PyMySql
+Flask
+click
+flask-table
