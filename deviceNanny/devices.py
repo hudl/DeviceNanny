@@ -1,23 +1,27 @@
-from flask import Blueprint, render_template, request, redirect, url_for, flash
+import csv
+
+from flask import Blueprint, render_template, redirect, url_for, flash
 
 from deviceNanny.db import get_db
+from deviceNanny.forms import SingleDeviceForm, UploadFileForm
 
 bp = Blueprint('devices', __name__, url_prefix='/devices')
 
 
 @bp.route('/add', methods=('GET', 'POST'))
 def add():
-    if request.method == 'POST':
-        device_id = request.form['device_id']
-        device_name = request.form['device_name']
-        serial_udid = request.form['serial_udid']
-        manufacturer = request.form['manufacturer']
-        model = request.form['model']
-        device_type = request.form['device_type']
-        os = request.form['os']
-        office = request.form['office']
+    add_single_device = SingleDeviceForm()
+    upload_file = UploadFileForm()
+    db = get_db()
+    if add_single_device.validate_on_submit():
+        device_id = add_single_device.device_id.data
+        device_name = add_single_device.device_name.data
+        serial_udid = add_single_device.serial_udid.data
+        manufacturer = add_single_device.manufacturer.data
+        model = add_single_device.model.data
+        device_type = add_single_device.device_type.data
+        office = add_single_device.office.data
 
-        db = get_db()
         error = None
         if not device_id:
             error = 'Device ID is required'
@@ -31,8 +35,6 @@ def add():
             error = 'Model is required'
         elif not device_type:
             error = 'Type is required'
-        elif not os:
-            error = 'Operating System is required'
         elif not office:
             error = 'Office location is required'
         elif db.execute(
@@ -42,12 +44,34 @@ def add():
 
         if error is None:
             db.execute(
-            'INSERT INTO devices (device_id, device_name, serial_udid, manufacturer, model, device_type, os, office) VALUES (?,?,?,?,?,?,?,?)',
-                (device_id, device_name, serial_udid, manufacturer, model, device_type, os, office)
+            'INSERT INTO devices (device_id, device_name, serial_udid, manufacturer, model, device_type, office) VALUES (?,?,?,?,?,?,?)',
+                (device_id, device_name, serial_udid, manufacturer, model, device_type, office)
             )
             db.commit()
             return redirect(url_for('devices.add'))
 
         flash(error)
 
-    return render_template('add_devices.html')
+    if upload_file.validate_on_submit():
+        file = upload_file.file.data
+        print(file)
+        content = file.read().decode('utf-8')
+
+        reader = csv.reader(content.splitlines(), delimiter=',')
+        columns = next(reader)
+        insert_query = 'INSERT INTO devices({}) VALUES ({})'.format(','.join(columns), ','.join('?' * len(columns)))
+        select_query = 'SELECT serial_udid FROM devices WHERE serial_udid = ?'
+        cursor = db.cursor()
+        for device_data in reader:
+            print(device_data)
+            # TODO make this a little smarter
+            if db.execute(select_query, (device_data[2],)).fetchone() is None:
+                cursor.execute(insert_query, device_data)
+
+        db.commit()
+        file.close()
+
+    return render_template('add_devices.html',
+                           title="Add Devices",
+                           add_single_device=add_single_device,
+                           upload_file=upload_file)

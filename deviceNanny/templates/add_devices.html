@@ -13,103 +13,45 @@
     <div class="row">
       <div class="col-lg-4">
         <form method="post">
-          <fieldset>
+          {{ add_single_device.hidden_tag() }}
+          <fieldset class="form-group">
             <div class="form-group">
-              <label for="device_id">Device ID</label>
-              <input class="form-control" id="device_id" name="device_id" placeholder="Device ID" required>
+              {{ add_single_device.device_id.label }} {{ add_single_device.device_id(class="form-control") }}
             </div>
-
-
-             <div class="form-group">
-              <label for="device_name">Device Name</label>
-              <input class="form-control" name="device_name" id="device_name" placeholder="Device Name" required>
-            </div>
-
-
             <div class="form-group">
-              <label for="serial_udid">Serial UDID</label>
-              <input class="form-control" name="serial_udid" id="serial_udid" placeholder="Serial UDID" required>
+              {{ add_single_device.device_name.label }} {{ add_single_device.device_name(class="form-control") }}
             </div>
-
             <div class="form-group">
-              <label for="model">Model</label>
-              <input class="form-control" name="model" id="model" placeholder="Model" required>
+              {{ add_single_device.serial_udid.label }} {{ add_single_device.serial_udid(class="form-control") }}
             </div>
-
-            <fieldset class="form-group">
-              <legend>Manufacturer</legend>
-              <div class="form-check">
-                <label class="form-check-label">
-                  <input type="radio" class="form-check-input" name="manufacturer" id="apple" value="apple">
-                  Apple
-                </label>
-              </div>
-              <div class="form-check">
-              <label class="form-check-label">
-                  <input type="radio" class="form-check-input" name="manufacturer" id="google" value="google">
-                  Google
-                </label>
-              </div>
-              <div class="form-check disabled">
-              <label class="form-check-label">
-                  <input type="radio" class="form-check-input" name="manufacturer" id="samsung" value="samsung">
-                  Samsung
-                </label>
-              </div>
-            </fieldset>
-
-
-            <fieldset class="form-group">
-              <legend>Device Type</legend>
-              <div class="form-check">
-                <label class="form-check-label">
-                  <input type="radio" class="form-check-input" name="device_type" id="phone" value="phone">
-                  Phone
-                </label>
-              </div>
-              <div class="form-check">
-              <label class="form-check-label">
-                  <input type="radio" class="form-check-input" name="device_type" id="tablet" value="tablet">
-                  Tablet
-                </label>
-              </div>
-            </fieldset>
-
-
-            <fieldset class="form-group">
-              <legend>Operating System</legend>
-              <div class="form-check">
-                <label class="form-check-label">
-                  <input type="radio" class="form-check-input" name="os" id="ios" value="ios">
-                  iOS
-                </label>
-              </div>
-              <div class="form-check">
-              <label class="form-check-label">
-                  <input type="radio" class="form-check-input" name="os" id="android" value="android">
-                  Android
-                </label>
-              </div>
-            </fieldset>
-
-
-            <fieldset class="form-group">
-              <legend>Office Location</legend>
-              <div class="form-check">
-                <label class="form-check-label">
-                  <input type="radio" class="form-check-input" name="office" id="omaha" value="omaha">
-                  Omaha
-                </label>
-              </div>
-              <div class="form-check">
-              <label class="form-check-label">
-                  <input type="radio" class="form-check-input" name="office" id=liconln" value="omaha">
-                  Lincoln
-                </label>
-              </div>
-            </fieldset>
-
-            <button type="submit" class="btn btn-primary">Add</button>
+            <div class="form-group">
+              {{ add_single_device.manufacturer.label }} {{ add_single_device.manufacturer }}
+            </div>
+            <div class="form-group">
+              {{ add_single_device.model.label }} {{ add_single_device.model }}
+            </div>
+            <div class="form-group">
+              {{ add_single_device.device_type.label }} {{ add_single_device.device_type }}
+            </div>
+            <div class="form-group">
+              {{ add_single_device.office.label }} {{ add_single_device.office }}
+            </div>
+              {{ add_single_device.submit(class="btn btn-primary") }}
+          </fieldset>
+        </form>
+      </div>
+    </div>
+  </div>
+  <div class="bs-docs-section">
+    <div class="row">
+      <div class="col-lg-4">
+        <form action="" method=post enctype=multipart/form-data>
+          {{ add_single_device.hidden_tag() }}
+          <fieldset class="form-group">
+            <div class="form-group">
+              {{ upload_file.file.label }} {{ upload_file.file }}
+            </div>
+            {{ upload_file.upload_submit(class="btn btn-primary") }}
           </fieldset>
         </form>
       </div>
