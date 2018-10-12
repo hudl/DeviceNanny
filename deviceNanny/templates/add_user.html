@@ -11,36 +11,37 @@
   <div class="bs-docs-section">
     <div class="row">
       <div class="col-lg-4">
-        <form method="post">
-          <fieldset>
+        <form action="" method="post" novalidate>
+          {{ add_single_user.hidden_tag() }}
+          <fieldset class="form-group">
             <div class="form-group">
-              <label for="first_name">First Name</label>
-              <input class="form-control" id="first_name" name="first_name" placeholder="First Name" required>
+                  {{ add_single_user.first_name.label }} {{ add_single_user.first_name(class="form-control") }}
             </div>
             <div class="form-group">
-              <label for="last_name">Last Name</label>
-              <input class="form-control" id="last_name" name="last_name" placeholder="Last Name" required>
+                  {{ add_single_user.last_name.label }} {{ add_single_user.last_name(class="form-control") }}
             </div>
             <div class="form-group">
-              <label for="slack_id">Slack Id</label>
-              <input class="form-control" id="slack_id" name="slack_id" placeholder="Slack Id" required>
+                  {{ add_single_user.slack_id.label }} {{ add_single_user.slack_id(class="form-control") }}
             </div>
-            <fieldset class="form-group">
-              <legend>Office Location</legend>
-              <div class="form-check">
-                <label class="form-check-label">
-                  <input type="radio" class="form-check-input" name="office" id="omaha" value="omaha">
-                  Omaha
-                </label>
-              </div>
-              <div class="form-check">
-              <label class="form-check-label">
-                  <input type="radio" class="form-check-input" name="office" id="lincoln" value="lincoln">
-                  Lincoln
-                </label>
-              </div>
-            </fieldset>
-            <button type="submit" class="btn btn-primary">Add</button>
+            <div class="form-check-label">
+              {{ add_single_user.office.label }} {{ add_single_user.office}}
+            </div>
+            {{ add_single_user.submit(class="btn btn-primary") }}
+          </fieldset>
+        </form>
+      </div>
+    </div>
+  </div>
+  <div class="bs-docs-section">
+    <div class="row">
+      <div class="col-lg-4">
+        <form action="" method=post enctype=multipart/form-data>
+          {{ upload_file.hidden_tag() }}
+          <fieldset class="form-group">
+            <div class="form-group">
+            {{ upload_file.file.label }} {{ upload_file.file }}
+            </div>
+            {{ upload_file.upload_submit(class="btn btn-primary") }}
           </fieldset>
         </form>
       </div>

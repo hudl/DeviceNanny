@@ -9,7 +9,6 @@ CREATE TABLE devices (
     manufacturer TEXT NOT NULL,
     model TEXT NOT NULL,
     device_type TEXT NOT NULL,
-    os TEXT NOT NULL,
     checked_out_by INTEGER,
     time_checked_out TIMESTAMP,
     last_reminded TIMESTAMP,
