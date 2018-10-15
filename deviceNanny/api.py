@@ -2,6 +2,8 @@ from flask import Blueprint, jsonify
 from deviceNanny.usb_checkout import *
 from deviceNanny.db_actions import *
 
+from flask import Blueprint, jsonify, current_app
+
 from deviceNanny.db import get_db
 
 bp = Blueprint('api', __name__, url_prefix='/api')
@@ -9,6 +11,7 @@ bp = Blueprint('api', __name__, url_prefix='/api')
 
 @bp.route('devices', methods=['GET'])
 def devices():
+    current_app.logger.info("Getting all devices")
     db = get_db()
     rows = db.execute('SELECT * FROM devices').fetchall()
     data = [dict(row) for row in rows]
