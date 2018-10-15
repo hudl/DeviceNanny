@@ -5,18 +5,13 @@
 # Created by Ethan Seyl 2016
 #
 
-import configparser
+from flask import current_app
 import logging
 import slacker
-import os
 
-working_dir = os.path.dirname(__file__)
-config = configparser.ConfigParser()
-config.read('{}/config/DeviceNanny.ini'.format(working_dir))
-
-slack = slacker.Slacker(config['SLACK']['ApiKey'])
-channel = config['SLACK']['channel']
-team_channel = config['SLACK']['team_channel']
+slack = slacker.Slacker(current_app.config('SLACK_API_KEY'))
+channel = 'omananny'
+team_channel = 'omananny'
 
 
 def help_message(device_name):
