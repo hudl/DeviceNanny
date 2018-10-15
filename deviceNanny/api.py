@@ -13,5 +13,6 @@ def devices():
     return jsonify(data)
 
 
-# @bp.route('devices/checkout', methods='POST')
-# def checkout_device():
+@bp.route('devices/checkout', methods=['GET'])
+def checkout_device():
+    return "STARTED THE CHECKOUT/CHECKIN PROCESS"

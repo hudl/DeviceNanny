@@ -98,4 +98,4 @@ web/secretInfo.php
 #Mac
 .DS_Store
 
-start_checkout.sh
+#start_checkout.sh
