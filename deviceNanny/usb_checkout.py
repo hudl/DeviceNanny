@@ -6,11 +6,11 @@
 # Created by Ethan Seyl 2016
 #
 
+from deviceNanny.slack import help_message
 import deviceNanny.db_actions as db
 import subprocess
 import logging
 import socket
-import slack
 import time
 import sys
 import os
@@ -80,7 +80,7 @@ def cancelled(port, device_id, device_name, filename):
     """
     if not is_device_connected(port):
         db.check_out('1', device_id)
-        slack.help_message(device_name)
+        help_message(device_name)
     if multiple_checkouts():
         delete_tempfile(filename)
         logging.debug("[usb_checkout][cancelled] FINISHED")

@@ -1,6 +1,7 @@
 from flask import Blueprint, jsonify
 from deviceNanny.usb_checkout import *
 from deviceNanny.db_actions import *
+from deviceNanny.slack import *
 import multiprocessing
 
 from flask import Blueprint, jsonify, current_app
