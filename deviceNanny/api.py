@@ -1,7 +1,6 @@
-from flask import Blueprint, jsonify
-from deviceNanny.usb_checkout import *
-from deviceNanny.db_actions import *
-from deviceNanny.slack import *
+import deviceNanny.usb_checkout as usb_checkout
+import deviceNanny.db_actions as db_actions
+import deviceNanny.slack as dn_slack
 import multiprocessing
 
 from flask import Blueprint, jsonify, current_app
@@ -26,41 +25,41 @@ def device_detected():
     # timer = multiprocessing.Process(target=timeout, name="Timer", args=(30,))
     location = "Test"
     # logging.info("LOCATION: {}".format(location))
-    port = find_port()
-    serial = get_serial(port)
-    device_id = get_device_id_from_serial(serial)
-    device_name = get_device_name(device_id, location, port)
-    filename = create_tempfile(port, device_name)
-    play_sound()
+    port = usb_checkout.find_port()
+    serial = usb_checkout.get_serial(port)
+    device_id = db_actions.get_device_id_from_serial(serial)
+    device_name = db_actions.get_device_name(device_id, location, port)
+    filename = usb_checkout.create_tempfile(port, device_name)
+    usb_checkout.play_sound()
     if device_id is None and serial is not None:
         add_device(serial, port, location, filename)
     else:
-        checked_out = check_if_out(location, port)
+        checked_out = usb_checkout.check_if_out(location, port)
         if checked_out:
             check_in_device(location, device_id, port)
         else:
             checkout_device(filename, location, port)
     print("------------DEVICE DETECTED-----------")
-    delete_tempfile(filename)
+    usb_checkout.delete_tempfile(filename)
     return "DEVICE DETECTED"
 
 
 @bp.route('devices/add', methods=['POST'])
 def add_device(serial, port, location, filename):
-    to_database(serial, port, location, filename)
+    usb_checkout.to_database(serial, port, location, filename)
 
 
 @bp.route('devices/checkout', methods=['PUT'])
 def checkout_device(filename, location, port):
-    logging.info("[usb_checkout][main] CHECK OUT")
-    device_id = get_device_id_from_port(location, port)
-    device_name = get_device_name_from_id(location, device_id)
-    timer = multiprocessing.Process(target=timeout, name="Timer", args=(30, port, device_id, device_name, filename))
+    current_app.logger.info("[usb_checkout][main] CHECK OUT")
+    device_id = db_actions.get_device_id_from_port(location, port)
+    device_name = db_actions.get_device_name_from_id(location, device_id)
+    timer = multiprocessing.Process(target=usb_checkout.timeout, name="Timer", args=(30, port, device_id, device_name, filename))
     timer.start()
-    user_info = get_user_info(timer, port, device_id, device_name, filename)
-    check_out(user_info, device_id)
-    slack.check_out_notice(user_info, device_name)
-    logging.info(
+    user_info = usb_checkout.get_user_info(timer, port, device_id, device_name, filename)
+    db_actions.check_out(user_info, device_id)
+    dn_slack.check_out_notice(user_info, device_name)
+    current_app.logger.info(
         "[usb_checkout][main] {} checked out by {} {}.".format(
             device_name,
             user_info.get('FirstName'), user_info.get('LastName')))
@@ -68,8 +67,8 @@ def checkout_device(filename, location, port):
 
 @bp.route('devices/check-in', methods=['PUT'])
 def check_in_device(location, device_id, port):
-    logging.info("[usb_checkout][main] CHECK IN")
-    device_name = get_device_name_from_id(location, device_id)
-    user_info = get_user_info_from_db(device_id)
-    check_in(device_id, port)
-    slack.check_in_notice(user_info, device_name)
+    current_app.logger.info("[usb_checkout][main] CHECK IN")
+    device_name = db_actions.get_device_name_from_id(location, device_id)
+    user_info = usb_checkout.get_user_info_from_db(device_id)
+    db_actions.check_in(device_id, port)
+    dn_slack.check_in_notice(user_info, device_name)
