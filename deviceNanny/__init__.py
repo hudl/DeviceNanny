@@ -37,4 +37,8 @@ def create_app(test_config=None):
     from . import devices
     app.register_blueprint(devices.bp)
 
+    # Add api endpoint
+    from . import api
+    app.register_blueprint(api.bp)
+
     return app
