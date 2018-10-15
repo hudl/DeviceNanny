@@ -8,8 +8,8 @@
 
 from deviceNanny.slack import help_message
 import deviceNanny.db_actions as db
+from flask import current_app
 import subprocess
-import logging
 import socket
 import time
 import sys
@@ -27,12 +27,12 @@ def get_lock(process_name, device_name):
 
     try:
         get_lock._lock_socket.bind('\0' + process_name)
-        logging.warning(
+        current_app.logger.warn(
             "[usb_checkout][get_lock] Prevented process from starting - already running."
         )
         popups('USB Connection', device_name)
     except socket.error:
-        logging.warning("[usb_checkout][get_lock] Process already locked.")
+        current_app.logger.warn("[usb_checkout][get_lock] Process already locked.")
 
 
 def create_tempfile(port, device_name):
@@ -54,9 +54,9 @@ def delete_tempfile(filename):
     """
     try:
         os.remove(filename)
-        logging.debug("[usb_checkout][delete_tempfile] Temp file deleted.")
+        current_app.logger.debug("[usb_checkout][delete_tempfile] Temp file deleted.")
     except IOError as e:
-        logging.debug(
+        current_app.logger.debug(
             "[usb_checkout][delete_tempfile] Temp file doesn't exist. {}".
             format(str(e)))
 
@@ -83,7 +83,7 @@ def cancelled(port, device_id, device_name, filename):
         help_message(device_name)
     if multiple_checkouts():
         delete_tempfile(filename)
-        logging.debug("[usb_checkout][cancelled] FINISHED")
+        current_app.logger.debug("[usb_checkout][cancelled] FINISHED")
     else:
         stop_program_if_running()
 
@@ -96,7 +96,7 @@ def is_device_connected(port):
     """
     try:
         open("/sys/bus/usb/devices/{}/serial".format(port))
-        logging.info(
+        current_app.logger.info(
             "[usb_checkout][is_device_connected] Checkout cancelled - device still connected"
         )
         return True
@@ -111,7 +111,7 @@ def multiple_checkouts():
     """
     pid = get_pid("[s]tart_checkout")
     if len(pid) > 1:
-        logging.debug(
+        current_app.logger.debug(
             "[usb_checkout][multiple_checkouts] Multiple checkouts in progress."
         )
         return True
@@ -124,7 +124,7 @@ def timeout(x, port, device_id, device_name, filename):
     :param x: 30
     """
     time.sleep(x)
-    logging.warning("[usb_checkout][timeout] TIMEOUT")
+    current_app.logger.warn("[usb_checkout][timeout] TIMEOUT")
     cancelled(port, device_id, device_name, filename)
 
 
@@ -137,7 +137,7 @@ def stop_program_if_running():
     print(pid)
     print(type(pid))
     pgid = os.getpgid(int(pid[0]))
-    logging.debug(
+    current_app.logger.debug(
         "[usb_checkout][stop_program_if_running] PGID: {}".format(pgid))
     kill(pgid)
 
@@ -149,7 +149,7 @@ def get_pid(string):
     """
     pid = (subprocess.check_output(
         ['pgrep', '-f', '{}'.format(string)])).decode('utf-8').splitlines()
-    logging.debug("[usb_checkout][get_pid] PID(s): {}".format(pid))
+    current_app.logger.debug("[usb_checkout][get_pid] PID(s): {}".format(pid))
     return pid
 
 
@@ -158,7 +158,7 @@ def kill(pgid):
     Kills group process ID.
     :param pgid: Group process ID
     """
-    logging.debug("[usb_checkout][kill] FINISHED")
+    current_app.logger.debug("[usb_checkout][kill] FINISHED")
     os.system('pkill -9 -g {}'.format(pgid))
 
 
@@ -182,7 +182,7 @@ def return_log():
         fsize = f.tell()
         f.seek(max(fsize - 2000, 0, 0))
         log = f.readlines()
-    logging.debug(
+    current_app.logger.debug(
         "[usb_checkout][return_log] End of kern.log file: {}".format(log))
     return log
 
@@ -197,12 +197,12 @@ def find_port():
     matches = [x for x in lines if re.search(match, x)]
     try:
         port = re.search(match, matches[len(matches) - 1]).group().split(" ")
-        logging.debug(
+        current_app.logger.debug(
             "[usb_checkout][find_port] USB Port from kern.log file: {}".format(
                 port[0]))
         return port[0]
     except:
-        logging.error(
+        current_app.logger.error(
             "[usb_checkout][find_port] No USB actions found near the end of the log!"
         )
         stop_program_if_running()
@@ -218,11 +218,11 @@ def get_serial(port):
         with open("/sys/bus/usb/devices/{}/serial".format(port)) as f:
             for line in f:
                 serial = line.rstrip()
-        logging.debug("[usb_checkout][get_serial] Serial number of device: {}".
+        current_app.logger.debug("[usb_checkout][get_serial] Serial number of device: {}".
                       format(serial))
         return serial
     except:
-        logging.debug("[usb_checkout][get_serial] Serial number not found.")
+        current_app.logger.debug("[usb_checkout][get_serial] Serial number not found.")
 
 
 def get_user_info(timer, port, device_id, device_name, filename):
@@ -236,8 +236,8 @@ def get_user_info(timer, port, device_id, device_name, filename):
         timer.terminate()
         return get_info_from_db(user_input.rstrip('\n').split(' '), timer, port, device_id, device_name, filename)
     except Exception as e:
-        logging.debug("[usb_checkout][get_user_info] {}".format(str(e)))
-        logging.debug(
+        current_app.logger.debug("[usb_checkout][get_user_info] {}".format(str(e)))
+        current_app.logger.debug(
             "[usb_checkout][get_user_info] User cancelled name entry")
         timer.terminate()
         cancelled(port, device_id, device_name, filename)
@@ -251,11 +251,11 @@ def get_user_info_from_db(device_id):
     """
     checked_out_by = []
     checked_out_by.append(db.checked_out_by(device_id))
-    logging.debug(
+    current_app.logger.debug(
         "[usb_checkout][get_user_info_from_db] checked_out_by = {}. Type = {}".
         format(checked_out_by, type(checked_out_by)))
     user_info = db.user_info(checked_out_by)
-    logging.debug("[usb_checkout][get_user_info_from_db] user_info = {}".
+    current_app.logger.debug("[usb_checkout][get_user_info_from_db] user_info = {}".
                   format(user_info))
     return user_info
 
@@ -271,12 +271,12 @@ def get_info_from_db(user_input, timer, port, device_id, device_name, filename):
     if (user_info is None) or (user_info.get('FirstName') == '-') or (
             user_info.get('FirstName') == 'Missing'):
         popups('Name Error')
-        logging.warning(
+        current_app.logger.warn(
             "[usb_checkout][get_info_from_db] {} is not a valid ID or name".
             format(user_input))
         return get_user_info(timer, port, device_id, device_name, filename)
     else:
-        logging.debug(
+        current_app.logger.debug(
             "[usb_checkout][get_info_from_db] User {} checking out device {}".
             format(user_info, device_name))
         return user_info
@@ -330,14 +330,15 @@ def get_new_device_info(serial, filename):
     :return: Device info from user
     """
     try:
-        logging.info(
+        current_app.logger.info(
             "[usb_checkout][get_new_device_info] New device. Serial: {}".
             format(serial))
         return popups('New Device').decode('utf-8').split('|')
-    except:
-        logging.info(
+    except Exception as e:
+        current_app.logger.info(
             "[usb_checkout][get_new_device_info] User cancelled new device entry."
         )
+        print(e)
         delete_tempfile(filename)
         sys.exit()
 
@@ -350,7 +351,7 @@ def to_database(serial, port, location, filename):
     new_device_id = db.new_device_id()
     device_info.extend([location, new_device_id, get_serial(port), port])
     db.add_to_database(device_info)
-    logging.info(
+    current_app.logger.info(
         "[usb_checkout][to_database] Device added: {}".format(device_info))
 
 
@@ -362,7 +363,7 @@ def check_if_out(location, port):
     """
     device_id = db.get_device_id_from_port(location, port)
     if device_id is None:
-        logging.debug(
+        current_app.logger.debug(
             "[usb_checkout][check_if_out] Port {} is not registered to a device.".
             format(port))
         return True
@@ -401,9 +402,9 @@ def get_device_name(device_id, location, port):
     :param port: USB Port
     :return: Device Name
     """
-    device_name = db.get_device_name(location, port)
+    device_name = db.get_device_name(device_id, location, port)
     if device_name is None:
-        logging.debug(
+        current_app.logger.debug(
             "[usb_checkout][get_device_name] Unable to get device name from port - trying ID."
         )
         device_name = db.get_device_name_from_id(location, device_id)
