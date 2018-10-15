@@ -19,6 +19,7 @@ def add():
         serial_udid = add_single_device.serial_udid.data
         manufacturer = add_single_device.manufacturer.data
         model = add_single_device.model.data
+        os_version = add_single_device.os_version.data
         device_type = add_single_device.device_type.data
         office = add_single_device.office.data
 
@@ -35,6 +36,8 @@ def add():
             error = 'Model is required'
         elif not device_type:
             error = 'Type is required'
+        elif not os_version:
+            error = 'OS Version is required'
         elif not office:
             error = 'Office location is required'
         elif db.execute(
@@ -44,8 +47,8 @@ def add():
 
         if error is None:
             db.execute(
-            'INSERT INTO devices (device_id, device_name, serial_udid, manufacturer, model, device_type, office) VALUES (?,?,?,?,?,?,?)',
-                (device_id, device_name, serial_udid, manufacturer, model, device_type, office)
+            'INSERT INTO devices (device_id, device_name, serial_udid, manufacturer, model, device_type, os_version, office) VALUES (?,?,?,?,?,?,?,?)',
+                (device_id, device_name, serial_udid, manufacturer, model, device_type, os_version, office)
             )
             db.commit()
             return redirect(url_for('devices.add'))
@@ -54,7 +57,6 @@ def add():
 
     if upload_file.validate_on_submit():
         file = upload_file.file.data
-        print(file)
         content = file.read().decode('utf-8')
 
         reader = csv.reader(content.splitlines(), delimiter=',')
@@ -63,7 +65,6 @@ def add():
         select_query = 'SELECT serial_udid FROM devices WHERE serial_udid = ?'
         cursor = db.cursor()
         for device_data in reader:
-            print(device_data)
             # TODO make this a little smarter
             if db.execute(select_query, (device_data[2],)).fetchone() is None:
                 cursor.execute(insert_query, device_data)

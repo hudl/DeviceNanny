@@ -34,6 +34,9 @@
               {{ add_single_device.device_type.label }} {{ add_single_device.device_type }}
             </div>
             <div class="form-group">
+              {{ add_single_device.os_version.label }} {{ add_single_device.os_version(class="form-control") }}
+            </div>
+            <div class="form-group">
               {{ add_single_device.office.label }} {{ add_single_device.office }}
             </div>
               {{ add_single_device.submit(class="btn btn-primary") }}

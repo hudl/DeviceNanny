@@ -29,7 +29,7 @@ class DeviceTable(Table):
 def home():
     db = get_db()
     rows = db.execute(
-        'SELECT id, device_id, device_name, serial_udid, manufacturer, model, device_type, os, checked_out_by, office FROM devices'
+        'SELECT id, device_id, device_name, serial_udid, manufacturer, model, device_type, os_version, checked_out_by, office FROM devices'
     ).fetchall()
     table = DeviceTable(rows)
     return render_template('home.html', table=table)
