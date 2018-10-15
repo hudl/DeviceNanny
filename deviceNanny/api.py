@@ -1,11 +1,12 @@
 import deviceNanny.usb_checkout as usb_checkout
 import deviceNanny.db_actions as db_actions
-import deviceNanny.slack as dn_slack
+from deviceNanny.slack import NannySlacker
 import multiprocessing
 
 from flask import Blueprint, jsonify, current_app
 
 from deviceNanny.db import get_db
+
 
 bp = Blueprint('api', __name__, url_prefix='/api')
 
@@ -57,7 +58,7 @@ def checkout_device(filename, location, port):
     timer.start()
     user_info = usb_checkout.get_user_info(timer, port, device_id, device_name, filename)
     db_actions.check_out(user_info, device_id)
-    dn_slack.check_out_notice(user_info, device_name)
+    NannySlacker.check_out_notice(user_info, device_name)
     current_app.logger.info(
         "[usb_checkout][main] {} checked out by {} {}.".format(
             device_name,
@@ -70,4 +71,4 @@ def check_in_device(location, device_id, port):
     device_name = db_actions.get_device_name_from_id(location, device_id)
     user_info = usb_checkout.get_user_info_from_db(device_id)
     db_actions.check_in(device_id, port)
-    dn_slack.check_in_notice(user_info, device_name)
+    NannySlacker.check_in_notice(user_info, device_name)
