@@ -91,7 +91,8 @@ def get_device_name_from_id(location, device_id):
     #     "[db_actions][get_device_name_from_id] Device ID = {}, Location = {}".
     #     format(device_id, location))
     try:
-        device = db_fetch("SELECT DeviceName from Devices WHERE DeviceID = '{}' AND Location = '{}'".format(device_id, location))
+        device = db_fetch("SELECT DeviceName from Devices WHERE DeviceID = '{}' AND Location = '{}'"
+                          .format(device_id, location))
         # logging.debug("[db_actions][get_device_name_from_id] Device Name: {}".format(device.get("DeviceName")))
         return device.get("DeviceName")
     except Exception as e:
@@ -150,7 +151,8 @@ def user_info(user_input):
         return user_info
     except Exception as e:
         try:
-            user_info = db_fetch("SELECT * from Users WHERE FirstName = '{}' AND LastName = '{}'".format(str(user_input[0]), str(user_input[1])))
+            user_info = db_fetch("SELECT * from Users WHERE FirstName = '{}' AND LastName = '{}'"
+                                 .format(str(user_input[0]), str(user_input[1])))
             print("Your UserID is: {}".format(user_info.get("UserID")))
             # logging.info("[db_actions][user_info] User name input. Checked out by {}".format(user_info))
             return user_info
@@ -180,7 +182,11 @@ def add_to_database(device_info):
     Adds info for a new device to the database.
     :param device_info:
     """
-    db_commit("INSERT INTO Devices(DeviceName,Manufacturer,Model,Type,OS,Location,DeviceID,SerialUDID,Port,CheckedOutBy, TimeCheckedOut,LastReminded) VALUES('{}','{}','{}','{}','{}','{}','{}','{}','{}','0','0','40000')".format(device_info[0], device_info[1], device_info[2], device_info[3], device_info[4].rstrip(), device_info[5], device_info[6], device_info[7], device_info[8]))
+    db_commit("INSERT INTO Devices(DeviceName,Manufacturer,Model,Type,OS,Location,DeviceID,SerialUDID,Port,"
+              "CheckedOutBy,TimeCheckedOut,LastReminded)"
+              "VALUES('{}','{}','{}','{}','{}','{}','{}','{}','{}','0','0','40000')"
+              .format(device_info[0], device_info[1], device_info[2], device_info[3], device_info[4].rstrip(),
+                      device_info[5], device_info[6], device_info[7], device_info[8]))
 
 
 def check_in(device_id, port):
@@ -203,7 +209,8 @@ def check_out(user_id, device_id):
     :param device_id:
     """
     try:
-        db_commit("UPDATE Devices set CheckedOutBy = {}, Port = NULL, TimeCheckedOut = unix_timestamp(), LastReminded = unix_timestamp() where DeviceID = {}".format(user_id, device_id))
+        db_commit("UPDATE Devices set CheckedOutBy = {}, Port = NULL, TimeCheckedOut = unix_timestamp(),"
+                  "LastReminded = unix_timestamp() where DeviceID = {}".format(user_id, device_id))
     except Exception as e:
         # logging.debug("[db_actions][check_out] Exception in check_out - {}".format(e))
         print(e)
@@ -215,7 +222,8 @@ def get_device_status(device_id):
     :param device_id:
     :return: DeviceName, CheckedOutBy, TimeCheckedOut, LastReminded
     """
-    device_status = db_fetch("SELECT DeviceName, CheckedOutBy, TimeCheckedOut, LastReminded, Location from Devices where DeviceID = {}".format(device_id))
+    device_status = db_fetch("SELECT DeviceName, CheckedOutBy, TimeCheckedOut, LastReminded, Location"
+                             "from Devices where DeviceID = {}".format(device_id))
     return device_status
 
 

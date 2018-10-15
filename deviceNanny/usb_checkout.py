@@ -7,7 +7,6 @@
 #
 
 import multiprocessing
-from db_actions import MyDB
 import logging.config
 import configparser
 import subprocess
@@ -421,8 +420,6 @@ def main():
     global location
     location = config['DEFAULT']['Location']
     logging.info("LOCATION: {}".format(location))
-    global db
-    db = MyDB()
     global port
     port = find_port()
     serial = get_serial(port)
