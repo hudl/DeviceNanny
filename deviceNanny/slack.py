@@ -5,13 +5,17 @@
 # Created by Ethan Seyl 2016
 #
 
-from flask import current_app
 import logging
 import slacker
 
-slack = slacker.Slacker(current_app.config('SLACK_API_KEY'))
+from flask import current_app
+
 channel = 'omananny'
 team_channel = 'omananny'
+
+
+def slack():
+    return slacker.Slacker(current_app.config['SLACK_API_KEY'])
 
 
 def help_message(device_name):
