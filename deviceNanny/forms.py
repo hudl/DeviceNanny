@@ -36,6 +36,7 @@ class SingleDeviceForm(FlaskForm):
     device_type = RadioField('Device Type',
                              choices=[('phone', 'Phone'), ('tablet', 'Tablet')]
                              )
+    os_version = StringField('OS Version')
     office = RadioField('Office Location',
                         choices=[('Omaha', 'Omaha'), ('Lincoln', 'Lincoln')]
                         )
