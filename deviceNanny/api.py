@@ -15,4 +15,5 @@ def devices():
 
 @bp.route('devices/checkout', methods=['GET'])
 def checkout_device():
+    print("------------STARTED THE CHECKOUT/CHECKIN PROCESS-----------")
     return "STARTED THE CHECKOUT/CHECKIN PROCESS"
