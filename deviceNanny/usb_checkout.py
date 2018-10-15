@@ -7,8 +7,6 @@
 #
 
 import multiprocessing
-import logging.config
-import configparser
 import subprocess
 import logging
 import socket
@@ -417,8 +415,10 @@ def main():
     """
     Assigns variables, checks if device is new or needs checked out/in.
     """
+    logging.debug("[usb_checkout] STARTED")
+    timer = multiprocessing.Process(target=timeout, name="Timer", args=(30,))
     global location
-    location = config['DEFAULT']['Location']
+    location = "Test"
     logging.info("LOCATION: {}".format(location))
     global port
     port = find_port()
@@ -453,15 +453,4 @@ def main():
                     device_name,
                     user_info.get('FirstName'), user_info.get('LastName')))
     delete_tempfile(filename)
-
-
-if __name__ == "__main__":
-    global working_dir
-    working_dir = os.path.dirname(__file__)
-    config = configparser.ConfigParser()
-    config.read('{}/config/DeviceNanny.ini'.format(working_dir))
-    logging.config.fileConfig('{}/config/usb_logging.conf'.format(working_dir))
-    logging.debug("[usb_checkout] STARTED")
-    timer = multiprocessing.Process(target=timeout, name="Timer", args=(30, ))
-    main()
     logging.info("[usb_checkout] FINISHED")
