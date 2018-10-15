@@ -6,7 +6,7 @@
 # Created by Ethan Seyl 2016
 #
 
-import multiprocessing
+import deviceNanny.db_actions as db
 import subprocess
 import logging
 import socket
@@ -17,7 +17,7 @@ import os
 import re
 
 
-def get_lock(process_name):
+def get_lock(process_name, device_name):
     """
     Prevents start_usb_checkout from starting after
     another USB action takes place on the same port
@@ -30,19 +30,19 @@ def get_lock(process_name):
         logging.warning(
             "[usb_checkout][get_lock] Prevented process from starting - already running."
         )
-        popups('USB Connection')
+        popups('USB Connection', device_name)
     except socket.error:
         logging.warning("[usb_checkout][get_lock] Process already locked.")
 
 
-def create_tempfile(port):
+def create_tempfile(port, device_name):
     """
     Creates a file with the name of the kernel in tmp directory
     :param port: Kernel of the USB port
     :return filename: /tmp/*kernel*.nanny
     """
     filename = '/tmp/{}.nanny'.format(port)
-    check_for_tempfile(filename)
+    check_for_tempfile(filename, device_name)
     with open(filename, 'w+b'):
         return filename
 
@@ -61,18 +61,18 @@ def delete_tempfile(filename):
             format(str(e)))
 
 
-def check_for_tempfile(filename):
+def check_for_tempfile(filename, device_name):
     """
     Checks the /tmp directory for a file matching the kernel name
     and ending in .nanny. If found, alerts user and exits.
     :param filename: /tmp/*kernel*.nanny
     """
     if os.path.isfile(filename):
-        get_lock('usb_checkout')
+        get_lock('usb_checkout', device_name)
         sys.exit()
 
 
-def cancelled():
+def cancelled(port, device_id, device_name, filename):
     """
     Called if user cancels checkout. If a user didn't plug the device back in before cancelling
     it will be checked out as missing. Also, if multiple devices were taken, cancelling one
@@ -117,7 +117,7 @@ def multiple_checkouts():
         return True
 
 
-def timeout(x):
+def timeout(x, port, device_id, device_name, filename):
     """
     30 second timer started during checkout. If user doesn't enter info
     before timeout ends, calls cancelled().
@@ -125,7 +125,7 @@ def timeout(x):
     """
     time.sleep(x)
     logging.warning("[usb_checkout][timeout] TIMEOUT")
-    cancelled()
+    cancelled(port, device_id, device_name, filename)
 
 
 def stop_program_if_running():
@@ -139,7 +139,6 @@ def stop_program_if_running():
     pgid = os.getpgid(int(pid[0]))
     logging.debug(
         "[usb_checkout][stop_program_if_running] PGID: {}".format(pgid))
-    delete_tempfile(filename)
     kill(pgid)
 
 
@@ -226,7 +225,7 @@ def get_serial(port):
         logging.debug("[usb_checkout][get_serial] Serial number not found.")
 
 
-def get_user_info():
+def get_user_info(timer, port, device_id, device_name, filename):
     """
     Asks user for their name or ID number, and retrieves full info
     from the database.
@@ -235,13 +234,13 @@ def get_user_info():
     try:
         user_input = popups('checkout').decode('utf-8')
         timer.terminate()
-        return get_info_from_db(user_input.rstrip('\n').split(' '))
+        return get_info_from_db(user_input.rstrip('\n').split(' '), timer, port, device_id, device_name, filename)
     except Exception as e:
         logging.debug("[usb_checkout][get_user_info] {}".format(str(e)))
         logging.debug(
             "[usb_checkout][get_user_info] User cancelled name entry")
         timer.terminate()
-        cancelled()
+        cancelled(port, device_id, device_name, filename)
 
 
 def get_user_info_from_db(device_id):
@@ -261,7 +260,7 @@ def get_user_info_from_db(device_id):
     return user_info
 
 
-def get_info_from_db(user_input):
+def get_info_from_db(user_input, timer, port, device_id, device_name, filename):
     """
     Gets user info from database via input from the user. Checks for
     valid entry.
@@ -275,7 +274,7 @@ def get_info_from_db(user_input):
         logging.warning(
             "[usb_checkout][get_info_from_db] {} is not a valid ID or name".
             format(user_input))
-        return get_user_info()
+        return get_user_info(timer, port, device_id, device_name, filename)
     else:
         logging.debug(
             "[usb_checkout][get_info_from_db] User {} checking out device {}".
@@ -283,7 +282,7 @@ def get_info_from_db(user_input):
         return user_info
 
 
-def popups(msg):
+def popups(msg, device_name):
     """
     Various Zenity windows for name errors, checkouts, USB connection issues,
     and new device registers.
@@ -325,7 +324,7 @@ def popups(msg):
         return dialog(new_cmd)
 
 
-def get_new_device_info(serial):
+def get_new_device_info(serial, filename):
     """
     Popup window asking user for new device info.
     :return: Device info from user
@@ -343,11 +342,11 @@ def get_new_device_info(serial):
         sys.exit()
 
 
-def to_database(serial):
+def to_database(serial, port, location, filename):
     """
     Combines device info provided by user with USB port and serial number.
     """
-    device_info = get_new_device_info(serial)
+    device_info = get_new_device_info(serial, filename)
     new_device_id = db.new_device_id()
     device_info.extend([location, new_device_id, get_serial(port), port])
     db.add_to_database(device_info)
@@ -409,48 +408,3 @@ def get_device_name(device_id, location, port):
         )
         device_name = db.get_device_name_from_id(location, device_id)
     return device_name
-
-
-def main():
-    """
-    Assigns variables, checks if device is new or needs checked out/in.
-    """
-    logging.debug("[usb_checkout] STARTED")
-    timer = multiprocessing.Process(target=timeout, name="Timer", args=(30,))
-    global location
-    location = "Test"
-    logging.info("LOCATION: {}".format(location))
-    global port
-    port = find_port()
-    serial = get_serial(port)
-    global device_id
-    device_id = db.get_device_id_from_serial(serial)
-    global device_name
-    device_name = get_device_name(device_id, location, port)
-    global filename
-    filename = create_tempfile(port)
-    play_sound()
-    if device_id is None and serial is not None:
-        to_database(serial)
-    else:
-        checked_out = check_if_out(location, port)
-        if checked_out:
-            logging.info("[usb_checkout][main] CHECK IN")
-            device_name = db.get_device_name_from_id(location, device_id)
-            user_info = get_user_info_from_db(device_id)
-            check_in(device_id, port)
-            slack.check_in_notice(user_info, device_name)
-        else:
-            logging.info("[usb_checkout][main] CHECK OUT")
-            device_id = db.get_device_id_from_port(location, port)
-            device_name = db.get_device_name_from_id(location, device_id)
-            timer.start()
-            user_info = get_user_info()
-            check_out(user_info, device_id)
-            slack.check_out_notice(user_info, device_name)
-            logging.info(
-                "[usb_checkout][main] {} checked out by {} {}.".format(
-                    device_name,
-                    user_info.get('FirstName'), user_info.get('LastName')))
-    delete_tempfile(filename)
-    logging.info("[usb_checkout] FINISHED")

@@ -1,6 +1,7 @@
 from flask import Blueprint, jsonify
 from deviceNanny.usb_checkout import *
 from deviceNanny.db_actions import *
+import multiprocessing
 
 from flask import Blueprint, jsonify, current_app
 
@@ -28,34 +29,34 @@ def device_detected():
     serial = get_serial(port)
     device_id = get_device_id_from_serial(serial)
     device_name = get_device_name(device_id, location, port)
-    filename = create_tempfile(port)
+    filename = create_tempfile(port, device_name)
     play_sound()
     if device_id is None and serial is not None:
-        add_device(serial)
+        add_device(serial, port, location, filename)
     else:
         checked_out = check_if_out(location, port)
         if checked_out:
             check_in_device(location, device_id, port)
         else:
-            checkout_device(location, port)
+            checkout_device(filename, location, port)
     print("------------DEVICE DETECTED-----------")
     delete_tempfile(filename)
     return "DEVICE DETECTED"
 
 
 @bp.route('devices/add', methods=['POST'])
-def add_device(serial):
-    to_database(serial)
+def add_device(serial, port, location, filename):
+    to_database(serial, port, location, filename)
 
 
 @bp.route('devices/checkout', methods=['PUT'])
-def checkout_device(location, port):
+def checkout_device(filename, location, port):
     logging.info("[usb_checkout][main] CHECK OUT")
-    timer = multiprocessing.Process(target=timeout, name="Timer", args=(30,))
     device_id = get_device_id_from_port(location, port)
     device_name = get_device_name_from_id(location, device_id)
+    timer = multiprocessing.Process(target=timeout, name="Timer", args=(30, port, device_id, device_name, filename))
     timer.start()
-    user_info = get_user_info()
+    user_info = get_user_info(timer, port, device_id, device_name, filename)
     check_out(user_info, device_id)
     slack.check_out_notice(user_info, device_name)
     logging.info(
