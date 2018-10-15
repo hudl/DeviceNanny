@@ -14,7 +14,7 @@ class DeviceTable(Table):
     manufacturer = Col('Manufacture')
     model = Col('Model')
     device_type = Col('Device Type')
-    os = Col('OS')
+    os_version = Col('OS Version')
     checked_out_by = Col('Checked out by')
     office = Col('Office Location')
 
