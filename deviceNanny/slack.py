@@ -9,7 +9,7 @@ from flask import current_app
 import logging
 import slacker
 
-slack = slacker.Slacker(current_app.config('SLACK_API_KEY'))
+slack = slacker.Slacker(current_app.config['SLACK_API_KEY'])
 channel = 'omananny'
 team_channel = 'omananny'
 

@@ -22,7 +22,6 @@ def devices():
 @bp.route('devices/detected', methods=['GET'])
 def device_detected():
     # logging.debug("[usb_checkout] STARTED")
-    # timer = multiprocessing.Process(target=timeout, name="Timer", args=(30,))
     location = "Test"
     # logging.info("LOCATION: {}".format(location))
     port = usb_checkout.find_port()
