@@ -13,7 +13,17 @@ def devices():
     return jsonify(data)
 
 
-@bp.route('devices/checkout', methods=['GET'])
-def checkout_device():
-    print("------------STARTED THE CHECKOUT/CHECKIN PROCESS-----------")
-    return "STARTED THE CHECKOUT/CHECKIN PROCESS"
+@bp.route('devices/detected', methods=['GET'])
+def device_detected():
+    # logging.debug("[usb_checkout] STARTED")
+    timer = multiprocessing.Process(target=timeout, name="Timer", args=(30,))
+    location = "Test"
+    # logging.info("LOCATION: {}".format(location))
+    port = find_port()
+    serial = get_serial(port)
+    device_id = db.get_device_id_from_serial(serial)
+    device_name = get_device_name(device_id, location, port)
+    filename = create_tempfile(port)
+    play_sound()
+    print("------------DEVICE DETECTED-----------")
+    return "DEVICE DETECTED"
