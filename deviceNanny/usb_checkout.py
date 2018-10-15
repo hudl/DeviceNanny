@@ -401,7 +401,7 @@ def get_device_name(device_id, location, port):
     :param port: USB Port
     :return: Device Name
     """
-    device_name = db.get_device_name(location, port)
+    device_name = db.get_device_name(device_id, location, port)
     if device_name is None:
         logging.debug(
             "[usb_checkout][get_device_name] Unable to get device name from port - trying ID."
