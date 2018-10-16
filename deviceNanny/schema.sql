@@ -12,8 +12,8 @@ CREATE TABLE devices (
     device_type TEXT NOT NULL,
     os_version TEXT NOT NULL,
     checked_out_by INTEGER,
-    time_checked_out TIMESTAMP,
-    last_reminded TIMESTAMP,
+    time_checked_out INTEGER,
+    last_reminded INTEGER,
     location TEXT NOT NULL,
     port INTEGER,
     FOREIGN KEY (checked_out_by) REFERENCES users (id)

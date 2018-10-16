@@ -334,8 +334,6 @@ def get_new_device_info(serial, filename):
         current_app.logger.info(
             "[usb_checkout][get_new_device_info] New device. Serial: {}".
             format(serial))
-        current_app.logger.info("DISPLAY: {}".format(os.environ["DISPLAY"]))
-        current_app.logger.info("XAUTH: {}".format(os.environ["XAUTHORITY"]))
         return popups('New Device', 'None').decode('utf-8').split('|')
     # except Exception as e:
     except subprocess.CalledProcessError as e:
