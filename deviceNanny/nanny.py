@@ -149,11 +149,11 @@ def reminder_due(device_status):
     """
     Finds out if user needs a reminder to check back in a device. If the user needs
     a reminder, make sure it's a weekday between 8-5pm.
-    :param device_status: DeviceName, CheckedOutBy, TimeCheckedOut, LastReminded, RFID
+    :param device_status: device_name, checked_out_by, time_checked_out, last_reminded, RFID
     :return: True or None depending on if a reminder is needed
     """
     reminder_interval = 100000
-    time_since_reminded = int(time.time()) - device_status.get("LastReminded")
+    time_since_reminded = int(time.time()) - device_status.get("last_reminded")
     current_app.logger.debug("[nanny][reminder_due] Last reminded {} seconds ago.".format(
         time_since_reminded))
     if time_since_reminded > int(reminder_interval) and checkout_expired(device_status):
@@ -179,14 +179,14 @@ def checkout_expired(device_status):
     """
     Compares current time to the time the device was checked out. If past
     the time set in config file, checkout is expired.
-    :param device_status: DeviceName, CheckedOutBy, TimeCheckedOut, LastReminded, RFID
+    :param device_status: device_name, checked_out_by, time_checked_out, last_reminded, RFID
     :return: True or None
     """
     checkout_expires = 10000
-    if int(time.time()) - device_status.get("TimeCheckedOut") > int(checkout_expires):
+    if int(time.time()) - device_status.get("time_checked_out") > int(checkout_expires):
         current_app.logger.debug(
             "[nanny][checkout_expired] Checkout expired for device {}".format(
-                device_status.get('DeviceName')))
+                device_status.get('device_name')))
         return True
 
 
@@ -194,46 +194,46 @@ def time_since_checkout(device_status):
     """
     Finds the time since device was checked out and converts it to a
     readable format.
-    :param device_status: DeviceName, CheckedOutBy, TimeCheckedOut, LastReminded, RFID
+    :param device_status: device_name, checked_out_by, time_checked_out, last_reminded, RFID
     :return: Hours and days since device was checked out in human readable format
     """
     sec = timedelta(
-        seconds=int(time.time() - device_status.get("TimeCheckedOut")))
+        seconds=int(time.time() - device_status.get("time_checked_out")))
     d = datetime(1, 1, 1) + sec
     return "{} days, {} hours".format(d.day - 1, d.hour)
 
 
 def slack_id(device_status):
     """
-    :param device_status: DeviceName, CheckedOutBy, TimeCheckedOut, LastReminded, RFID
+    :param device_status: device_name, checked_out_by, time_checked_out, last_reminded, RFID
     :return: Slack ID of user that checked out device
     """
-    slack_id = db.get_slack_id(device_status.get("CheckedOutBy"))
-    return slack_id.get("SlackID")
+    slack_id = db.get_slack_id(device_status.get("checked_out_by"))
+    return slack_id.get("slack_id")
 
 
 def send_reminder(device_status):
     """
     Sends a reminder slack message to whoever checked out the device if the
     checkout has expired.
-    :param device_status: DeviceName, CheckedOutBy, TimeCheckedOut, LastReminded, RFID
+    :param device_status: device_name, checked_out_by, time_checked_out, last_reminded, RFID
     """
     if reminder_due(device_status):
         current_app.logger.debug(
             "[nanny][send_reminder] Device checked out by {} type {}".format(
-                device_status.get('CheckedOutBy'),
-                type(device_status.get('CheckedOutBy'))))
-        if device_status.get('CheckedOutBy') is not 1:
+                device_status.get('checked_out_by'),
+                type(device_status.get('checked_out_by'))))
+        if device_status.get('checked_out_by') is not 1:
             current_app.logger.debug("[nanny][send_reminder] User reminder...")
             NannySlacker.user_reminder(
                 slack_id(device_status),
                 time_since_checkout(device_status),
-                device_status.get("DeviceName"))
+                device_status.get("device_name"))
         else:
             NannySlacker.missing_device_message(
-                device_status.get('DeviceName'),
+                device_status.get('device_name'),
                 time_since_checkout(device_status))
-        db.update_time_reminded(device_status.get("DeviceName"))
+        db.update_time_reminded(device_status.get("device_name"))
 
 
 def checkout_reminders():
@@ -247,11 +247,11 @@ def checkout_reminders():
         devices.append(x['device_id'])
     for x in devices:
         device_status = db.get_device_status(x)
-        if device_status.get("CheckedOutBy") is not 0 and device_status.get(
-                "Location") == location:
+        if device_status.get("checked_out_by") is not 0 and device_status.get(
+                "location") == location:
             print(
-                "CHECKED OUT BY: {}".format(device_status.get("CheckedOutBy")))
-            print("DEVICE LOCATION: {}".format(device_status.get("Location")))
+                "CHECKED OUT BY: {}".format(device_status.get("checked_out_by")))
+            print("DEVICE location: {}".format(device_status.get("location")))
             current_app.logger.debug(
                 "[nanny][checkout_reminders] Check if device {} needs a reminder.".
                 format(x))
@@ -268,7 +268,7 @@ def registered_ports(location):
     :return: Every port registered in database.
     """
     ports = db.get_registered_ports(location)
-    current_app.logger.debug("PORTS: {}".format(ports))
+    current_app.logger.debug("portS: {}".format(ports))
     values = []
     for i in ports:
         values.append(i['port'])
