@@ -283,7 +283,9 @@ def missing_devices():
     :return: List of ports that are registered but are no longer in use (device is gone)
     """
     location = 'Test'
-    return set(registered_ports(location)) - set(usb_devices())
+    ports = set(registered_ports(location)) - set(usb_devices())
+    current_app.logger.debug('[missing_devices] Ports: {}'.format(ports))
+    return ports
 
 
 def missing_device_ids(missing_devices):
