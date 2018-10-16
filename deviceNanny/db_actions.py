@@ -104,6 +104,7 @@ def get_device_id_from_port(location, port):
     :param location:
     :return: device_id
     """
+    current_app.logger.debug("[db_actions][get_device_id_from_port] Port: {} Location: {}".format(port, location))
     device = db_fetch("SELECT device_id from devices WHERE location = '{}' AND port = '{}'".format(location, port))
     try:
         return device["device_id"]
