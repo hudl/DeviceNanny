@@ -153,7 +153,7 @@ def reminder_due(device_status):
     :return: True or None depending on if a reminder is needed
     """
     reminder_interval = 100000
-    time_since_reminded = int(time.time()) - device_status.get("last_reminded")
+    time_since_reminded = int(time.time()) - device_status["last_reminded"]
     current_app.logger.debug("[nanny][reminder_due] Last reminded {} seconds ago.".format(
         time_since_reminded))
     if time_since_reminded > int(reminder_interval) and checkout_expired(device_status):
@@ -183,10 +183,10 @@ def checkout_expired(device_status):
     :return: True or None
     """
     checkout_expires = 10000
-    if int(time.time()) - device_status.get("time_checked_out") > int(checkout_expires):
+    if int(time.time()) - device_status["time_checked_out"] > int(checkout_expires):
         current_app.logger.debug(
             "[nanny][checkout_expired] Checkout expired for device {}".format(
-                device_status.get('device_name')))
+                device_status['device_name']))
         return True
 
 
@@ -198,7 +198,7 @@ def time_since_checkout(device_status):
     :return: Hours and days since device was checked out in human readable format
     """
     sec = timedelta(
-        seconds=int(time.time() - device_status.get("time_checked_out")))
+        seconds=int(time.time() - device_status["time_checked_out"]))
     d = datetime(1, 1, 1) + sec
     return "{} days, {} hours".format(d.day - 1, d.hour)
 
@@ -208,8 +208,8 @@ def slack_id(device_status):
     :param device_status: device_name, checked_out_by, time_checked_out, last_reminded, RFID
     :return: Slack ID of user that checked out device
     """
-    slack_id = db.get_slack_id(device_status.get("checked_out_by"))
-    return slack_id.get("slack_id")
+    slack_id = db.get_slack_id(device_status["checked_out_by"])
+    return slack_id["slack_id"]
 
 
 def send_reminder(device_status):
@@ -221,19 +221,19 @@ def send_reminder(device_status):
     if reminder_due(device_status):
         current_app.logger.debug(
             "[nanny][send_reminder] Device checked out by {} type {}".format(
-                device_status.get('checked_out_by'),
-                type(device_status.get('checked_out_by'))))
-        if device_status.get('checked_out_by') is not 1:
+                device_status['checked_out_by'],
+                type(device_status['checked_out_by'])))
+        if device_status['checked_out_by'] is not 1:
             current_app.logger.debug("[nanny][send_reminder] User reminder...")
             NannySlacker.user_reminder(
                 slack_id(device_status),
                 time_since_checkout(device_status),
-                device_status.get("device_name"))
+                device_status["device_name"])
         else:
             NannySlacker.missing_device_message(
-                device_status.get('device_name'),
+                device_status['device_name'],
                 time_since_checkout(device_status))
-        db.update_time_reminded(device_status.get("device_name"))
+        db.update_time_reminded(device_status["device_name"])
 
 
 def checkout_reminders():
