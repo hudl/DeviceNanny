@@ -50,6 +50,10 @@ def create_app(test_config=None):
     from . import devices
     app.register_blueprint(devices.bp)
 
+    # Add settings page
+    from . import settings
+    app.register_blueprint(settings.bp)
+
     # Add api endpoint
     from . import api
     app.register_blueprint(api.bp)
