@@ -271,7 +271,7 @@ def registered_ports(location):
     current_app.logger.debug("PORTS: {}".format(ports))
     values = []
     for i in ports:
-        values += i.values()
+        values.append(i['port'])
     return values
 
 
