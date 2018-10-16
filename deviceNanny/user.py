@@ -18,7 +18,7 @@ def add():
         first_name = add_single_user.first_name.data
         last_name = add_single_user.last_name.data
         slack_id = add_single_user.slack_id.data
-        office = add_single_user.office.data
+        location = add_single_user.location.data
 
         error = None
 
@@ -33,13 +33,13 @@ def add():
         ).fetchone() is not None:
             error = 'User {} {} is already in DeviceNanny'.format(first_name, last_name)
 
-        if not office:
-            office = None
+        if not location:
+            location = None
 
         if error is None:
             db.execute(
-            'INSERT INTO users (first_name, last_name, slack_id, office) VALUES (?,?,?,?)',
-                (first_name, last_name, slack_id, office)
+            'INSERT INTO users (first_name, last_name, slack_id, location) VALUES (?,?,?,?)',
+                (first_name, last_name, slack_id, location)
             )
             db.commit()
             return redirect(url_for('user.add'))

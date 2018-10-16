@@ -230,7 +230,7 @@ def get_user_info(timer, port, device_id, device_name, filename):
     """
     Asks user for their name or ID number, and retrieves full info
     from the database.
-    :return: FirstName, LastName, SlackID, Office
+    :return: FirstName, LastName, SlackID, location
     """
     try:
         user_input = popups('checkout').decode('utf-8')
@@ -248,7 +248,7 @@ def get_user_info_from_db(device_id):
     """
     Retrieves user info from the database by device number.
     :param device_id: Device ID number
-    :return: FirstName, LastName, SlackID, Office
+    :return: FirstName, LastName, SlackID, location
     """
     checked_out_by = []
     checked_out_by.append(db.checked_out_by(device_id))
@@ -266,7 +266,7 @@ def get_info_from_db(user_input, timer, port, device_id, device_name, filename):
     Gets user info from database via input from the user. Checks for
     valid entry.
     :param user_input: Either first and last name or user ID.
-    :return: FirstName, LastName, SlackID, Office
+    :return: FirstName, LastName, SlackID, location
     """
     user_info = db.user_info(user_input)
     if (user_info is None) or (user_info.get('FirstName') == '-') or (
@@ -382,7 +382,7 @@ def check_in(device_id, port):
 def check_out(user_info, device_id):
     """
     Checks device out from the database.
-    :param user_info: First Name, Last Name, SlackID, Office
+    :param user_info: First Name, Last Name, SlackID, location
     :param device_id: Device ID number
     """
     db.check_out(user_info.get('UserID'), device_id)
