@@ -29,7 +29,7 @@ def device_detected():
     port = usb_checkout.find_port()
     serial = usb_checkout.get_serial(port)
     device_id = db_actions.get_device_id_from_serial(serial)
-    device_name = db_actions.get_device_name(device_id, location, port)
+    device_name = db_actions.get_device_name(location, port)
     filename = usb_checkout.create_tempfile(port, device_name)
     usb_checkout.play_sound()
     if device_id is None and serial is not None:
