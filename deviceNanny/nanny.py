@@ -60,6 +60,7 @@ def update_db(port):
     the system is turned off.
     :param port: USB port
     """
+    nanny = NannySlacker()
     location = 'Test'
     serial = get_serial(port)
     if serial is None:
@@ -68,7 +69,7 @@ def update_db(port):
     if device_id:
         if is_device_checked_out(device_id):
             db.check_in(device_id, port)
-            NannySlacker.nanny_check_in(db.get_device_name_from_id(device_id))
+            nanny.nanny_check_in(db.get_device_name_from_id(device_id))
             current_app.logger.info(
                 "[nanny][update_db] Device {} checked in.".format(device_id))
         else:
