@@ -106,7 +106,7 @@ def get_device_id_from_port(location, port):
     """
     device = db_fetch("SELECT device_id from devices WHERE location = '{}' AND port = '{}'".format(location, port))
     try:
-        return device.get("device_id")
+        return device["device_id"]
     except AttributeError:
         pass
 
