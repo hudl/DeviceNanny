@@ -152,11 +152,11 @@ def reminder_due(device_status):
     :param device_status: DeviceName, CheckedOutBy, TimeCheckedOut, LastReminded, RFID
     :return: True or None depending on if a reminder is needed
     """
+    reminder_interval = 100000
     time_since_reminded = int(time.time()) - device_status.get("LastReminded")
     current_app.logger.debug("[nanny][reminder_due] Last reminded {} seconds ago.".format(
         time_since_reminded))
-    if time_since_reminded > int(config['DEFAULT']['ReminderInterval']
-                                 ) and checkout_expired(device_status):
+    if time_since_reminded > int(reminder_interval) and checkout_expired(device_status):
         if workday():
             current_app.logger.debug("[nanny][reminder_due] Device needs a reminder")
             return True
@@ -182,8 +182,8 @@ def checkout_expired(device_status):
     :param device_status: DeviceName, CheckedOutBy, TimeCheckedOut, LastReminded, RFID
     :return: True or None
     """
-    if int(time.time()) - device_status.get("TimeCheckedOut") > int(
-            config['DEFAULT']['CheckoutExpires']):
+    checkout_expires = 10000
+    if int(time.time()) - device_status.get("TimeCheckedOut") > int(checkout_expires):
         current_app.logger.debug(
             "[nanny][checkout_expired] Checkout expired for device {}".format(
                 device_status.get('DeviceName')))
@@ -240,6 +240,7 @@ def checkout_reminders():
     """
     Checks every device in the database to see if it's checked out.
     """
+    location = 'Test'
     device_ids = db.device_ids()
     devices = []
     for x in device_ids:
@@ -289,6 +290,7 @@ def missing_device_ids(missing_devices):
     :param missing_devices: List of ports that are registered but are no longer in use (device is gone)
     :return: The missing device's device IDs
     """
+    location = 'Test'
     return [
         db.get_device_id_from_port(location, port) for port in missing_devices
     ]
