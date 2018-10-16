@@ -6,8 +6,7 @@ def db_fetch(string):
     try:
         current_app.logger.debug(string)
         db = get_db()
-        cur = db.execute(string)
-        item = cur.fetchone()
+        item = db.execute(string).fetchone()
         current_app.logger.debug(item)
         return item
     except Exception as e:
