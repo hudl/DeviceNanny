@@ -251,8 +251,8 @@ def checkout_reminders():
         current_app.logger.debug("[checkout_reminders] DEVICE STATUS: {}".format(device_status))
         if device_status["checked_out_by"] is not 0 and device_status["location"] == location:
             print(
-                "CHECKED OUT BY: {}".format(device_status.get("checked_out_by")))
-            print("DEVICE location: {}".format(device_status.get("location")))
+                "CHECKED OUT BY: {}".format(device_status["checked_out_by"]))
+            print("DEVICE location: {}".format(device_status["location"]))
             current_app.logger.debug(
                 "[nanny][checkout_reminders] Check if device {} needs a reminder.".
                 format(x))

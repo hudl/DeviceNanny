@@ -38,7 +38,7 @@ def new_device_id():
     """
     try:
         last_id_num = db_fetch("SELECT device_id from devices where device_id=(SELECT max(device_id) FROM devices)")
-        id_number = last_id_num.get('device_id') + 1
+        id_number = last_id_num['device_id'] + 1
     except Exception as e:
         id_number = '0'
         current_app.logger.debug("[db_actions][new_device_id] {}".format(id_number))
@@ -61,8 +61,8 @@ def checked_out_by(device_id):
     """
     user_info = db_fetch("SELECT checked_out_by from devices WHERE device_id = {}".format(int(device_id)))
     current_app.logger.debug("[db_actions][checked_out_by] device_id {} checked out by {}".format(
-        device_id, user_info.get("checked_out_by")))
-    return user_info.get("checked_out_by")
+        device_id, user_info["checked_out_by"]))
+    return user_info["checked_out_by"]
 
 
 def get_device_name(device_id, location, port):
@@ -73,7 +73,7 @@ def get_device_name(device_id, location, port):
     """
     try:
         device = db_fetch("SELECT device_name from devices WHERE port = '{}' AND location = '{}'".format(port, location))
-        return device.get("device_name")
+        return device["device_name"]
     except Exception as e:
         current_app.logger.debug(
             "[db_actions][get_device_name] Exception - {}".format(e))
@@ -91,8 +91,8 @@ def get_device_name_from_id(location, device_id):
     try:
         device = db_fetch("SELECT device_name from devices WHERE device_id = '{}' AND location = '{}'"
                           .format(device_id, location))
-        current_app.logger.debug("[db_actions][get_device_name_from_id] Device Name: {}".format(device.get("device_name")))
-        return device.get("device_name")
+        current_app.logger.debug("[db_actions][get_device_name_from_id] Device Name: {}".format(device["device_name"]))
+        return device["device_name"]
     except Exception as e:
         current_app.logger.error("[db_actions][get_device_name_from_id] Exception - {}".format(e))
         print(e)
@@ -120,7 +120,7 @@ def get_port_from_device_id(device_id):
         """
         port = db_fetch("SELECT port from devices WHERE device_id = '{}'".format(device_id))
         try:
-            return port.get("port")
+            return port["port"]
         except Exception as e:
             current_app.logger.debug("[db_actions][get_port_from_device_id] No port registered for device {}".format(device_id))
             print(e)
@@ -133,7 +133,7 @@ def get_device_id_from_serial(serial):
     """
     device = db_fetch("SELECT device_id from devices WHERE serial_udid = '{}'".format(serial))
     try:
-        return device.get("device_id")
+        return device["device_id"]
     except AttributeError:
         pass
 
@@ -153,7 +153,7 @@ def user_info(user_input):
         try:
             user_info = db_fetch("SELECT * from users WHERE FirstName = '{}' AND LastName = '{}'"
                                  .format(str(user_input[0]), str(user_input[1])))
-            print("Your id is: {}".format(user_info.get("id")))
+            print("Your id is: {}".format(user_info["id"]))
             current_app.logger.info("[db_actions][user_info] User name input. Checked out by {}".format(user_info))
             return user_info
         except Exception as e:
@@ -252,4 +252,4 @@ def get_serial_number_from_port(location, port):
     :return: Serial number
     """
     serial = db_fetch("SELECT serial_udid from devices where port = '{}' AND location = '{}'".format(port, location))
-    return serial.get("serial_udid")
+    return serial["serial_udid"]
