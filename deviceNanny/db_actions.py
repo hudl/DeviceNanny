@@ -4,9 +4,11 @@ from flask import current_app
 
 def db_fetch(string):
     try:
+        current_app.logger.debug("HEREHEREHEREHEREHEREHERE")
+        current_app.logger.debug(string)
         db = get_db()
-        cur = db.execute(string)
-        item = cur.fetchone()
+        item = db.execute(string).fetchone()
+        current_app.logger.debug(item)
         return item
     except Exception as e:
         current_app.logger.error("[db_actions][db_fetch] Exception - {}".format(e))
