@@ -79,9 +79,10 @@ def cancelled(port, device_id, device_name, filename):
     it will be checked out as missing. Also, if multiple devices were taken, cancelling one
     won't close all checkout processes.
     """
+    nanny = NannySlacker()
     if not is_device_connected(port):
         db.check_out('1', device_id)
-        NannySlacker.help_message(device_name)
+        nanny.help_message(device_name)
     if multiple_checkouts():
         delete_tempfile(filename)
         current_app.logger.debug("[usb_checkout][cancelled] FINISHED")
