@@ -222,7 +222,7 @@ def get_device_status(device_id):
     """
     device_status = db_fetch("SELECT device_name, checked_out_by, time_checked_out, last_reminded,"
                              "location FROM devices WHERE device_id = {}".format(device_id))
-    current_app.logger.debug("DEVICE STATUS: {}".format(device_status))
+    current_app.logger.debug("[get_device_status] DEVICE STATUS: {}".format(device_status))
     return device_status
 
 

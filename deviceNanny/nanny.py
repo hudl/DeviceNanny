@@ -269,11 +269,11 @@ def registered_ports(location):
     :return: Every port registered in database.
     """
     ports = db.get_registered_ports(location)
-    current_app.logger.debug("ports: {}".format(ports))
+    current_app.logger.debug("registered_ports] ports: {}".format(ports))
     values = []
     for i in ports:
         values.append(i['port'])
-    current_app.logger.debug("VALUES: {}".format(values))
+    current_app.logger.debug("registered_ports] VALUES: {}".format(values))
     return values
 
 
