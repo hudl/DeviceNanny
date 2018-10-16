@@ -47,6 +47,7 @@ def device_detected():
 @bp.route('devices/add', methods=['POST'])
 def add_device(serial, port, location, filename):
     usb_checkout.to_database(serial, port, location, filename)
+    return "DONE"
 
 
 @bp.route('devices/checkout', methods=['PUT'])
@@ -63,6 +64,7 @@ def checkout_device(filename, location, port):
         "[usb_checkout][checkout_device] {} checked out by {} {}.".format(
             device_name,
             user_info.get('FirstName'), user_info.get('LastName')))
+    return "DONE"
 
 
 @bp.route('devices/check-in', methods=['PUT'])
@@ -72,6 +74,7 @@ def check_in_device(location, device_id, port):
     user_info = usb_checkout.get_user_info_from_db(device_id)
     db_actions.check_in(device_id, port)
     NannySlacker.check_in_notice(user_info, device_name)
+    return "DONE"
 
 
 @bp.route('nanny', methods=['GET'])
