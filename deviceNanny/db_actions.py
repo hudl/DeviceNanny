@@ -88,7 +88,7 @@ def get_device_name_from_id(device_id):
     # logging.debug(
     #     "[db_actions][get_device_name_from_id] Device ID = {}, location = {}".
     #     format(device_id, location))
-    location = 'Test'
+    location = current_app.config['location']
     try:
         device = db_fetch("SELECT device_name from devices WHERE device_id = '{}' AND location = '{}'"
                           .format(device_id, location))
@@ -149,7 +149,7 @@ def user_info(user_input):
     # logging.debug("[db_actions][user_info] user_input = {}. device_type = {}".format(user_input, type(user_input)))
     try:
         int(user_input[0])
-        user_info = db_fetch("SELECT * from users WHERE id = {}".format(user_input[0]))
+        user_info = db_fetch("SELECT * FROM users WHERE id = {}".format(user_input[0]))
         current_app.logger.info("[db_actions][user_info] id input. Checked out by {}".format(user_info))
         return user_info
     except Exception as e:
@@ -199,7 +199,7 @@ def check_in(device_id, port):
     :param port:
     """
     try:
-        db_commit("UPDATE devices set checked_out_by = '0', port = '{}' where device_id = {}".format(port, device_id))
+        db_commit("UPDATE devices SET checked_out_by = '1', port = '{}' where device_id = {}".format(port, device_id))
     except Exception as e:
         current_app.logger.debug("[db_actions][check_in] Exception - {}".format(e))
         print(e)
@@ -212,7 +212,7 @@ def check_out(user_id, device_id):
     :param device_id:
     """
     try:
-        db_commit("UPDATE devices set checked_out_by = {}, port = NULL, time_checked_out = strftime('%s', 'now'),"
+        db_commit("UPDATE devices SET checked_out_by = {}, port = NULL, time_checked_out = strftime('%s', 'now'),"
                   "last_reminded = strftime('%s', 'now') where device_id = {}".format(user_id, device_id))
     except Exception as e:
         current_app.logger.debug("[db_actions][check_out] Exception in check_out - {}".format(e))
@@ -236,7 +236,7 @@ def get_slack_id(user_id):
     :param user_id:
     :return: SlackID for user
     """
-    slack_id = db_fetch("SELECT SlackID from users where id = {}".format(user_id))
+    slack_id = db_fetch("SELECT slack_id FROM users WHERE id = {}".format(user_id))
     return slack_id
 
 
@@ -254,5 +254,5 @@ def get_serial_number_from_port(location, port):
     :param location:
     :return: Serial number
     """
-    serial = db_fetch("SELECT serial_udid from devices where port = '{}' AND location = '{}'".format(port, location))
+    serial = db_fetch("SELECT serial_udid FROM devices WHERE port = '{}' AND location = '{}'".format(port, location))
     return serial["serial_udid"]

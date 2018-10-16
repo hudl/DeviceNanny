@@ -60,8 +60,8 @@ def checkout_device(filename, location, port):
     timer.start()
     user_info = usb_checkout.get_user_info(timer, port, device_id, device_name, filename)
     db_actions.check_out(user_info, device_id)
-    nanny = NannySlacker()
-    nanny.check_out_notice(user_info, device_name)
+    slacker_nanny = NannySlacker()
+    slacker_nanny.check_out_notice(user_info, device_name)
     return "DONE"
 
 

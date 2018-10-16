@@ -89,7 +89,7 @@ def was_port_registered(location, port):
         current_app.logger.debug(
             "[nanny][update_db] Device was registered to a different port. Fixing."
         )
-        db.check_out('1', device_id)
+        db.check_out('2', device_id)
 
 
 def verify_match(serial, location, port, device_id):
@@ -113,7 +113,7 @@ def verify_match(serial, location, port, device_id):
         current_app.logger.debug(
             "[nanny][verify_match] Serial numbers don't match - fixing port {}".
             format(port))
-        db.check_out('1', device_id)
+        db.check_out(2, device_id)
         current_app.logger.info(
             "[nanny][verify_match] Nanny checked out device {}. Will be checked in on the next "
             "Nanny run.".format(device_id))
@@ -129,12 +129,12 @@ def is_device_checked_out(device_id):
     :return: True or False if checked in or out
     """
     checked_out_by = db.checked_out_by(device_id)
-    if checked_out_by is 1:
+    if checked_out_by is 2:
         current_app.logger.debug(
             "[nanny][is_device_checked_out] Device {} is registered as missing".
             format(device_id))
         return True
-    elif checked_out_by is not 0:
+    elif checked_out_by is not 1:
         current_app.logger.debug(
             "[nanny][is_device_checked_out] Device {} is checked out by {}".
             format(device_id, checked_out_by))
@@ -220,7 +220,7 @@ def send_reminder(device_status):
     :param device_status: device_name, checked_out_by, time_checked_out, last_reminded, RFID
     """
     if reminder_due(device_status):
-        if device_status['checked_out_by'] is not 1:
+        if device_status['checked_out_by'] is not 2:
             current_app.logger.debug("[nanny][send_reminder] User reminder...")
             NannySlacker.user_reminder(
                 slack_id(device_status),
@@ -246,7 +246,7 @@ def checkout_reminders():
         current_app.logger.debug("[checkout_reminders] DEVICE: {}".format(x))
         device_status = db.get_device_status(x)
         current_app.logger.debug("[checkout_reminders] DEVICE STATUS: {}".format(device_status))
-        if device_status["checked_out_by"] is not 0 and device_status["location"] == location:
+        if device_status["checked_out_by"] is not 1 and device_status["location"] == location:
             current_app.logger.debug("[nanny][checkout_reminders] CHECKED OUT BY: {}"
                                      .format(device_status["checked_out_by"]))
             current_app.logger.debug(
@@ -277,7 +277,7 @@ def missing_devices():
     Compares the list of all registered ports to the ports that have devices connected.
     :return: List of ports that are registered but are no longer in use (device is gone)
     """
-    location = 'Test'
+    location = current_app.config['location']
     ports = set(registered_ports(location)) - set(usb_devices())
     current_app.logger.debug('[missing_devices] Ports: {} Type: {}'.format(ports, type(ports)))
     return ports
@@ -300,7 +300,7 @@ def missing_device_ids(missing_devices):
 def verify_registered_connections():
     """
     Iterates through list of missing devices and checks each of them out.
-    '1' is the user Missing Device in the Users database. This keeps the database
+    '2' is the user Missing Device in the Users database. This keeps the database
     up-to-date even if devices are taken when the checkout system has crashed
     or is turned off.
     """
@@ -308,7 +308,7 @@ def verify_registered_connections():
     for device in checked_out:
         current_app.logger.debug(
             "[nanny][verify_registered_connections] Device {} not connected. Checked it out.".format(device))
-        db.check_out('1', device)
+        db.check_out(2, device)
 
 
 def is_checkout_running():

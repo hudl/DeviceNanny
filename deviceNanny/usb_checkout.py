@@ -271,8 +271,8 @@ def get_info_from_db(user_input, timer, port, device_id, device_name, filename):
     :return: FirstName, LastName, SlackID, location
     """
     user_info = db.user_info(user_input)
-    if (user_info is None) or (user_info.get('FirstName') == '-') or (
-            user_info.get('FirstName') == 'Missing'):
+    if (user_info is None) or (user_info['id'] == 1) or (
+            user_info['first_name'] == 'Missing'):
         popups('Name Error', 'None')
         current_app.logger.warn(
             "[usb_checkout][get_info_from_db] {} is not a valid ID or name".

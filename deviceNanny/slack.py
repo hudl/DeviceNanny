@@ -66,7 +66,7 @@ class NannySlacker:
             self.slack.chat.post_message(
                 self.channel,
                 "*{} {}* just checked out `{}`".format(
-                    user_info['FirstName'], user_info['LastName'], device),
+                    user_info['first_name'], user_info['last_name'], device),
                 as_user=False,
                 username="DeviceNanny")
             logging.debug("[slack][check_out_notice] Checkout message sent.")
@@ -80,7 +80,7 @@ class NannySlacker:
         :param device: Device returned
         """
         try:
-            if user_info["FirstName"] != "Missing":
+            if user_info["first_name"] != "Missing":
                 logging.debug("[slack][check_in_notice] SlackID from user_info: {}".format(
                     user_info['SlackID']))
                 self.slack.chat.post_message(
@@ -91,13 +91,13 @@ class NannySlacker:
                 self.slack.chat.post_message(
                     self.channel,
                     "*{} {}* just checked in `{}`".format(
-                        user_info['FirstName'],
-                        user_info['LastName'], device),
+                        user_info['first_name'],
+                        user_info['last_name'], device),
                     as_user=False,
                     username="DeviceNanny")
                 logging.debug(
                     "[slack][check_in_notice] {} {} just checked in {}".format(
-                        user_info['FirstName'],
+                        user_info['first_name'],
                         user_info['LastName'], device))
         except Exception as e:
             current_app.logger.debug("[slack][check_in_notice] Check in message not sent. {}".format(e))

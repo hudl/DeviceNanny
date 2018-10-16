@@ -21,7 +21,6 @@ CREATE TABLE devices (
 
 CREATE TABLE users (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    user_id INTEGER NOT NULL,
     first_name TEXT NOT NULL,
     last_name TEXT NOT NULL,
     slack_id TEXT,
@@ -41,6 +40,6 @@ CREATE TABLE settings (
 INSERT INTO settings (slack_channel, slack_team_channel, reminder_interval, checkout_length, message, office_location) VALUES
 ('omananny', 'omananny', '5', '30', 'You have a device checked out', 'Omaha');
 
-INSERT INTO users (user_id, first_name, last_name) VALUES ('0', '-', '-');
+INSERT INTO users (first_name, last_name) VALUES ('-', '-');
 
-INSERT INTO users (user_id, first_name, last_name) VALUES ('1', 'Missing', 'Device');
+INSERT INTO users (first_name, last_name) VALUES ('Missing', 'Device');
