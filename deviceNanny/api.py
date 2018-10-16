@@ -31,16 +31,17 @@ def device_detected():
     device_id = db_actions.get_device_id_from_serial(serial)
     device_name = db_actions.get_device_name(location, port)
     filename = usb_checkout.create_tempfile(port, device_name)
-    usb_checkout.play_sound()
-    if device_id is None and serial is not None:
-        add_device(serial, port, location, filename)
-    else:
-        checked_out = usb_checkout.check_if_out(location, port)
-        if checked_out:
-            check_in_device(device_id, port)
+    if filename:
+        usb_checkout.play_sound()
+        if device_id is None and serial is not None:
+            add_device(serial, port, location, filename)
         else:
-            checkout_device(filename, location, port)
-    usb_checkout.delete_tempfile(filename)
+            checked_out = usb_checkout.check_if_out(location, port)
+            if checked_out:
+                check_in_device(device_id, port)
+            else:
+                checkout_device(filename, location, port)
+        usb_checkout.delete_tempfile(filename)
     return "DONE"
 
 

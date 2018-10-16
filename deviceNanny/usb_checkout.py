@@ -43,7 +43,8 @@ def create_tempfile(port, device_name):
     :return filename: /tmp/*kernel*.nanny
     """
     filename = '/tmp/{}.nanny'.format(port)
-    check_for_tempfile(filename, device_name)
+    if check_for_tempfile(filename, device_name):
+        return
     with open(filename, 'w+b'):
         return filename
 
@@ -70,7 +71,7 @@ def check_for_tempfile(filename, device_name):
     """
     if os.path.isfile(filename):
         get_lock('usb_checkout', device_name)
-        sys.exit()
+        return True
 
 
 def cancelled(port, device_id, device_name, filename):
