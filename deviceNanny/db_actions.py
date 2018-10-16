@@ -181,7 +181,7 @@ def add_to_database(device_info):
     Adds info for a new device to the database.
     :param device_info:
     """
-    db_commit("INSERT INTO devices(device_name,Manufacturer,Model,device_type,OS,location,device_id,serial_udid,port,"
+    db_commit("INSERT INTO devices(device_name,Manufacturer,Model,device_type,os_version,location,device_id,serial_udid,port,"
               "checked_out_by,TimeCheckedOut,LastReminded)"
               "VALUES('{}','{}','{}','{}','{}','{}','{}','{}','{}','0','0','40000')"
               .format(device_info[0], device_info[1], device_info[2], device_info[3], device_info[4].rstrip(),
