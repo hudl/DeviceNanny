@@ -76,10 +76,10 @@ class NannySlacker:
         :param user_info: First Name, Last Name, SlackID, location of user who checked in device
         :param device: Device returned
         """
-        logging.debug("[slack][check_in_notice] SlackID from user_info: {}".format(
-            user_info['SlackID']))
         if user_info["FirstName"] != "Missing":
             try:
+                logging.debug("[slack][check_in_notice] SlackID from user_info: {}".format(
+                    user_info['SlackID']))
                 self.slack.chat.post_message(
                     user_info['SlackID'],
                     "You checked in `{}`. Thanks!".format(device),
