@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, url_for
+from flask import Blueprint, render_template, url_for, current_app
 from werkzeug.utils import redirect
 
 from deviceNanny.db import get_db
@@ -14,7 +14,6 @@ def update():
     settings_data = db.execute(
         'SELECT * FROM settings WHERE id = 1'
     ).fetchone()
-
     if settings.validate_on_submit():
         slack_channel = settings.slack_channel.data
         slack_team_channel = settings.slack_team_channel.data
@@ -26,16 +25,22 @@ def update():
         insert_query = 'UPDATE settings SET {} = "{}" WHERE id = 1'
 
         if slack_channel:
+            current_app.config['slack_channel'] = settings_data['slack_channel']
             db.execute(insert_query.format('slack_channel', slack_channel))
         if slack_team_channel:
+            current_app.config['slack_team_channel'] = settings_data['slack_team_channel']
             db.execute(insert_query.format('slack_team_channel', slack_team_channel))
         if reminder_interval:
+            current_app.config['reminder_interval'] = settings_data['reminder_interval']
             db.execute(insert_query.format('reminder_interval', reminder_interval))
         if checkout_length:
+            current_app.config['checkout_length'] = settings_data['checkout_length']
             db.execute(insert_query.format('checkout_length', checkout_length))
         if office_location:
+            current_app.config['location'] = settings_data['office_location']
             db.execute(insert_query.format('office_location', office_location))
         if message:
+            current_app.config['message'] = settings_data['message']
             db.execute(insert_query.format('message', message))
 
         db.commit()

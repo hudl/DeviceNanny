@@ -60,7 +60,7 @@ def update_db(port):
     the system is turned off.
     :param port: USB port
     """
-    location = 'Test'
+    location = current_app.config['location']
     serial = get_serial(port)
     if serial is None:
         was_port_registered(location, port)
@@ -240,7 +240,7 @@ def checkout_reminders():
     """
     Checks every device in the database to see if it's checked out.
     """
-    location = 'Test'
+    location = current_app.config['location']
     device_ids = db.device_ids()
     devices = []
     for x in device_ids:
@@ -292,7 +292,7 @@ def missing_device_ids(missing_devices):
     :param missing_devices: List of ports that are registered but are no longer in use (device is gone)
     :return: The missing device's device IDs
     """
-    location = 'Test'
+    location = current_app.config['location']
     return [
         db.get_device_id_from_port(location, port) for port in missing_devices
     ]

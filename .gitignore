@@ -99,3 +99,6 @@ web/secretInfo.php
 .DS_Store
 
 #start_checkout.sh
+
+# Logging
+logs/
