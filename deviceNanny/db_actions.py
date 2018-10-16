@@ -4,9 +4,11 @@ from flask import current_app
 
 def db_fetch(string):
     try:
+        current_app.logger.debug(string)
         db = get_db()
         cur = db.execute(string)
         item = cur.fetchone()
+        current_app.logger.debug(item)
         return item
     except Exception as e:
         current_app.logger.error("[db_actions][db_fetch] Exception - {}".format(e))
@@ -222,7 +224,7 @@ def get_device_status(device_id):
     :return: device_name, checked_out_by, time_checked_out, last_reminded
     """
     device_status = db_fetch("SELECT device_name, checked_out_by, time_checked_out, last_reminded,"
-                             "location from devices where device_id = '{}'".format(device_id))
+                             "location FROM devices WHERE device_id = {}".format(device_id))
     return device_status
 
 
