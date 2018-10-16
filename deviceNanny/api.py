@@ -52,6 +52,7 @@ def add_device(serial, port, location, filename):
 
 @bp.route('devices/checkout', methods=['PUT'])
 def checkout_device(filename, location, port):
+    nanny = NannySlacker()
     current_app.logger.info("[usb_checkout][checkout_device] CHECK OUT")
     device_id = db_actions.get_device_id_from_port(location, port)
     device_name = db_actions.get_device_name_from_id(location, device_id)
@@ -59,7 +60,7 @@ def checkout_device(filename, location, port):
     timer.start()
     user_info = usb_checkout.get_user_info(timer, port, device_id, device_name, filename)
     db_actions.check_out(user_info, device_id)
-    NannySlacker.check_out_notice(user_info, device_name)
+    nanny.check_out_notice(user_info, device_name)
     current_app.logger.info(
         "[usb_checkout][checkout_device] {} checked out by {} {}.".format(
             device_name,
