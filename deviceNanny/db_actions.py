@@ -65,7 +65,7 @@ def checked_out_by(device_id):
     return user_info["checked_out_by"]
 
 
-def get_device_name(device_id, location, port):
+def get_device_name(location, port):
     """
     :param port: USB port
     :param location: location
