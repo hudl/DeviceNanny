@@ -13,7 +13,6 @@ from flask import current_app
 import configparser
 import subprocess
 import time
-import glob
 import os
 import re
 
@@ -61,6 +60,7 @@ def update_db(port):
     the system is turned off.
     :param port: USB port
     """
+    location = 'Test'
     serial = get_serial(port)
     if serial is None:
         was_port_registered(location, port)
@@ -278,7 +278,7 @@ def missing_devices():
     Compares the list of all registered ports to the ports that have devices connected.
     :return: List of ports that are registered but are no longer in use (device is gone)
     """
-    return set(registered_ports(location)) - set(usb_devices())
+    return set(registered_ports('Test')) - set(usb_devices())
 
 
 def missing_device_ids(missing_devices):
@@ -313,10 +313,11 @@ def is_checkout_running():
     Checks to see if a checkout is in progress.
     :return: True or False
     """
-    if glob.glob('/tmp/*.nanny'):
-        current_app.logger.info("[nanny][is_checkout_running] Checkout is running. Skip.")
-        return True
-    current_app.logger.debug("[nanny][is_checkout_running] Checkout not running.")
+    # if glob.glob('/tmp/*.nanny'):
+    #     current_app.logger.info("[nanny][is_checkout_running] Checkout is running. Skip.")
+    #     return True
+    # current_app.logger.debug("[nanny][is_checkout_running] Checkout not running.")
+    return False
 
 
 def clean_tmp_file():
