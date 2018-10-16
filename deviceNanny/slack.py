@@ -13,8 +13,8 @@ from flask import current_app
 
 class NannySlacker:
     def __init__(self):
-        self.channel = current_app.config['CHANNEL']
-        self.team_channel = current_app.config['TEAM_CHANNEL']
+        self.channel = current_app.config['SLACK_CHANNEL']
+        self.team_channel = current_app.config['SLACK_TEAM_CHANNEL']
         self.slack = Slacker(current_app.config['SLACK_API_KEY'])
 
     def help_message(self, device_name):
