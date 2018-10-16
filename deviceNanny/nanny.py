@@ -269,11 +269,11 @@ def registered_ports(location):
     :return: Every port registered in database.
     """
     ports = db.get_registered_ports(location)
-    current_app.logger.debug("registered_ports] ports: {}".format(ports))
+    current_app.logger.debug("[registered_ports] ports: {}".format(ports))
     values = []
     for i in ports:
         values.append(i['port'])
-    current_app.logger.debug("registered_ports] VALUES: {}".format(values))
+    current_app.logger.debug("[registered_ports] VALUES: {}".format(values))
     return values
 
 
@@ -282,7 +282,8 @@ def missing_devices():
     Compares the list of all registered ports to the ports that have devices connected.
     :return: List of ports that are registered but are no longer in use (device is gone)
     """
-    return set(registered_ports('Test')) - set(usb_devices())
+    location = 'Test'
+    return set(registered_ports(location)) - set(usb_devices())
 
 
 def missing_device_ids(missing_devices):
