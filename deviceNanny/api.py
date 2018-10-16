@@ -75,7 +75,7 @@ def check_in_device(location, device_id, port):
 
 
 @bp.route('nanny', methods=['GET'])
-def nanny():
+def run_nanny():
     if not nanny.is_checkout_running():
         nanny.clean_tmp_file()
         nanny.check_usb_connections()
