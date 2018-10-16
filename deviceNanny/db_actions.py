@@ -221,8 +221,7 @@ def get_device_status(device_id):
     :param device_id:
     :return: device_name, checked_out_by, time_checked_out, last_reminded
     """
-    device_status = db_fetch("SELECT device_name, checked_out_by, time_checked_out, last_reminded,"
-                             "location from devices where device_id = {}".format(device_id))
+    device_status = db_fetch('SELECT device_name, checked_out_by, time_checked_out, last_reminded, location FROM devices WHERE device_id = "{}"'.format(device_id))
     return device_status
 
 
