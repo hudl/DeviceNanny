@@ -56,7 +56,7 @@ class NannySlacker:
         :param device: Device taken
         """
         self.slack.chat.post_message(
-            user_info.get('SlackID'),
+            user_info['SlackID'],
             "You checked out `{}`. Checkout will expire after 3 days. Remember to plug the "
             "device back in when you return it to the lab. You can renew your checkout from "
             "the DeviceNanny web page.".format(device),
@@ -65,7 +65,7 @@ class NannySlacker:
         self.slack.chat.post_message(
             self.channel,
             "*{} {}* just checked out `{}`".format(
-                user_info.get('FirstName'), user_info.get('LastName'), device),
+                user_info['FirstName'], user_info['LastName'], device),
             as_user=False,
             username="DeviceNanny")
         logging.debug("[slack][check_out_notice] Checkout message sent.")
@@ -77,25 +77,25 @@ class NannySlacker:
         :param device: Device returned
         """
         logging.debug("[slack][check_in_notice] SlackID from user_info: {}".format(
-            user_info.get('SlackID')))
-        if user_info.get("FirstName") != "Missing":
+            user_info['SlackID']))
+        if user_info["FirstName"] != "Missing":
             try:
                 self.slack.chat.post_message(
-                    user_info.get('SlackID'),
+                    user_info['SlackID'],
                     "You checked in `{}`. Thanks!".format(device),
                     as_user=False,
                     username="DeviceNanny")
                 self.slack.chat.post_message(
                     self.channel,
                     "*{} {}* just checked in `{}`".format(
-                        user_info.get('FirstName'),
-                        user_info.get('LastName'), device),
+                        user_info['FirstName'],
+                        user_info['LastName'], device),
                     as_user=False,
                     username="DeviceNanny")
                 logging.debug(
                     "[slack][check_in_notice] {} {} just checked in {}".format(
-                        user_info.get('FirstName'),
-                        user_info.get('LastName'), device))
+                        user_info['FirstName'],
+                        user_info['LastName'], device))
             except Exception as e:
                 print(str(e))
 
