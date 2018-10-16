@@ -21,21 +21,26 @@ CREATE TABLE devices (
 
 CREATE TABLE users (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    first_name text NOT NULL,
-    last_name text NOT NULL,
-    slack_id text NOT NULL,
-    location text
+    user_id INTEGER NOT NULL,
+    first_name TEXT NOT NULL,
+    last_name TEXT NOT NULL,
+    slack_id TEXT,
+    location TEXT
 );
 
 CREATE TABLE settings (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    slack_channel text,
-    slack_team_channel text,
-    reminder_interval text,
-    checkout_length text,
-    message text,
-    office_location text
+    slack_channel TEXT,
+    slack_team_channel TEXT,
+    reminder_interval TEXT,
+    checkout_length TEXT,
+    message TEXT,
+    office_location TEXT
 );
 
 INSERT INTO settings (slack_channel, slack_team_channel, reminder_interval, checkout_length, message, office_location) VALUES
-('omananny', 'omananny', '5', '30', 'You have a device checked out', 'Omaha')
+('omananny', 'omananny', '5', '30', 'You have a device checked out', 'Omaha');
+
+INSERT INTO users (user_id, first_name, last_name) VALUES ('0', '-', '-');
+
+INSERT INTO users (user_id, first_name, last_name) VALUES ('1', 'Missing', 'Device');
