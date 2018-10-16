@@ -9,3 +9,5 @@ load_dotenv(os.path.join(basedir, '.env'))
 class Config(object):
     SECRET_KEY = os.environ.get('SECRET_KEY')
     SLACK_API_KEY = os.environ.get('SLACK_API_KEY')
+    SLACK_CHANNEL = "omananny"
+    SLACK_TEAM_CHANNEL = "omananny"
