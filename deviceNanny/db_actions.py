@@ -164,8 +164,8 @@ def update_time_reminded(device_name):
     Updates database with the last time a reminder was sent.
     :param device_name:
     """
-    db_commit("UPDATE devices set LastReminded = unix_timestamp() where device_name = '{}'".format(device_name))
-    current_app.logger.info("[db_actions][update_time_reminded] LastReminded has been reset to current time.")
+    db_commit("UPDATE devices set last_reminded = unix_timestamp() where device_name = '{}'".format(device_name))
+    current_app.logger.info("[db_actions][update_time_reminded] last_reminded has been reset to current time.")
 
 
 def clear_port(device_id):
@@ -181,8 +181,8 @@ def add_to_database(device_info):
     Adds info for a new device to the database.
     :param device_info:
     """
-    db_commit("INSERT INTO devices(device_name,Manufacturer,Model,device_type,os_version,location,device_id,serial_udid,port,"
-              "checked_out_by,TimeCheckedOut,LastReminded)"
+    db_commit("INSERT INTO devices(device_name,manufacturer,model,device_type,os_version,location,device_id,serial_udid,port,"
+              "checked_out_by,time_checked_out,last_reminded)"
               "VALUES('{}','{}','{}','{}','{}','{}','{}','{}','{}','0','0','40000')"
               .format(device_info[0], device_info[1], device_info[2], device_info[3], device_info[4].rstrip(),
                       device_info[5], device_info[6], device_info[7], device_info[8]))
@@ -208,8 +208,8 @@ def check_out(user_id, device_id):
     :param device_id:
     """
     try:
-        db_commit("UPDATE devices set checked_out_by = {}, port = NULL, TimeCheckedOut = unix_timestamp(),"
-                  "LastReminded = unix_timestamp() where device_id = {}".format(user_id, device_id))
+        db_commit("UPDATE devices set checked_out_by = {}, port = NULL, time_checked_out = unix_timestamp(),"
+                  "last_reminded = unix_timestamp() where device_id = {}".format(user_id, device_id))
     except Exception as e:
         current_app.logger.debug("[db_actions][check_out] Exception in check_out - {}".format(e))
         print(e)
@@ -219,9 +219,9 @@ def get_device_status(device_id):
     """
     Returns all columns for a device.
     :param device_id:
-    :return: device_name, checked_out_by, TimeCheckedOut, LastReminded
+    :return: device_name, checked_out_by, time_checked_out, last_reminded
     """
-    device_status = db_fetch("SELECT device_name, checked_out_by, TimeCheckedOut, LastReminded, location"
+    device_status = db_fetch("SELECT device_name, checked_out_by, time_checked_out, last_reminded, location"
                              "from devices where device_id = {}".format(device_id))
     return device_status
 
