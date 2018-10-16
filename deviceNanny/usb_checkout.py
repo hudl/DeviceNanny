@@ -338,10 +338,10 @@ def get_new_device_info(serial, filename):
     # except Exception as e:
     except subprocess.CalledProcessError as e:
         current_app.logger.info(
-            "[usb_checkout][get_new_device_info] User cancelled new device entry. Exception: {}".format(e.output)
+            "[usb_checkout][get_new_device_info] User cancelled new device entry. Exception: {}".format(e)
         )
         delete_tempfile(filename)
-        sys.exit()
+        # sys.exit()
 
 
 def to_database(serial, port, location, filename):
