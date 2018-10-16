@@ -6,7 +6,7 @@
 # Created by Ethan Seyl 2016
 #
 
-from deviceNanny.slack import help_message
+from deviceNanny.slack import NannySlacker
 import deviceNanny.db_actions as db
 from flask import current_app
 import subprocess
@@ -80,7 +80,7 @@ def cancelled(port, device_id, device_name, filename):
     """
     if not is_device_connected(port):
         db.check_out('1', device_id)
-        help_message(device_name)
+        NannySlacker.help_message(device_name)
     if multiple_checkouts():
         delete_tempfile(filename)
         current_app.logger.debug("[usb_checkout][cancelled] FINISHED")
