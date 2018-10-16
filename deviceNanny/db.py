@@ -17,6 +17,23 @@ def init_db():
         db.executescript(f.read().decode('utf8'))
 
 
+def load_settings(app):
+    db = sqlite3.connect(
+        app.config['DATABASE'],
+        detect_types=sqlite3.PARSE_DECLTYPES
+    )
+    db.row_factory = sqlite3.Row
+    settings_data = db.execute(
+        'SELECT * FROM settings WHERE id = 1'
+    ).fetchone()
+    app.config['location'] = settings_data['office_location']
+    app.config['slack_channel'] = settings_data['slack_channel']
+    app.config['slack_team_channel'] = settings_data['slack_team_channel']
+    app.config['reminder_interval'] = settings_data['reminder_interval']
+    app.config['checkout_length'] = settings_data['checkout_length']
+    app.config['message'] = settings_data['message']
+
+
 @click.command('init-db')
 @with_appcontext
 def init_db_command():

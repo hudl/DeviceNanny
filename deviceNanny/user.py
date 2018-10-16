@@ -13,7 +13,7 @@ def add():
     add_single_user = SingleUserForm()
     upload_file = UploadFileForm()
     db = get_db()
-
+    
     if add_single_user.validate_on_submit():
         first_name = add_single_user.first_name.data
         last_name = add_single_user.last_name.data

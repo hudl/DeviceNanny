@@ -24,7 +24,7 @@ def devices():
 @bp.route('devices/detected', methods=['GET'])
 def device_detected():
     # logging.debug("[usb_checkout] STARTED")
-    location = "Test"
+    location = current_app.config['location']
     # logging.info("LOCATION: {}".format(location))
     port = usb_checkout.find_port()
     serial = usb_checkout.get_serial(port)
