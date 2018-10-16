@@ -308,10 +308,9 @@ def verify_registered_connections():
     """
     checked_out = missing_device_ids(missing_devices())
     for device in checked_out:
-        db.check_out('1', device)
         current_app.logger.debug(
-            "[nanny][verify_registered_connections] Device {} not connected. Checked out.".
-            format(device))
+            "[nanny][verify_registered_connections] Device {} not connected. Checked it out.".format(device))
+        db.check_out('1', device)
 
 
 def is_checkout_running():
