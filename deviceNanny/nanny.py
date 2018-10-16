@@ -220,10 +220,6 @@ def send_reminder(device_status):
     :param device_status: device_name, checked_out_by, time_checked_out, last_reminded, RFID
     """
     if reminder_due(device_status):
-        current_app.logger.debug(
-            "[nanny][send_reminder] Device checked out by {} type {}".format(
-                device_status['checked_out_by'],
-                type(device_status['checked_out_by'])))
         if device_status['checked_out_by'] is not 1:
             current_app.logger.debug("[nanny][send_reminder] User reminder...")
             NannySlacker.user_reminder(
@@ -251,13 +247,11 @@ def checkout_reminders():
         device_status = db.get_device_status(x)
         current_app.logger.debug("[checkout_reminders] DEVICE STATUS: {}".format(device_status))
         if device_status["checked_out_by"] is not 0 and device_status["location"] == location:
-            print(
-                "CHECKED OUT BY: {}".format(device_status["checked_out_by"]))
-            print("DEVICE location: {}".format(device_status["location"]))
+            current_app.logger.debug("[nanny][checkout_reminders] CHECKED OUT BY: {}"
+                                     .format(device_status["checked_out_by"]))
             current_app.logger.debug(
                 "[nanny][checkout_reminders] Check if device {} needs a reminder.".
                 format(x))
-            print("NEEDS REMINDER")
             send_reminder(device_status)
         else:
             print("NONONONONO")
