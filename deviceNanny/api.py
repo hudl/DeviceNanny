@@ -69,11 +69,12 @@ def checkout_device(filename, location, port):
 
 @bp.route('devices/check-in', methods=['PUT'])
 def check_in_device(location, device_id, port):
+    nanny = NannySlacker()
     current_app.logger.info("[usb_checkout][check_in_device] CHECK IN")
     device_name = db_actions.get_device_name_from_id(location, device_id)
     user_info = usb_checkout.get_user_info_from_db(device_id)
     db_actions.check_in(device_id, port)
-    NannySlacker.check_in_notice(user_info, device_name)
+    nanny.check_in_notice(user_info, device_name)
     return "DONE"
 
 
