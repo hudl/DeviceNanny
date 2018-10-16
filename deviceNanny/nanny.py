@@ -244,7 +244,7 @@ def checkout_reminders():
     device_ids = db.device_ids()
     devices = []
     for x in device_ids:
-        devices += x.values()
+        devices.append(x['device_id'])
     for x in devices:
         device_status = db.get_device_status(x)
         if device_status.get("CheckedOutBy") is not 0 and device_status.get(
