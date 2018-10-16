@@ -1,5 +1,6 @@
 DROP TABLE IF EXISTS devices;
 DROP TABLE IF EXISTS users;
+DROP TABLE IF EXISTS settings;
 
 CREATE TABLE devices (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -19,9 +20,22 @@ CREATE TABLE devices (
 );
 
 CREATE TABLE users (
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
-  first_name text NOT NULL,
-  last_name text NOT NULL,
-  slack_id text NOT NULL,
-  office text
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    first_name text NOT NULL,
+    last_name text NOT NULL,
+    slack_id text NOT NULL,
+    office text
 );
+
+CREATE TABLE settings (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    slack_channel text,
+    slack_team_channel text,
+    reminder_interval text,
+    checkout_length text,
+    message text,
+    office_location text
+);
+
+INSERT INTO settings (slack_channel, slack_team_channel, reminder_interval, checkout_length, message, office_location) VALUES
+('omananny', 'omananny', '5', '30', 'You have a device checked out', 'Omaha')

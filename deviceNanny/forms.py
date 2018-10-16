@@ -43,6 +43,16 @@ class SingleDeviceForm(FlaskForm):
     submit = SubmitField('Add')
 
 
+class SettingsForm(FlaskForm):
+    slack_channel = StringField('Slack Channel')
+    slack_team_channel = StringField('Slack Team Channel')
+    reminder_interval = StringField('Reminder Interval')
+    checkout_length = StringField('Checkout Length')
+    office_location = StringField('Office Location')
+    message = StringField('Slack Message')
+    update_submit = SubmitField('Update')
+
+
 class UploadFileForm(FlaskForm):
     file = FileField('Choose csv file')
     upload_submit = SubmitField("Upload")
