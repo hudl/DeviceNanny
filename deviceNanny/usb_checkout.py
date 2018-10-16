@@ -335,11 +335,11 @@ def get_new_device_info(serial, filename):
             "[usb_checkout][get_new_device_info] New device. Serial: {}".
             format(serial))
         return popups('New Device', 'None').decode('utf-8').split('|')
-    except Exception as e:
+    # except Exception as e:
+    except subprocess.CalledProcessError as e:
         current_app.logger.info(
-            "[usb_checkout][get_new_device_info] User cancelled new device entry. Exception: {}".format(e)
+            "[usb_checkout][get_new_device_info] User cancelled new device entry. Exception: {}".format(e.output)
         )
-        print(e)
         delete_tempfile(filename)
         sys.exit()
 
