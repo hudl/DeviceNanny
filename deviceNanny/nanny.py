@@ -327,18 +327,3 @@ def clean_tmp_file():
     for f in os.listdir('/tmp'):
         if re.search('.nanny', f):
             os.remove(os.path.join('/tmp', f))
-
-
-def main():
-    """
-    Keeps the database up-to-date by looking for devices that have been attached/removed
-    from the Pi without checking them in/out, th en sends a reminder to users who
-    have expired checkouts.
-    :return:
-    """
-    if not is_checkout_running():
-        clean_tmp_file()
-        check_usb_connections()
-        verify_registered_connections()
-        checkout_reminders()
-
