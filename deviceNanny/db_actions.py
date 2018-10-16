@@ -4,6 +4,7 @@ from flask import current_app
 
 def db_fetch(string):
     try:
+        current_app.logger.debug("HEREHEREHEREHEREHEREHERE")
         current_app.logger.debug(string)
         db = get_db()
         item = db.execute(string).fetchone()
