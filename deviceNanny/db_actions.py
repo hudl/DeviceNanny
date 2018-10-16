@@ -80,7 +80,7 @@ def get_device_name(device_id, location, port):
         print(e)
 
 
-def get_device_name_from_id(location, device_id):
+def get_device_name_from_id(device_id):
     """
     :param device_id:
     :return: device_name
@@ -88,6 +88,7 @@ def get_device_name_from_id(location, device_id):
     # logging.debug(
     #     "[db_actions][get_device_name_from_id] Device ID = {}, location = {}".
     #     format(device_id, location))
+    location = 'Test'
     try:
         device = db_fetch("SELECT device_name from devices WHERE device_id = '{}' AND location = '{}'"
                           .format(device_id, location))
