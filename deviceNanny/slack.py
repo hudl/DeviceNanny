@@ -79,8 +79,8 @@ class NannySlacker:
         :param user_info: First Name, Last Name, SlackID, location of user who checked in device
         :param device: Device returned
         """
-        if user_info["FirstName"] != "Missing":
-            try:
+        try:
+            if user_info["FirstName"] != "Missing":
                 logging.debug("[slack][check_in_notice] SlackID from user_info: {}".format(
                     user_info['SlackID']))
                 self.slack.chat.post_message(
@@ -99,8 +99,8 @@ class NannySlacker:
                     "[slack][check_in_notice] {} {} just checked in {}".format(
                         user_info['FirstName'],
                         user_info['LastName'], device))
-            except Exception as e:
-                current_app.logger.debug("[slack][check_in_notice] Check in message not sent. {}".format(e))
+        except Exception as e:
+            current_app.logger.debug("[slack][check_in_notice] Check in message not sent. {}".format(e))
 
     def post_to_channel(self, device_id, time_difference, firstname, lastname):
         """
