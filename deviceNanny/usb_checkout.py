@@ -79,9 +79,10 @@ def cancelled(port, device_id, device_name, filename):
     it will be checked out as missing. Also, if multiple devices were taken, cancelling one
     won't close all checkout processes.
     """
+    nanny = NannySlacker()
     if not is_device_connected(port):
         db.check_out('1', device_id)
-        NannySlacker.help_message(device_name)
+        nanny.help_message(device_name)
     if multiple_checkouts():
         delete_tempfile(filename)
         current_app.logger.debug("[usb_checkout][cancelled] FINISHED")
@@ -233,7 +234,7 @@ def get_user_info(timer, port, device_id, device_name, filename):
     :return: FirstName, LastName, SlackID, location
     """
     try:
-        user_input = popups('checkout').decode('utf-8')
+        user_input = popups('checkout', device_name).decode('utf-8')
         timer.terminate()
         return get_info_from_db(user_input.rstrip('\n').split(' '), timer, port, device_id, device_name, filename)
     except Exception as e:
@@ -271,7 +272,7 @@ def get_info_from_db(user_input, timer, port, device_id, device_name, filename):
     user_info = db.user_info(user_input)
     if (user_info is None) or (user_info.get('FirstName') == '-') or (
             user_info.get('FirstName') == 'Missing'):
-        popups('Name Error')
+        popups('Name Error', 'None')
         current_app.logger.warn(
             "[usb_checkout][get_info_from_db] {} is not a valid ID or name".
             format(user_input))

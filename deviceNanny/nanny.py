@@ -61,6 +61,7 @@ def update_db(port):
     :param port: USB port
     """
     location = current_app.config['location']
+    nanny = NannySlacker()
     serial = get_serial(port)
     if serial is None:
         was_port_registered(location, port)
@@ -68,7 +69,7 @@ def update_db(port):
     if device_id:
         if is_device_checked_out(device_id):
             db.check_in(device_id, port)
-            NannySlacker.nanny_check_in(db.get_device_name_from_id(device_id))
+            nanny.nanny_check_in(db.get_device_name_from_id(device_id))
             current_app.logger.info(
                 "[nanny][update_db] Device {} checked in.".format(device_id))
         else:
@@ -153,7 +154,7 @@ def reminder_due(device_status):
     :return: True or None depending on if a reminder is needed
     """
     reminder_interval = 100000
-    time_since_reminded = int(time.time()) - device_status.get("last_reminded")
+    time_since_reminded = int(time.time()) - device_status["last_reminded"]
     current_app.logger.debug("[nanny][reminder_due] Last reminded {} seconds ago.".format(
         time_since_reminded))
     if time_since_reminded > int(reminder_interval) and checkout_expired(device_status):
@@ -183,10 +184,10 @@ def checkout_expired(device_status):
     :return: True or None
     """
     checkout_expires = 10000
-    if int(time.time()) - device_status.get("time_checked_out") > int(checkout_expires):
+    if int(time.time()) - device_status["time_checked_out"] > int(checkout_expires):
         current_app.logger.debug(
             "[nanny][checkout_expired] Checkout expired for device {}".format(
-                device_status.get('device_name')))
+                device_status['device_name']))
         return True
 
 
@@ -198,7 +199,7 @@ def time_since_checkout(device_status):
     :return: Hours and days since device was checked out in human readable format
     """
     sec = timedelta(
-        seconds=int(time.time() - device_status.get("time_checked_out")))
+        seconds=int(time.time() - device_status["time_checked_out"]))
     d = datetime(1, 1, 1) + sec
     return "{} days, {} hours".format(d.day - 1, d.hour)
 
@@ -208,8 +209,8 @@ def slack_id(device_status):
     :param device_status: device_name, checked_out_by, time_checked_out, last_reminded, RFID
     :return: Slack ID of user that checked out device
     """
-    slack_id = db.get_slack_id(device_status.get("checked_out_by"))
-    return slack_id.get("slack_id")
+    slack_id = db.get_slack_id(device_status["checked_out_by"])
+    return slack_id["slack_id"]
 
 
 def send_reminder(device_status):
@@ -219,21 +220,17 @@ def send_reminder(device_status):
     :param device_status: device_name, checked_out_by, time_checked_out, last_reminded, RFID
     """
     if reminder_due(device_status):
-        current_app.logger.debug(
-            "[nanny][send_reminder] Device checked out by {} type {}".format(
-                device_status.get('checked_out_by'),
-                type(device_status.get('checked_out_by'))))
-        if device_status.get('checked_out_by') is not 1:
+        if device_status['checked_out_by'] is not 1:
             current_app.logger.debug("[nanny][send_reminder] User reminder...")
             NannySlacker.user_reminder(
                 slack_id(device_status),
                 time_since_checkout(device_status),
-                device_status.get("device_name"))
+                device_status["device_name"])
         else:
             NannySlacker.missing_device_message(
-                device_status.get('device_name'),
+                device_status['device_name'],
                 time_since_checkout(device_status))
-        db.update_time_reminded(device_status.get("device_name"))
+        db.update_time_reminded(device_status["device_name"])
 
 
 def checkout_reminders():
@@ -246,17 +243,15 @@ def checkout_reminders():
     for x in device_ids:
         devices.append(x['device_id'])
     for x in devices:
-        current_app.logger.debug("DEVICE: {}".format(x))
+        current_app.logger.debug("[checkout_reminders] DEVICE: {}".format(x))
         device_status = db.get_device_status(x)
-        current_app.logger.debug("DEVICE STATUS: {}".format(device_status))
+        current_app.logger.debug("[checkout_reminders] DEVICE STATUS: {}".format(device_status))
         if device_status["checked_out_by"] is not 0 and device_status["location"] == location:
-            print(
-                "CHECKED OUT BY: {}".format(device_status.get("checked_out_by")))
-            print("DEVICE location: {}".format(device_status.get("location")))
+            current_app.logger.debug("[nanny][checkout_reminders] CHECKED OUT BY: {}"
+                                     .format(device_status["checked_out_by"]))
             current_app.logger.debug(
                 "[nanny][checkout_reminders] Check if device {} needs a reminder.".
                 format(x))
-            print("NEEDS REMINDER")
             send_reminder(device_status)
         else:
             print("NONONONONO")
@@ -269,11 +264,11 @@ def registered_ports(location):
     :return: Every port registered in database.
     """
     ports = db.get_registered_ports(location)
-    current_app.logger.debug("ports: {}".format(ports))
+    current_app.logger.debug("[registered_ports] ports: {}".format(ports))
     values = []
     for i in ports:
         values.append(i['port'])
-    current_app.logger.debug("VALUES: {}".format(values))
+    current_app.logger.debug("[registered_ports] VALUES: {}".format(values))
     return values
 
 
@@ -282,7 +277,10 @@ def missing_devices():
     Compares the list of all registered ports to the ports that have devices connected.
     :return: List of ports that are registered but are no longer in use (device is gone)
     """
-    return set(registered_ports('Test')) - set(usb_devices())
+    location = 'Test'
+    ports = set(registered_ports(location)) - set(usb_devices())
+    current_app.logger.debug('[missing_devices] Ports: {} Type: {}'.format(ports, type(ports)))
+    return ports
 
 
 def missing_device_ids(missing_devices):
@@ -293,9 +291,10 @@ def missing_device_ids(missing_devices):
     :return: The missing device's device IDs
     """
     location = current_app.config['location']
-    return [
-        db.get_device_id_from_port(location, port) for port in missing_devices
-    ]
+    current_app.logger.debug('[missing_device_ids] Missing device ports: {}'.format(missing_devices))
+    missing_ids = [db.get_device_id_from_port(location, port) for port in missing_devices]
+    current_app.logger.debug('[missing_device_ids] Missing device IDs: {}'.format(missing_ids))
+    return missing_ids
 
 
 def verify_registered_connections():
@@ -307,10 +306,9 @@ def verify_registered_connections():
     """
     checked_out = missing_device_ids(missing_devices())
     for device in checked_out:
-        db.check_out('1', device)
         current_app.logger.debug(
-            "[nanny][verify_registered_connections] Device {} not connected. Checked out.".
-            format(device))
+            "[nanny][verify_registered_connections] Device {} not connected. Checked it out.".format(device))
+        db.check_out('1', device)
 
 
 def is_checkout_running():

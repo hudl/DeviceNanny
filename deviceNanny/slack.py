@@ -13,8 +13,8 @@ from flask import current_app
 
 class NannySlacker:
     def __init__(self):
-        self.channel = current_app.config['CHANNEL']
-        self.team_channel = current_app.config['TEAM_CHANNEL']
+        self.channel = current_app.config['SLACK_CHANNEL']
+        self.team_channel = current_app.config['SLACK_TEAM_CHANNEL']
         self.slack = Slacker(current_app.config['SLACK_API_KEY'])
 
     def help_message(self, device_name):
@@ -55,20 +55,23 @@ class NannySlacker:
         :param user_info: First Name, Last Name, SlackID, location of user who checked out device
         :param device: Device taken
         """
-        self.slack.chat.post_message(
-            user_info.get('SlackID'),
-            "You checked out `{}`. Checkout will expire after 3 days. Remember to plug the "
-            "device back in when you return it to the lab. You can renew your checkout from "
-            "the DeviceNanny web page.".format(device),
-            as_user=False,
-            username="DeviceNanny")
-        self.slack.chat.post_message(
-            self.channel,
-            "*{} {}* just checked out `{}`".format(
-                user_info.get('FirstName'), user_info.get('LastName'), device),
-            as_user=False,
-            username="DeviceNanny")
-        logging.debug("[slack][check_out_notice] Checkout message sent.")
+        try:
+            self.slack.chat.post_message(
+                user_info['SlackID'],
+                "You checked out `{}`. Checkout will expire after 3 days. Remember to plug the "
+                "device back in when you return it to the lab. You can renew your checkout from "
+                "the DeviceNanny web page.".format(device),
+                as_user=False,
+                username="DeviceNanny")
+            self.slack.chat.post_message(
+                self.channel,
+                "*{} {}* just checked out `{}`".format(
+                    user_info['FirstName'], user_info['LastName'], device),
+                as_user=False,
+                username="DeviceNanny")
+            logging.debug("[slack][check_out_notice] Checkout message sent.")
+        except Exception as e:
+            current_app.logger.debug("[slack][check_out_notice] Check out notice NOT sent. {}".format(e))
 
     def check_in_notice(self, user_info, device):
         """
@@ -76,28 +79,28 @@ class NannySlacker:
         :param user_info: First Name, Last Name, SlackID, location of user who checked in device
         :param device: Device returned
         """
-        logging.debug("[slack][check_in_notice] SlackID from user_info: {}".format(
-            user_info.get('SlackID')))
-        if user_info.get("FirstName") != "Missing":
-            try:
+        try:
+            if user_info["FirstName"] != "Missing":
+                logging.debug("[slack][check_in_notice] SlackID from user_info: {}".format(
+                    user_info['SlackID']))
                 self.slack.chat.post_message(
-                    user_info.get('SlackID'),
+                    user_info['SlackID'],
                     "You checked in `{}`. Thanks!".format(device),
                     as_user=False,
                     username="DeviceNanny")
                 self.slack.chat.post_message(
                     self.channel,
                     "*{} {}* just checked in `{}`".format(
-                        user_info.get('FirstName'),
-                        user_info.get('LastName'), device),
+                        user_info['FirstName'],
+                        user_info['LastName'], device),
                     as_user=False,
                     username="DeviceNanny")
                 logging.debug(
                     "[slack][check_in_notice] {} {} just checked in {}".format(
-                        user_info.get('FirstName'),
-                        user_info.get('LastName'), device))
-            except Exception as e:
-                print(str(e))
+                        user_info['FirstName'],
+                        user_info['LastName'], device))
+        except Exception as e:
+            current_app.logger.debug("[slack][check_in_notice] Check in message not sent. {}".format(e))
 
     def post_to_channel(self, device_id, time_difference, firstname, lastname):
         """
