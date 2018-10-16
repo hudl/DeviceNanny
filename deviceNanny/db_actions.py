@@ -42,7 +42,7 @@ def new_device_id():
         id_number = last_id_num.get('device_id') + 1
     except Exception as e:
         id_number = '0'
-        current_app.loggerdebug("[db_actions][new_device_id] {}".format(id_number))
+        current_app.logger.debug("[db_actions][new_device_id] {}".format(id_number))
         print(e)
     return id_number
 
