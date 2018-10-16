@@ -207,8 +207,8 @@ def check_out(user_id, device_id):
     :param device_id:
     """
     try:
-        db_commit("UPDATE devices set checked_out_by = {}, port = NULL, time_checked_out = unix_timestamp(),"
-                  "last_reminded = unix_timestamp() where device_id = {}".format(user_id, device_id))
+        db_commit("UPDATE devices set checked_out_by = {}, port = NULL, time_checked_out = strftime('%s', 'now'),"
+                  "last_reminded = strftime('%s', 'now') where device_id = {}".format(user_id, device_id))
     except Exception as e:
         current_app.logger.debug("[db_actions][check_out] Exception in check_out - {}".format(e))
         print(e)
