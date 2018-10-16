@@ -37,7 +37,7 @@ def device_detected():
     else:
         checked_out = usb_checkout.check_if_out(location, port)
         if checked_out:
-            check_in_device(location, device_id, port)
+            check_in_device(device_id, port)
         else:
             checkout_device(filename, location, port)
     usb_checkout.delete_tempfile(filename)
