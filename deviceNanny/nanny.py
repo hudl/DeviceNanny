@@ -246,9 +246,9 @@ def checkout_reminders():
     for x in device_ids:
         devices.append(x['device_id'])
     for x in devices:
-        current_app.logger.debug("DEVICE: {}".format(x))
+        current_app.logger.debug("[checkout_reminders] DEVICE: {}".format(x))
         device_status = db.get_device_status(x)
-        current_app.logger.debug("DEVICE STATUS: {}".format(device_status))
+        current_app.logger.debug("[checkout_reminders] DEVICE STATUS: {}".format(device_status))
         if device_status["checked_out_by"] is not 0 and device_status["location"] == location:
             print(
                 "CHECKED OUT BY: {}".format(device_status.get("checked_out_by")))
