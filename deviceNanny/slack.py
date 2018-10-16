@@ -71,7 +71,7 @@ class NannySlacker:
                 username="DeviceNanny")
             logging.debug("[slack][check_out_notice] Checkout message sent.")
         except Exception as e:
-            current_app.logger.debug("[slack][check_out_notice] Check out notice not sent. {}".format(e))
+            current_app.logger.debug("[slack][check_out_notice] Check out notice NOT sent. {}".format(e))
 
     def check_in_notice(self, user_info, device):
         """

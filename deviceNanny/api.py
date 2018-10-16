@@ -61,10 +61,8 @@ def checkout_device(filename, location, port):
     user_info = usb_checkout.get_user_info(timer, port, device_id, device_name, filename)
     db_actions.check_out(user_info, device_id)
     nanny.check_out_notice(user_info, device_name)
-    current_app.logger.info(
-        "[usb_checkout][checkout_device] {} checked out by {} {}.".format(
-            device_name,
-            user_info.get('FirstName'), user_info.get('LastName')))
+    current_app.logger.info("[usb_checkout][checkout_device] {} checked out by {} {}"
+                            .format(device_name, user_info['FirstName'], user_info['LastName']))
     return "DONE"
 
 
