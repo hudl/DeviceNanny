@@ -134,7 +134,8 @@ def get_device_id_from_serial(serial):
     device = db_fetch("SELECT device_id from devices WHERE serial_udid = '{}'".format(serial))
     try:
         return device["device_id"]
-    except AttributeError:
+    except TypeError as e:
+        current_app.logger.warn("[db_actions][get_device_id_from_serial] Exception for serial {}: {}".format(serial, e))
         pass
 
 
