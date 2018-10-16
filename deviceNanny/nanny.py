@@ -296,9 +296,10 @@ def missing_device_ids(missing_devices):
     :return: The missing device's device IDs
     """
     location = 'Test'
-    return [
-        db.get_device_id_from_port(location, port) for port in missing_devices
-    ]
+    current_app.logger.debug('[missing_device_ids] Missing device ports: {}'.format(missing_devices))
+    missing_ids = [db.get_device_id_from_port(location, port) for port in missing_devices]
+    current_app.logger.debug('[missing_device_ids] Missing device IDs: {}'.format(missing_ids))
+    return missing_ids
 
 
 def verify_registered_connections():
