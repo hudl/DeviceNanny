@@ -7,7 +7,7 @@ class SingleUserForm(FlaskForm):
     first_name = StringField('First Name', validators=[DataRequired()])
     last_name = StringField('Last Name', validators=[DataRequired()])
     slack_id = StringField('Slack ID')
-    office = RadioField('Office Location',
+    location = RadioField('Office Location',
                         choices=[('Omaha', 'Omaha'), ('Lincoln', 'Lincoln')]
                         )
     submit = SubmitField('Add')
@@ -37,7 +37,7 @@ class SingleDeviceForm(FlaskForm):
                              choices=[('phone', 'Phone'), ('tablet', 'Tablet')]
                              )
     os_version = StringField('OS Version')
-    office = RadioField('Office Location',
+    location = RadioField('Office Location',
                         choices=[('Omaha', 'Omaha'), ('Lincoln', 'Lincoln')]
                         )
     submit = SubmitField('Add')

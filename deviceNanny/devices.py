@@ -21,7 +21,7 @@ def add():
         model = add_single_device.model.data
         os_version = add_single_device.os_version.data
         device_type = add_single_device.device_type.data
-        office = add_single_device.office.data
+        location = add_single_device.location.data
 
         error = None
         if not device_id:
@@ -38,7 +38,7 @@ def add():
             error = 'Type is required'
         elif not os_version:
             error = 'OS Version is required'
-        elif not office:
+        elif not location:
             error = 'Office location is required'
         elif db.execute(
             'SELECT id FROM devices WHERE serial_udid = ?', (serial_udid,)
@@ -47,8 +47,8 @@ def add():
 
         if error is None:
             db.execute(
-            'INSERT INTO devices (device_id, device_name, serial_udid, manufacturer, model, device_type, os_version, office) VALUES (?,?,?,?,?,?,?,?)',
-                (device_id, device_name, serial_udid, manufacturer, model, device_type, os_version, office)
+            'INSERT INTO devices (device_id, device_name, serial_udid, manufacturer, model, device_type, os_version, location) VALUES (?,?,?,?,?,?,?,?)',
+                (device_id, device_name, serial_udid, manufacturer, model, device_type, os_version, location)
             )
             db.commit()
             return redirect(url_for('devices.add'))

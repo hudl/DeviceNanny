@@ -1,4 +1,5 @@
 import deviceNanny.usb_checkout as usb_checkout
+import deviceNanny.nanny as nanny
 import deviceNanny.db_actions as db_actions
 from deviceNanny.slack import NannySlacker
 import multiprocessing
@@ -39,19 +40,19 @@ def device_detected():
             check_in_device(location, device_id, port)
         else:
             checkout_device(filename, location, port)
-    print("------------DEVICE DETECTED-----------")
     usb_checkout.delete_tempfile(filename)
-    return "DEVICE DETECTED"
+    return "DONE"
 
 
 @bp.route('devices/add', methods=['POST'])
 def add_device(serial, port, location, filename):
     usb_checkout.to_database(serial, port, location, filename)
+    return "DONE"
 
 
 @bp.route('devices/checkout', methods=['PUT'])
 def checkout_device(filename, location, port):
-    current_app.logger.info("[usb_checkout][main] CHECK OUT")
+    current_app.logger.info("[usb_checkout][checkout_device] CHECK OUT")
     device_id = db_actions.get_device_id_from_port(location, port)
     device_name = db_actions.get_device_name_from_id(location, device_id)
     timer = multiprocessing.Process(target=usb_checkout.timeout, name="Timer", args=(30, port, device_id, device_name, filename))
@@ -60,15 +61,27 @@ def checkout_device(filename, location, port):
     db_actions.check_out(user_info, device_id)
     NannySlacker.check_out_notice(user_info, device_name)
     current_app.logger.info(
-        "[usb_checkout][main] {} checked out by {} {}.".format(
+        "[usb_checkout][checkout_device] {} checked out by {} {}.".format(
             device_name,
             user_info.get('FirstName'), user_info.get('LastName')))
+    return "DONE"
 
 
 @bp.route('devices/check-in', methods=['PUT'])
 def check_in_device(location, device_id, port):
-    current_app.logger.info("[usb_checkout][main] CHECK IN")
+    current_app.logger.info("[usb_checkout][check_in_device] CHECK IN")
     device_name = db_actions.get_device_name_from_id(location, device_id)
     user_info = usb_checkout.get_user_info_from_db(device_id)
     db_actions.check_in(device_id, port)
     NannySlacker.check_in_notice(user_info, device_name)
+    return "DONE"
+
+
+@bp.route('nanny', methods=['GET'])
+def run_nanny():
+    if not nanny.is_checkout_running():
+        nanny.clean_tmp_file()
+        nanny.check_usb_connections()
+        nanny.verify_registered_connections()
+        nanny.checkout_reminders()
+    return "NANNY DONE"

@@ -6,7 +6,7 @@
 # Created by Ethan Seyl 2016
 #
 
-from deviceNanny.slack import help_message
+from deviceNanny.slack import NannySlacker
 import deviceNanny.db_actions as db
 from flask import current_app
 import subprocess
@@ -18,21 +18,22 @@ import re
 
 
 def get_lock(process_name, device_name):
-    """
-    Prevents start_usb_checkout from starting after
-    another USB action takes place on the same port
-    before checkout is completed.
-    """
-    get_lock._lock_socket = socket.socket(socket.AF_UNIX, socket.SOCK_DGRAM)
-
-    try:
-        get_lock._lock_socket.bind('\0' + process_name)
-        current_app.logger.warn(
-            "[usb_checkout][get_lock] Prevented process from starting - already running."
-        )
-        popups('USB Connection', device_name)
-    except socket.error:
-        current_app.logger.warn("[usb_checkout][get_lock] Process already locked.")
+    # """
+    # Prevents start_usb_checkout from starting after
+    # another USB action takes place on the same port
+    # before checkout is completed.
+    # """
+    # get_lock._lock_socket = socket.socket(socket.AF_UNIX, socket.SOCK_DGRAM)
+    #
+    # try:
+    #     get_lock._lock_socket.bind('\0' + process_name)
+    #     current_app.logger.warn(
+    #         "[usb_checkout][get_lock] Prevented process from starting - already running."
+    #     )
+    #     popups('USB Connection', device_name)
+    # except socket.error:
+    #     current_app.logger.warn("[usb_checkout][get_lock] Process already locked.")
+    pass
 
 
 def create_tempfile(port, device_name):
@@ -80,7 +81,7 @@ def cancelled(port, device_id, device_name, filename):
     """
     if not is_device_connected(port):
         db.check_out('1', device_id)
-        help_message(device_name)
+        NannySlacker.help_message(device_name)
     if multiple_checkouts():
         delete_tempfile(filename)
         current_app.logger.debug("[usb_checkout][cancelled] FINISHED")
@@ -229,7 +230,7 @@ def get_user_info(timer, port, device_id, device_name, filename):
     """
     Asks user for their name or ID number, and retrieves full info
     from the database.
-    :return: FirstName, LastName, SlackID, Office
+    :return: FirstName, LastName, SlackID, location
     """
     try:
         user_input = popups('checkout').decode('utf-8')
@@ -247,7 +248,7 @@ def get_user_info_from_db(device_id):
     """
     Retrieves user info from the database by device number.
     :param device_id: Device ID number
-    :return: FirstName, LastName, SlackID, Office
+    :return: FirstName, LastName, SlackID, location
     """
     checked_out_by = []
     checked_out_by.append(db.checked_out_by(device_id))
@@ -265,7 +266,7 @@ def get_info_from_db(user_input, timer, port, device_id, device_name, filename):
     Gets user info from database via input from the user. Checks for
     valid entry.
     :param user_input: Either first and last name or user ID.
-    :return: FirstName, LastName, SlackID, Office
+    :return: FirstName, LastName, SlackID, location
     """
     user_info = db.user_info(user_input)
     if (user_info is None) or (user_info.get('FirstName') == '-') or (
@@ -333,12 +334,14 @@ def get_new_device_info(serial, filename):
         current_app.logger.info(
             "[usb_checkout][get_new_device_info] New device. Serial: {}".
             format(serial))
-        return popups('New Device').decode('utf-8').split('|')
-    except Exception as e:
+        current_app.logger.info("DISPLAY: {}".format(os.environ["DISPLAY"]))
+        current_app.logger.info("XAUTH: {}".format(os.environ["XAUTHORITY"]))
+        return popups('New Device', 'None').decode('utf-8').split('|')
+    # except Exception as e:
+    except subprocess.CalledProcessError as e:
         current_app.logger.info(
-            "[usb_checkout][get_new_device_info] User cancelled new device entry."
+            "[usb_checkout][get_new_device_info] User cancelled new device entry. Exception: {}".format(e)
         )
-        print(e)
         delete_tempfile(filename)
         sys.exit()
 
@@ -381,7 +384,7 @@ def check_in(device_id, port):
 def check_out(user_info, device_id):
     """
     Checks device out from the database.
-    :param user_info: First Name, Last Name, SlackID, Office
+    :param user_info: First Name, Last Name, SlackID, location
     :param device_id: Device ID number
     """
     db.check_out(user_info.get('UserID'), device_id)

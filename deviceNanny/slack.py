@@ -52,7 +52,7 @@ class NannySlacker:
     def check_out_notice(self, user_info, device):
         """
         Sends a slack message confirming a device was checked out.
-        :param user_info: First Name, Last Name, SlackID, Office of user who checked out device
+        :param user_info: First Name, Last Name, SlackID, location of user who checked out device
         :param device: Device taken
         """
         self.slack.chat.post_message(
@@ -73,7 +73,7 @@ class NannySlacker:
     def check_in_notice(self, user_info, device):
         """
         Sends a slack message confirming a device was checked in.
-        :param user_info: First Name, Last Name, SlackID, Office of user who checked in device
+        :param user_info: First Name, Last Name, SlackID, location of user who checked in device
         :param device: Device returned
         """
         logging.debug("[slack][check_in_notice] SlackID from user_info: {}".format(
@@ -130,7 +130,7 @@ class NannySlacker:
 
     def missing_device_message(self, device_name, time_difference):
         """
-        Send a message to the office channel about a device that's been missing from the lab
+        Send a message to the location channel about a device that's been missing from the lab
         for more than the set checkout time.
         :param device_name:
         :param time_difference:

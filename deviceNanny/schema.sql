@@ -14,7 +14,7 @@ CREATE TABLE devices (
     checked_out_by INTEGER,
     time_checked_out TIMESTAMP,
     last_reminded TIMESTAMP,
-    office TEXT NOT NULL,
+    location TEXT NOT NULL,
     port INTEGER,
     FOREIGN KEY (checked_out_by) REFERENCES users (id)
 );
@@ -24,7 +24,7 @@ CREATE TABLE users (
     first_name text NOT NULL,
     last_name text NOT NULL,
     slack_id text NOT NULL,
-    office text
+    location text
 );
 
 CREATE TABLE settings (
