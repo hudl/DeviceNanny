@@ -284,7 +284,7 @@ def missing_devices():
     """
     location = 'Test'
     ports = set(registered_ports(location)) - set(usb_devices())
-    current_app.logger.debug('[missing_devices] Ports: {}'.format(ports))
+    current_app.logger.debug('[missing_devices] Ports: {} Type: {}'.format(ports, type(ports)))
     return ports
 
 
