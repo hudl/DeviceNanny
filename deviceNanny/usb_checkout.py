@@ -18,21 +18,22 @@ import re
 
 
 def get_lock(process_name, device_name):
-    """
-    Prevents start_usb_checkout from starting after
-    another USB action takes place on the same port
-    before checkout is completed.
-    """
-    get_lock._lock_socket = socket.socket(socket.AF_UNIX, socket.SOCK_DGRAM)
-
-    try:
-        get_lock._lock_socket.bind('\0' + process_name)
-        current_app.logger.warn(
-            "[usb_checkout][get_lock] Prevented process from starting - already running."
-        )
-        popups('USB Connection', device_name)
-    except socket.error:
-        current_app.logger.warn("[usb_checkout][get_lock] Process already locked.")
+    # """
+    # Prevents start_usb_checkout from starting after
+    # another USB action takes place on the same port
+    # before checkout is completed.
+    # """
+    # get_lock._lock_socket = socket.socket(socket.AF_UNIX, socket.SOCK_DGRAM)
+    #
+    # try:
+    #     get_lock._lock_socket.bind('\0' + process_name)
+    #     current_app.logger.warn(
+    #         "[usb_checkout][get_lock] Prevented process from starting - already running."
+    #     )
+    #     popups('USB Connection', device_name)
+    # except socket.error:
+    #     current_app.logger.warn("[usb_checkout][get_lock] Process already locked.")
+    pass
 
 
 def create_tempfile(port, device_name):
