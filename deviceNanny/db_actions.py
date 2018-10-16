@@ -142,7 +142,7 @@ def user_info(user_input):
     :param user_input: FirstName LastName OR UserID
     :return: FirstName, LastName, SlackID, location, UserID
     """
-    # logging.debug("[db_actions][user_info] user_input = {}. Type = {}".format(user_input, type(user_input)))
+    # logging.debug("[db_actions][user_info] user_input = {}. device_type = {}".format(user_input, type(user_input)))
     try:
         int(user_input[0])
         user_info = db_fetch("SELECT * from users WHERE id = {}".format(user_input[0]))
@@ -181,7 +181,7 @@ def add_to_database(device_info):
     Adds info for a new device to the database.
     :param device_info:
     """
-    db_commit("INSERT INTO devices(device_name,Manufacturer,Model,Type,OS,location,device_id,serial_udid,port,"
+    db_commit("INSERT INTO devices(device_name,Manufacturer,Model,device_type,OS,location,device_id,serial_udid,port,"
               "checked_out_by,TimeCheckedOut,LastReminded)"
               "VALUES('{}','{}','{}','{}','{}','{}','{}','{}','{}','0','0','40000')"
               .format(device_info[0], device_info[1], device_info[2], device_info[3], device_info[4].rstrip(),
