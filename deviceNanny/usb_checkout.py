@@ -323,7 +323,7 @@ def popups(msg, info):
     :return: User input if applicable
     """
     if msg == 'Name Error':
-        text = "Not\\a\\valid name or ID. Would you like to add the user {} {}?".format(info['first_name'], info['last_name'])
+        text = "Not\\ a\\ valid\ name or ID. Would you like to add the user {} {}?".format(info['first_name'], info['last_name'])
         name_cmd = "zenity --question --title Invalid --text {} --ok-label Yes --cancel-label No".format(text)
         return dialog(name_cmd)
     elif msg == 'checkout':
