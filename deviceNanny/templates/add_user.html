@@ -5,12 +5,13 @@
 {% endblock %}
 
 {% block page_header %}
-  <h2>Add Users</h2>
+
 {% endblock %}
 {% block content %}
   <div class="bs-docs-section">
     <div class="row">
       <div class="col-lg-4">
+        <h2>Add Users</h2>
         <form action="" method="post" novalidate>
           {{ add_single_user.hidden_tag() }}
           <fieldset class="form-group">
@@ -23,15 +24,17 @@
             <div class="form-group">
                   {{ add_single_user.slack_id.label }} {{ add_single_user.slack_id(class="form-control") }}
             </div>
-            <div class="form-check-label">
-              {{ add_single_user.location.label }} {{ add_single_user.location}}
-            </div>
             {{ add_single_user.submit(class="btn btn-primary") }}
           </fieldset>
         </form>
       </div>
+      <div class="col-lg-4 offset-lg-2">
+        <h2>Users</h2>
+        {{ table }}
+      </div>
     </div>
   </div>
+
   <div class="bs-docs-section">
     <div class="row">
       <div class="col-lg-4">

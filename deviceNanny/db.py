@@ -31,7 +31,6 @@ def load_settings(app):
     app.config['slack_team_channel'] = settings_data['slack_team_channel']
     app.config['reminder_interval'] = settings_data['reminder_interval']
     app.config['checkout_length'] = settings_data['checkout_length']
-    app.config['message'] = settings_data['message']
 
 
 @click.command('init-db')
