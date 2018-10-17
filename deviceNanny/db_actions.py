@@ -230,7 +230,7 @@ def check_out(user, device_id):
     current_app.logger.debug('[check_out] user_id: {} device_id: {}'.format(user['id'], device_id))
     try:
         user_name = '{} {}'.format(user['first_name'], user['last_name'])
-        db_commit("UPDATE devices SET checked_out_user = {} WHERE device_id = {}".format(user_name,
+        db_commit("UPDATE devices SET checked_out_user = \"{}\" WHERE device_id = {}".format(user_name,
                                                                                          device_id))
         db_commit("UPDATE devices SET checked_out_by = {}, port = NULL, time_checked_out = strftime('%s', 'now'),"
                   "last_reminded = strftime('%s', 'now') where device_id = {}".format(user['id'], device_id))
