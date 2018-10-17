@@ -147,7 +147,7 @@ class NannySlacker:
         self.slack.chat.post_message(
             self.channel,
             attachments=[{
-                "pretext": "Missing Device",
+                "pretext": "Missing Device Checked In",
                 "fallback": "Message from DeviceNanny",
                 "text": text
             }])
