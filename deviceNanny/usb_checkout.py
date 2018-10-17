@@ -276,6 +276,7 @@ def get_info_from_db(user_input, timer, port, device_id, device_name, filename):
     if (user_info is None) or (user_info['id'] == 1) or (user_info['first_name'] == 'Missing') or new_user:
         current_app.logger.info("[get_info_from_db] {} is not a valid ID or name".format(user_input))
         add_user = popups('Name Error', user_info)
+        current_app.logger.info("[get_info_from_db] ADD USER RESPONSE: {}".format(add_user))
         if add_user:
             add_new_user_to_db(user_info)
         else:
@@ -288,7 +289,7 @@ def get_info_from_db(user_input, timer, port, device_id, device_name, filename):
 def add_new_user_to_db(user_info):
     first_name = user_info['first_name']
     last_name = user_info['last_name']
-    get_slack_id(first_name +' '+last_name)
+    get_slack_id(first_name + ' ' + last_name)
     current_app.logger.debug("YES")
 
 
