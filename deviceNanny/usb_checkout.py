@@ -88,7 +88,7 @@ def cancelled(port, device_id, device_name, filename):
         delete_tempfile(filename)
         current_app.logger.debug("[cancelled] FINISHED")
     else:
-        stop_program_if_running()
+        current_app.logger.debug("[cancelled] This doesn't need to do anything")
 
 
 def is_device_connected(port):
