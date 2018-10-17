@@ -276,6 +276,7 @@ def get_info_from_db(user_input, timer, port, device_id, device_name, filename):
     """
     new_user, user_info = db.user_info(user_input)
     if (user_info is None) or (user_info['id'] == 1) or (user_info['first_name'] == 'Missing') or new_user:
+        current_app.logger.debug('[get_info_from_db] Name Error Popup')
         popups('Name Error', user_info)
         current_app.logger.warn(
             "[get_info_from_db] {} is not a valid ID or name".
