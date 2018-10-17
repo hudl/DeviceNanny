@@ -244,7 +244,7 @@ def get_user_info(timer, port, device_id, device_name, filename):
     except Exception as e:
         current_app.logger.debug("[get_user_info] Maybe user cancelled name entry: {}".format(e))
         timer.terminate()
-        cancelled(port, device_id, device_name, filename)
+        cancelled(port, device_name, filename)
         return {'id': 2}
 
 
