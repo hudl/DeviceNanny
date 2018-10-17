@@ -318,9 +318,7 @@ def popups(msg, info):
     if msg == 'Name Error':
         current_app.logger.debug('[popups] NAME ERROR')
         text = "Not a valid name or ID. Would you like to add the user {} {}?".format(info['first_name'], info['last_name'])
-        name_cmd = [
-            "zenity --question --title='ERROR' --text={} --ok-label='Yes' --cancel-label='No'".format(text)
-        ]
+        name_cmd = "zenity --question --title='ERROR' --text={} --ok-label='Yes' --cancel-label='No'".format(text)
         return dialog(name_cmd)
     elif msg == 'checkout':
         text = "Enter your first and last name OR your user ID number:"
