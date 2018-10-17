@@ -229,7 +229,7 @@ def check_out(user_id, device_id):
     """
     current_app.logger.debug('[check_out] user_id: {} device_id: {}'.format(user_id, device_id))
     try:
-        db_commit("UPDATE devices SET checked_out_by = {} {}, port = NULL, time_checked_out = strftime('%s', 'now'),"
+        db_commit("UPDATE devices SET checked_out_by = {}, port = NULL, time_checked_out = strftime('%s', 'now'),"
                   "last_reminded = strftime('%s', 'now') where device_id = {}".format(user_id, device_id))
     except Exception as e:
         current_app.logger.error("[check_out] FAILED TO CHECK OUT DEVICE - {}".format(e))
