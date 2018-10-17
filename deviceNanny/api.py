@@ -77,9 +77,11 @@ def check_in_device(device_id, port):
 
 @bp.route('nanny', methods=['GET'])
 def run_nanny():
-    if not nanny.is_checkout_running():
+    if not usb_checkout.get_pid('start_checkout'):
         nanny.clean_tmp_file()
         nanny.check_usb_connections()
         nanny.verify_registered_connections()
         nanny.checkout_reminders()
+    else:
+        current_app.logger.info('[run_nanny] Checkout currently in progress - skip.')
     return "NANNY DONE"
