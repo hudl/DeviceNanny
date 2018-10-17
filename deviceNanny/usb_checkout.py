@@ -245,7 +245,7 @@ def get_user_info(timer, port, device_id, device_name, filename):
         user_input = popups('checkout', device_name).decode('utf-8')
         timer.terminate()
         return get_info_from_db(user_input.rstrip('\n').split(' '), timer, port, device_id, device_name, filename)
-    except Exception as e:
+    except Exception:
         current_app.logger.debug("[get_user_info] User cancelled name entry")
         timer.terminate()
         cancelled(port, device_id, device_name, filename)
@@ -316,6 +316,7 @@ def popups(msg, info):
     :return: User input if applicable
     """
     if msg == 'Name Error':
+        current_app.logger.debug('[popups] NAME ERROR')
         text = "Not a valid name or ID. Would you like to add the user {} {}?".format(info['first_name'], info['last_name'])
         name_cmd = [
             "zenity --question --title='ERROR' --text={} --ok-label='Yes' --cancel-label='No'".format(text)
