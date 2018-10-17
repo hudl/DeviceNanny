@@ -306,8 +306,8 @@ def get_slack_id(name):
                 current_app.logger.info('[get_slack_id] Slack ID found: {}'.format(user['id']))
                 return user['id']
         current_app.logger.warn('[get_slack_id] No Slack ID for for {}'.format(name))
-    except nanny_slacker.slack.Error:
-        current_app.logger.error('[get_slack_id] Unable to connect to Slack')
+    except Exception as e:
+        current_app.logger.error('[get_slack_id] Exception: {}'.format(e))
 
 
 def popups(msg, info):
