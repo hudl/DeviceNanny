@@ -25,23 +25,23 @@ def update():
         checkout_expires = settings.checkout_expires.data
         office_location = settings.office_location.data
 
-        insert_query = 'UPDATE settings SET {} = "{}" WHERE id = 1'
+        update_query = 'UPDATE settings SET {} = "{}" WHERE id = 1'
 
         if slack_channel:
             current_app.config['slack_channel'] = settings_data['slack_channel']
-            db.execute(insert_query.format('slack_channel', slack_channel))
+            db.execute(update_query.format('slack_channel', slack_channel))
         if slack_team_channel:
             current_app.config['slack_team_channel'] = settings_data['slack_team_channel']
-            db.execute(insert_query.format('slack_team_channel', slack_team_channel))
+            db.execute(update_query.format('slack_team_channel', slack_team_channel))
         if reminder_interval:
             current_app.config['reminder_interval'] = settings_data['reminder_interval']
-            db.execute(insert_query.format('reminder_interval', reminder_interval))
+            db.execute(update_query.format('reminder_interval', reminder_interval))
         if checkout_expires:
             current_app.config['checkout_expires'] = settings_data['checkout_expires']
-            db.execute(insert_query.format('checkout_expires', checkout_expires))
+            db.execute(update_query.format('checkout_expires', checkout_expires))
         if office_location:
             current_app.config['location'] = settings_data['office_location']
-            db.execute(insert_query.format('office_location', office_location))
+            db.execute(update_query.format('office_location', office_location))
 
         db.commit()
         return redirect(url_for('settings.update'))
