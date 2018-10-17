@@ -10,6 +10,7 @@ from deviceNanny.slack import NannySlacker
 import deviceNanny.db_actions as db
 from flask import current_app
 import subprocess
+import requests
 import socket
 import time
 import sys
@@ -273,15 +274,34 @@ def get_info_from_db(user_input, timer, port, device_id, device_name, filename):
     """
     new_user, user_info = db.user_info(user_input)
     if (user_info is None) or (user_info['id'] == 1) or (user_info['first_name'] == 'Missing') or new_user:
-        current_app.logger.debug('[get_info_from_db] Name Error Popup')
-        popups('Name Error', user_info)
-        current_app.logger.warn(
-            "[get_info_from_db] {} is not a valid ID or name".
-            format(user_input))
-        return get_user_info(timer, port, device_id, device_name, filename)
+        current_app.logger.info("[get_info_from_db] {} is not a valid ID or name".format(user_input))
+        add_user = popups('Name Error', user_info)
+        current_app.logger.info("[get_info_from_db] ADD USER RESPONSE: {}".format(add_user))
+        if add_user:
+            add_new_user_to_db(user_info)
+        else:
+            return get_user_info(timer, port, device_id, device_name, filename)
     else:
         current_app.logger.debug("[get_info_from_db] User {} checking out device {}".format(user_info, device_name))
         return user_info
+
+
+def add_new_user_to_db(user_info):
+    first_name = user_info['first_name']
+    last_name = user_info['last_name']
+    get_slack_id(first_name + ' ' + last_name)
+    current_app.logger.debug("YES")
+
+
+def get_slack_id(name):
+    nanny_slacker = NannySlacker()
+    try:
+        for user in nanny_slacker.slack.users.list().body['members']:
+            if user['name'] == name:
+                current_app.logger.info('[get_slack_id] Slack ID found: {}'.format(user['id']))
+                return user['id']
+    except nanny_slacker.slack.Error:
+        current_app.logger.error('[get_slack_id] Unable to connect to Slack')
 
 
 def popups(msg, info):
@@ -298,7 +318,7 @@ def popups(msg, info):
             "zenity", "--question", "--title='ERROR'", "--text='{}'".format(text),
             "--ok-label='Yes'", "--cancel-label='No'"
         ]
-        dialog(name_cmd)
+        return dialog(name_cmd)
     elif msg == 'checkout':
         text = "Enter your first and last name OR your user ID number:"
         checkout_cmd = [
