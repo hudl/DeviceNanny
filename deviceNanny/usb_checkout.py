@@ -82,7 +82,7 @@ def cancelled(port, device_id, device_name, filename):
     """
     nanny = NannySlacker()
     if not is_device_connected(port):
-        db.check_out('1', device_id)
+        db.check_out('2', device_id)
         nanny.help_message(device_name)
     if multiple_checkouts():
         delete_tempfile(filename)

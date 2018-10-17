@@ -257,12 +257,13 @@ def checkout_reminders():
             print("NONONONONO")
 
 
-def registered_ports(location):
+def registered_ports():
     """
     Gets all the ports registered in the database. If a device has a registered
     port, it's connected to the Pi.
     :return: Every port registered in database.
     """
+    location = current_app.config['location']
     ports = db.get_registered_ports(location)
     current_app.logger.debug("[registered_ports] ports: {}".format(ports))
     values = []
@@ -277,9 +278,8 @@ def missing_devices():
     Compares the list of all registered ports to the ports that have devices connected.
     :return: List of ports that are registered but are no longer in use (device is gone)
     """
-    location = current_app.config['location']
-    ports = set(registered_ports(location)) - set(usb_devices())
-    current_app.logger.debug('[missing_devices] Ports: {} Type: {}'.format(ports, type(ports)))
+    ports = set(registered_ports()) - set(usb_devices())
+    current_app.logger.debug('[nanny][missing_devices] Ports: {} Type: {}'.format(ports, type(ports)))
     return ports
 
 
@@ -291,9 +291,9 @@ def missing_device_ids(missing_devices):
     :return: The missing device's device IDs
     """
     location = current_app.config['location']
-    current_app.logger.debug('[missing_device_ids] Missing device ports: {}'.format(missing_devices))
+    current_app.logger.debug('[nanny][missing_device_ids] Missing device ports: {}'.format(missing_devices))
     missing_ids = [db.get_device_id_from_port(location, port) for port in missing_devices]
-    current_app.logger.debug('[missing_device_ids] Missing device IDs: {}'.format(missing_ids))
+    current_app.logger.debug('[nanny][missing_device_ids] Missing device IDs: {}'.format(missing_ids))
     return missing_ids
 
 

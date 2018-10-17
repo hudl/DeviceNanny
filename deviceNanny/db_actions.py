@@ -146,7 +146,7 @@ def user_info(user_input):
     :param user_input: FirstName LastName OR UserID
     :return: FirstName, LastName, SlackID, location, UserID
     """
-    # logging.debug("[db_actions][user_info] user_input = {}. device_type = {}".format(user_input, type(user_input)))
+    # logging.debug([user_info] user_input = {}. device_type = {}".format(user_input, type(user_input)))
     try:
         int(user_input[0])
         user_info = db_fetch("SELECT * FROM users WHERE id = {}".format(user_input[0]))
