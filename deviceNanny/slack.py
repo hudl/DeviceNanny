@@ -63,6 +63,7 @@ class NannySlacker:
         :param device: Device taken
         """
         try:
+            current_app.logger.debug('[check_out_notice] User Info: {} Device: {}'.format(user_info, device))
             user_text = "You checked out `{}`. Checkout will expire after 3 days. Remember to plug the " \
                         "device back in when you return it to the lab. You can renew your checkout from " \
                         "the DeviceNanny web page.".format(device)
