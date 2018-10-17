@@ -145,7 +145,6 @@ def user_info(user_input):
     :param user_input: first_name last_name OR UserID
     :return: first_name, last_name, SlackID, location, UserID
     """
-    # logging.debug([user_info] user_input = {}. device_type = {}".format(user_input, type(user_input)))
     try:
         int(user_input[0])
         user_info = db_fetch("SELECT * FROM users WHERE id = {}".format(user_input[0]))
@@ -155,7 +154,6 @@ def user_info(user_input):
         try:
             user_info = db_fetch("SELECT * from users WHERE first_name = '{}' AND last_name = '{}'"
                                  .format(str(user_input[0]), str(user_input[1])))
-            print("Your id is: {}".format(user_info["id"]))
             current_app.logger.info("[user_info] User name input. Checked out by {}".format(user_info['first_name']))
             return False, user_info
         except Exception as e:

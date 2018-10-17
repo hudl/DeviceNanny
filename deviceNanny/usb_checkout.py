@@ -281,6 +281,11 @@ def get_info_from_db(user_input, timer, port, device_id, device_name, filename):
         current_app.logger.info("[get_info_from_db] ADD USER RESPONSE: {}".format(add_user))
         if add_user == 0:
             user_info = add_new_user_to_db(user_info)
+            current_app.logger.debug('[get_info_from_db] User Info: {} {} {} {} {}'.format(user_info['first_name'],
+                                                                                           user_info['last_name'],
+                                                                                           user_info['id'],
+                                                                                           user_info['slack_id'],
+                                                                                           user_info['location']))
             return user_info
         else:
             return get_user_info(timer, port, device_id, device_name, filename)
@@ -296,7 +301,8 @@ def add_new_user_to_db(user_info):
     user_info['slack_id'] = get_slack_id(first_name + ' ' + last_name)
     user_info['location'] = current_app.config['location']
     current_app.logger.debug('[add_new_user_to_db] USER INFO: {}'.format(user_info))
-    user_id = db.add_user_to_database(user_info)
+    db.add_user_to_database(user_info)
+    user_info = db.user_info([first_name, last_name])
     return user_info
 
 
