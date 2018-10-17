@@ -280,8 +280,8 @@ def get_info_from_db(user_input, timer, port, device_id, device_name, filename):
         add_user = popups('Name Error', user_info)
         current_app.logger.info("[get_info_from_db] ADD USER RESPONSE: {}".format(add_user))
         if add_user == 0:
-            add_new_user_to_db(user_info)
-            return get_user_info(timer, port, device_id, device_name, filename)
+            user_info = add_new_user_to_db(user_info)
+            return user_info
         else:
             return get_user_info(timer, port, device_id, device_name, filename)
     else:
@@ -297,6 +297,7 @@ def add_new_user_to_db(user_info):
     user_info['location'] = current_app.config['location']
     current_app.logger.debug('[add_new_user_to_db] USER INFO: {}'.format(user_info))
     db.add_user_to_database(user_info)
+    return user_info
 
 
 def get_slack_id(name):
