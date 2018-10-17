@@ -61,20 +61,27 @@ class NannySlacker:
         :param user_info: First Name, Last Name, SlackID, location of user who checked out device
         :param device: Device taken
         """
+        user_text = "You checked out `{}`. Checkout will expire after 3 days. Remember to plug the " \
+                    "device back in when you return it to the lab. You can renew your checkout from " \
+                    "the DeviceNanny web page.".format(device)
+
+        channel_text = "*{} {}* just checked out `{}`".format(user_info['first_name'], user_info['last_name'], device)
+
         try:
             self.slack.chat.post_message(
                 user_info['SlackID'],
-                "You checked out `{}`. Checkout will expire after 3 days. Remember to plug the "
-                "device back in when you return it to the lab. You can renew your checkout from "
-                "the DeviceNanny web page.".format(device),
-                as_user=False,
-                username="DeviceNanny")
+                attachments=[{
+                    "pretext": "Device Checked Out",
+                    "fallback": "Message from DeviceNanny",
+                    "text": user_text
+                }])
             self.slack.chat.post_message(
                 self.channel,
-                "*{} {}* just checked out `{}`".format(
-                    user_info['first_name'], user_info['last_name'], device),
-                as_user=False,
-                username="DeviceNanny")
+                attachments=[{
+                    "pretext": "Device Checked Out",
+                    "fallback": "Message from DeviceNanny",
+                    "text": channel_text
+                }])
             logging.debug("[check_out_notice] Checkout message sent.")
         except Exception as e:
             current_app.logger.debug("[check_out_notice] Check out notice NOT sent. {}".format(e))
@@ -85,22 +92,26 @@ class NannySlacker:
         :param user_info: First Name, Last Name, SlackID, location of user who checked in device
         :param device: Device returned
         """
+        user_text = "You checked in `{}`. Thanks!".format(device)
+        channel_text = "*{} {}* just checked in `{}`".format(user_info['first_name'], user_info['last_name'], device)
         try:
             if user_info["first_name"] != "Missing":
                 logging.debug("[check_in_notice] SlackID from user_info: {}".format(
                     user_info['SlackID']))
                 self.slack.chat.post_message(
                     user_info['SlackID'],
-                    "You checked in `{}`. Thanks!".format(device),
-                    as_user=False,
-                    username="DeviceNanny")
+                    attachments=[{
+                        "pretext": "Device Checked In",
+                        "fallback": "Message from DeviceNanny",
+                        "text": user_text
+                    }])
                 self.slack.chat.post_message(
                     self.channel,
-                    "*{} {}* just checked in `{}`".format(
-                        user_info['first_name'],
-                        user_info['last_name'], device),
-                    as_user=False,
-                    username="DeviceNanny")
+                    attachments=[{
+                        "pretext": "Device Checked In",
+                        "fallback": "Message from DeviceNanny",
+                        "text": channel_text
+                    }])
                 logging.debug(
                     "[check_in_notice] {} {} just checked in {}".format(
                         user_info['first_name'],
@@ -116,12 +127,14 @@ class NannySlacker:
         :param firstname: First name of user with expired checkout
         :param lastname: Last name of user with expired checkout
         """
+        text = '`{}` was checked out *{}* ago by *{} {}*'.format(device_id, time_difference, firstname, lastname)
         self.slack.chat.post_message(
             self.channel,
-            '`{}` was checked out *{}* ago by *{} {}*'.format(
-                device_id, time_difference, firstname, lastname),
-            as_user=False,
-            username="DeviceNanny")
+            attachments=[{
+                "pretext": "Expired Checkout",
+                "fallback": "Message from DeviceNanny",
+                "text": text
+            }])
         logging.debug("[post_to_channel] Posted to channel.")
 
     def nanny_check_in(self, device_name):
@@ -130,11 +143,14 @@ class NannySlacker:
         connected device that wasn't checked in.
         :param device_name: Name of device checked in
         """
+        text = "`{}` was checked in by the Nanny.".format(device_name)
         self.slack.chat.post_message(
             self.channel,
-            "`{}` was checked in by the Nanny.".format(device_name),
-            as_user=False,
-            username="DeviceNanny")
+            attachments=[{
+                "pretext": "Missing Device",
+                "fallback": "Message from DeviceNanny",
+                "text": text
+            }])
         logging.debug("[nanny_check_in] Nanny check-in message sent.")
 
     def missing_device_message(self, device_name, time_difference):
@@ -145,12 +161,15 @@ class NannySlacker:
         :param time_difference:
         :return:
         """
+        text = "`{}` has been missing from the device lab for `{}`. If you have it, please return the device to " \
+               "the lab and check it out under your name.".format(device_name, time_difference)
         self.slack.chat.post_message(
             self.team_channel,
-            "`{}` has been missing from the device lab for `{}`. If you have it, please return the device to the lab "
-            "and check it out under your name.".format(device_name, time_difference),
-            as_user=False,
-            username="DeviceNanny")
+            attachments=[{
+                "pretext": "Missing Device",
+                "fallback": "Message from DeviceNanny",
+                "text": text
+            }])
         logging.info(
             "[missing_device_message] Slack reminder sent to team channel for {}".
             format(device_name))
