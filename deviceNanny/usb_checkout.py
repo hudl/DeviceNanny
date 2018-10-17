@@ -210,10 +210,7 @@ def find_port():
                 port[0]))
         return port[0]
     except:
-        current_app.logger.error(
-            "[find_port] No USB actions found near the end of the log!"
-        )
-        stop_program_if_running()
+        current_app.logger.error("[find_port] No USB actions found near the end of the log!")
 
 
 def get_serial(port):
