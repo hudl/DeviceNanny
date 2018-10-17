@@ -142,8 +142,8 @@ def get_device_id_from_serial(serial):
 
 def user_info(user_input):
     """
-    :param user_input: FirstName LastName OR UserID
-    :return: FirstName, LastName, SlackID, location, UserID
+    :param user_input: first_name last_name OR UserID
+    :return: first_name, last_name, SlackID, location, UserID
     """
     # logging.debug([user_info] user_input = {}. device_type = {}".format(user_input, type(user_input)))
     try:
@@ -153,7 +153,7 @@ def user_info(user_input):
         return user_info
     except Exception as e:
         try:
-            user_info = db_fetch("SELECT * from users WHERE FirstName = '{}' AND LastName = '{}'"
+            user_info = db_fetch("SELECT * from users WHERE first_name = '{}' AND last_name = '{}'"
                                  .format(str(user_input[0]), str(user_input[1])))
             print("Your id is: {}".format(user_info["id"]))
             current_app.logger.info("[user_info] User name input. Checked out by {}".format(user_info))
