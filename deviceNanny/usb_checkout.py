@@ -154,7 +154,7 @@ def get_pid(string):
     """
     pid = (subprocess.Popen(['pgrep', '-f', '{}'.format(string)], stdout=subprocess.PIPE).communicate()[0]).decode("utf-8")
     current_app.logger.debug("[get_pid] pid(s): {}".format(pid))
-    return pid
+    return pid + '\n'
 
 
 def kill(pgid):
