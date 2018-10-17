@@ -88,7 +88,7 @@ def cancelled(port, device_id, device_name, filename):
         delete_tempfile(filename)
         current_app.logger.debug("[cancelled] FINISHED")
     else:
-        stop_program_if_running()
+        current_app.logger.debug("[cancelled] This doesn't need to do anything")
 
 
 def is_device_connected(port):
@@ -118,6 +118,8 @@ def multiple_checkouts():
             "[multiple_checkouts] Multiple checkouts in progress."
         )
         return True
+    else:
+        current_app.logger.debug('[multiple_checkouts] One checkout in progress...')
 
 
 def timeout(x, port, device_id, device_name, filename):
@@ -208,10 +210,7 @@ def find_port():
                 port[0]))
         return port[0]
     except:
-        current_app.logger.error(
-            "[find_port] No USB actions found near the end of the log!"
-        )
-        stop_program_if_running()
+        current_app.logger.error("[find_port] No USB actions found near the end of the log!")
 
 
 def get_serial(port):
@@ -243,8 +242,7 @@ def get_user_info(timer, port, device_id, device_name, filename):
         return get_info_from_db(user_input.rstrip('\n').split(' '), timer, port, device_id, device_name, filename)
     except Exception as e:
         current_app.logger.debug("[get_user_info] {}".format(str(e)))
-        current_app.logger.debug(
-            "[get_user_info] User cancelled name entry")
+        current_app.logger.debug("[get_user_info] User cancelled name entry")
         timer.terminate()
         cancelled(port, device_id, device_name, filename)
 
@@ -273,18 +271,16 @@ def get_info_from_db(user_input, timer, port, device_id, device_name, filename):
     :param user_input: Either first and last name or user ID.
     :return: FirstName, LastName, SlackID, location
     """
-    user_info = db.user_info(user_input)
-    if (user_info is None) or (user_info['id'] == 1) or (
-            user_info['first_name'] == 'Missing'):
+    new_user, user_info = db.user_info(user_input)
+    if (user_info is None) or (user_info['id'] == 1) or (user_info['first_name'] == 'Missing') or new_user:
+        current_app.logger.debug('[get_info_from_db] Name Error Popup')
         popups('Name Error', user_info)
         current_app.logger.warn(
             "[get_info_from_db] {} is not a valid ID or name".
             format(user_input))
         return get_user_info(timer, port, device_id, device_name, filename)
     else:
-        current_app.logger.debug(
-            "[get_info_from_db] User {} checking out device {}".
-            format(user_info, device_name))
+        current_app.logger.debug("[get_info_from_db] User {} checking out device {}".format(user_info, device_name))
         return user_info
 
 

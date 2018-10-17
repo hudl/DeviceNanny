@@ -41,9 +41,10 @@ class NannySlacker:
         :param time_difference: Time since device was checked out
         :param device_name: Name of expired device
         """
-        text = "It's been *{}* since you checked out `{}`. Please renew your checkout online or return it " \
-               "to the device lab.".format(time_difference, device_name)
         try:
+            text = "It's been *{}* since you checked out `{}`. Please renew your checkout online or return it " \
+                   "to the device lab.".format(time_difference, device_name)
+
             self.slack.chat.post_message(
                 slack_id,
                 attachments=[{
@@ -61,13 +62,14 @@ class NannySlacker:
         :param user_info: First Name, Last Name, SlackID, location of user who checked out device
         :param device: Device taken
         """
-        user_text = "You checked out `{}`. Checkout will expire after 3 days. Remember to plug the " \
-                    "device back in when you return it to the lab. You can renew your checkout from " \
-                    "the DeviceNanny web page.".format(device)
-
-        channel_text = "*{} {}* just checked out `{}`".format(user_info['first_name'], user_info['last_name'], device)
-
         try:
+            user_text = "You checked out `{}`. Checkout will expire after 3 days. Remember to plug the " \
+                        "device back in when you return it to the lab. You can renew your checkout from " \
+                        "the DeviceNanny web page.".format(device)
+
+            channel_text = "*{} {}* just checked out `{}`".format(user_info['first_name'], user_info['last_name'],
+                                                                  device)
+
             self.slack.chat.post_message(
                 user_info['SlackID'],
                 attachments=[{
@@ -92,9 +94,11 @@ class NannySlacker:
         :param user_info: First Name, Last Name, SlackID, location of user who checked in device
         :param device: Device returned
         """
-        user_text = "You checked in `{}`. Thanks!".format(device)
-        channel_text = "*{} {}* just checked in `{}`".format(user_info['first_name'], user_info['last_name'], device)
         try:
+            user_text = "You checked in `{}`. Thanks!".format(device)
+            channel_text = "*{} {}* just checked in `{}`".format(user_info['first_name'], user_info['last_name'],
+                                                                 device)
+
             if user_info["first_name"] != "Missing":
                 logging.debug("[check_in_notice] SlackID from user_info: {}".format(
                     user_info['SlackID']))
