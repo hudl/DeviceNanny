@@ -150,10 +150,9 @@ def get_pid(string):
     :param string: [s]tart_checkout
     :return: process ID(s) as int
     """
-    pid = (subprocess.Popen(['pgrep', '-f', '{}'.format(string)]))
-    out, err = pid.communicate()
-    current_app.logger.debug("[get_pid] out: {} err: {}".format(out, err))
-    return out
+    pid = (subprocess.Popen(['pgrep', '-f', '{}'.format(string)], stdout=subprocess.PIPE).communicate()[0]).decode("utf-8")
+    current_app.logger.debug("[get_pid] pid(s): {}".format(pid))
+    return pid
 
 
 def kill(pgid):
