@@ -160,7 +160,7 @@ def user_info(user_input):
             return user_info
         except Exception as e:
             current_app.logger.info('[user_info] User not found. {}'.format(e))
-            return {'first_name': user_input[1], 'last_name': user_input[2], 'id': None}
+            return True, {'first_name': str(user_input[1]), 'last_name': str(user_input[2]), 'id': None}
 
 
 def update_time_reminded(device_name):
