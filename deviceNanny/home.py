@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, flash
+from flask import Blueprint, render_template
 from flask_table import Table, Col
 
 from deviceNanny.db import get_db
@@ -8,14 +8,12 @@ bp = Blueprint('home', __name__, url_prefix='/')
 
 class DeviceTable(Table):
     html_attrs = {'class': 'table table-hover'}
-    device_id = Col('Device Id')
     device_name = Col('Device Name')
     manufacturer = Col('Manufacture')
     model = Col('Model')
     device_type = Col('Device Type')
     os_version = Col('OS Version')
-    checked_out_by = Col('Checked out by')
-    location = Col('Office Location')
+    user_name = Col('Checked Out By')
 
     def get_tr_attrs(self, item):
         if int(item['id']) % 2 == 0:
@@ -28,7 +26,8 @@ class DeviceTable(Table):
 def home():
     db = get_db()
     rows = db.execute(
-        'SELECT id, device_id, device_name, manufacturer, model, device_type, os_version, checked_out_by, location FROM devices'
+        "SELECT devices.id, devices.device_name, devices.manufacturer, devices.model, devices.device_type, devices.os_version, users.first_name || ' ' || users.last_name as user_name "
+        "FROM devices INNER JOIN users ON devices.checked_out_by=users.id"
     ).fetchall()
     table = DeviceTable(rows)
 
