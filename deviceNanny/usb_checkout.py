@@ -113,7 +113,7 @@ def multiple_checkouts():
     :return: True or None
     """
     pid = get_pid("[s]tart_checkout")
-    if pid:
+    if len(pid.strip()) > 1:
         current_app.logger.debug(
             "[multiple_checkouts] Multiple checkouts in progress."
         )
