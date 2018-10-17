@@ -272,7 +272,7 @@ def get_info_from_db(user_input, timer, port, device_id, device_name, filename):
     user_info = db.user_info(user_input)
     if (user_info is None) or (user_info['id'] == 1) or (
             user_info['first_name'] == 'Missing'):
-        popups('Name Error', 'None')
+        popups('Name Error', user_info)
         current_app.logger.warn(
             "[get_info_from_db] {} is not a valid ID or name".
             format(user_input))
@@ -284,30 +284,32 @@ def get_info_from_db(user_input, timer, port, device_id, device_name, filename):
         return user_info
 
 
-def popups(msg, device_name):
+def popups(msg, info):
     """
     Various Zenity windows for name errors, checkouts, USB connection issues,
     and new device registers.
     :param msg: Type of message needed
+    :param info: Device name or user input
     :return: User input if applicable
     """
     if msg == 'Name Error':
-        text = "Not a valid name or ID"
+        text = "Not a valid name or ID. Would you like to add the user {} {}?".format(info['first_name'], info['last_name'])
         name_cmd = [
-            "zenity", "--error", "--title='ERROR'", "--text='{}'".format(text)
+            "zenity", "--question", "--title='ERROR'", "--text='{}'".format(text),
+            "--ok-label='Yes'", "--cancel-label='No'"
         ]
         dialog(name_cmd)
     elif msg == 'checkout':
         text = "Enter your first and last name OR your user ID number:"
         checkout_cmd = [
             "zenity", "--entry",
-            "--title='Device Checkout: {}'".format(device_name),
+            "--title='Device Checkout: {}'".format(info),
             "--text='{}'".format(text)
         ]
         return dialog(checkout_cmd)
     elif msg == 'USB Connection':
         text = "Device {} detected more than once. Either you plugged " \
-            "it back in without finishing checkout OR it's a bad USB cord.".format(device_name)
+            "it back in without finishing checkout OR it's a bad USB cord.".format(info)
         conn_cmd = [
             "zenity", "--error", "--title='ERROR'", "--text='{}'".format(text)
         ]
