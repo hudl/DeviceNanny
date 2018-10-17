@@ -54,6 +54,7 @@ def add():
                 (first_name, last_name, slack_id, current_app.config['location'])
             )
             db.commit()
+            flash('Successfully added user {} {}'.format(first_name, last_name))
             return redirect(url_for('user.add'))
 
         flash(error)
@@ -74,6 +75,7 @@ def add():
                 cursor.execute(insert_query, user_data)
 
         db.commit()
+        flash('Successfully imported users from csv')
         file.close()
         return redirect(url_for('user.add'))
 

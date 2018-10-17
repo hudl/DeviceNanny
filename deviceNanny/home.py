@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template
+from flask import Blueprint, render_template, flash
 from flask_table import Table, Col
 
 from deviceNanny.db import get_db
@@ -31,4 +31,5 @@ def home():
         'SELECT id, device_id, device_name, manufacturer, model, device_type, os_version, checked_out_by, location FROM devices'
     ).fetchall()
     table = DeviceTable(rows)
+
     return render_template('home.html', table=table)
