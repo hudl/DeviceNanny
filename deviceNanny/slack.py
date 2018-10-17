@@ -28,7 +28,7 @@ class NannySlacker:
         self.slack.chat.post_message(
             self.channel,
             attachments=[{
-                "pretext": "Device Nanny",
+                "pretext": "Missing Device",
                 "fallback": "Message from DeviceNanny",
                 "text": text
             }])
@@ -47,7 +47,7 @@ class NannySlacker:
             self.slack.chat.post_message(
                 slack_id,
                 attachments=[{
-                    "pretext": "Device Nanny",
+                    "pretext": "Checkout Reminder",
                     "fallback": "Message from DeviceNanny",
                     "text": text
                 }])
