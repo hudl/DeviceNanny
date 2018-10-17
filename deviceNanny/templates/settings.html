@@ -9,33 +9,34 @@
 {% endblock %}
 {% block content %}
 <div class="bs-docs-section">
-    <div class="row">
-      <div class="col-lg-4">
-        <form action="" method=post enctype=multipart/form-data>
-          {{ settings.hidden_tag() }}
-          <fieldset class="form-group">
-            <div class="form-group">
-            {{ settings.slack_channel.label }} {{ settings.slack_channel(class="form-control", value=settings_data['slack_channel']) }}
-            </div>
-            <div class="form-group">
-            {{ settings.slack_team_channel.label }} {{ settings.slack_team_channel(class="form-control", value=settings_data['slack_team_channel']) }}
-            </div>
-            <div class="form-group">
-            {{ settings.reminder_interval.label }} {{ settings.reminder_interval(class="form-control", value=settings_data['reminder_interval']) }}
-            </div>
-            <div class="form-group">
-            {{ settings.checkout_length.label }} {{ settings.checkout_length(class="form-control", value=settings_data['checkout_length']) }}
-            </div>
-            <div class="form-group">
-            {{ settings.office_location.label }} {{ settings.office_location(class="form-control", value=settings_data['office_location']) }}
-            </div>
-            <div class="form-group">
-            {{ settings.message.label }} {{ settings.message(class="form-control", value=settings_data['message']) }}
-            </div>
-            {{ settings.update_submit(class="btn btn-primary") }}
-          </fieldset>
-        </form>
-      </div>
+  <div class="row">
+    <div class="col-lg-4">
+      <form action="" method=post enctype=multipart/form-data>
+        {{ settings.hidden_tag() }}
+        <fieldset class="form-group">
+          <div class="form-group">
+          {{ settings.slack_channel.label }} {{ settings.slack_channel(class="form-control") }}
+          </div>
+          <div class="form-group">
+          {{ settings.slack_team_channel.label }} {{ settings.slack_team_channel(class="form-control") }}
+          </div>
+          <div class="form-group">
+          {{ settings.reminder_interval.label }} {{ settings.reminder_interval(class="form-control") }}
+          </div>
+          <div class="form-group">
+          {{ settings.checkout_length.label }} {{ settings.checkout_length(class="form-control") }}
+          </div>
+          <div class="form-group">
+          {{ settings.office_location.label }} {{ settings.office_location(class="form-control") }}
+          </div>
+          <div class="form-group">
+          {{ settings.message.label }} {{ settings.message(class="form-control") }}
+          </div>
+          {{ settings.update_submit(class="btn btn-primary") }}
+        </fieldset>
+      </form>
     </div>
   </div>
+</div>
+
 {% endblock %}

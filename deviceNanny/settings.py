@@ -9,11 +9,16 @@ bp = Blueprint('settings', __name__, url_prefix='/settings')
 
 @bp.route('/update', methods=('GET', 'POST'))
 def update():
-    settings = SettingsForm()
     db = get_db()
     settings_data = db.execute(
         'SELECT * FROM settings WHERE id = 1'
     ).fetchone()
+    settings = SettingsForm(slack_channel=settings_data['slack_channel'],
+                            slack_team_channel=settings_data['slack_team_channel'],
+                            reminder_interval=settings_data['reminder_interval'],
+                            checkout_length=settings_data['checkout_length'],
+                            office_location=settings_data['office_location'],
+                            message=settings_data['message'])
     if settings.validate_on_submit():
         slack_channel = settings.slack_channel.data
         slack_team_channel = settings.slack_team_channel.data
