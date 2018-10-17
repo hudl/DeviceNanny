@@ -177,7 +177,11 @@ def dialog(popup):
     :param popup: Parameters set in popups()
     :return: user input from window, if needed
     """
-    output = subprocess.check_output(popup, timeout=120)
+    if '--question' in popup[0]:
+        output = os.system(popup)
+        current_app.logger.debug('[dialog] Output: {}'.format(output))
+    else:
+        output = subprocess.check_output(popup, timeout=120)
     return output
 
 
@@ -242,7 +246,6 @@ def get_user_info(timer, port, device_id, device_name, filename):
         timer.terminate()
         return get_info_from_db(user_input.rstrip('\n').split(' '), timer, port, device_id, device_name, filename)
     except Exception as e:
-        current_app.logger.debug("[get_user_info] {}".format(str(e)))
         current_app.logger.debug("[get_user_info] User cancelled name entry")
         timer.terminate()
         cancelled(port, device_id, device_name, filename)
@@ -315,8 +318,7 @@ def popups(msg, info):
     if msg == 'Name Error':
         text = "Not a valid name or ID. Would you like to add the user {} {}?".format(info['first_name'], info['last_name'])
         name_cmd = [
-            "zenity", "--question", "--title='ERROR'", "--text='{}'".format(text),
-            "--ok-label='Yes'", "--cancel-label='No'"
+            "zenity --question --title='ERROR' --text={} --ok-label='Yes' --cancel-label='No'".format(text)
         ]
         return dialog(name_cmd)
     elif msg == 'checkout':
