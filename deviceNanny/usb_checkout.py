@@ -257,8 +257,7 @@ def get_user_info_from_db(device_id):
     checked_out_by = []
     checked_out_by.append(db.checked_out_by(device_id))
     current_app.logger.debug("[get_user_info_from_db] checked_out_by = {}".format(checked_out_by))
-    user_info = db.user_info(checked_out_by)
-    current_app.logger.debug("[get_user_info_from_db] user_info = {}".format(user_info[1]))
+    new_user, user_info = db.user_info(checked_out_by)
     return user_info
 
 
