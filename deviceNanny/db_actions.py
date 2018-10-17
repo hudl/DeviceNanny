@@ -221,19 +221,16 @@ def check_in(device_id, port):
         print(e)
 
 
-def check_out(user, device_id):
+def check_out(user_id, device_id):
     """
     Updates database with check out info.
     :param user_id: User checking out device. Missing device ID is 2
     :param device_id: Device ID of device getting checked out
     """
-    current_app.logger.debug('[check_out] user_id: {} device_id: {}'.format(user['id'], device_id))
+    current_app.logger.debug('[check_out] user_id: {} device_id: {}'.format(user_id, device_id))
     try:
-        user_name = '{} {}'.format(user['first_name'], user['last_name'])
-        db_commit("UPDATE devices SET checked_out_user = \"{}\" WHERE device_id = {}".format(user_name,
-                                                                                         device_id))
         db_commit("UPDATE devices SET checked_out_by = {}, port = NULL, time_checked_out = strftime('%s', 'now'),"
-                  "last_reminded = strftime('%s', 'now') where device_id = {}".format(user['id'], device_id))
+                  "last_reminded = strftime('%s', 'now') where device_id = {}".format(user_id, device_id))
     except Exception as e:
         current_app.logger.error("[check_out] FAILED TO CHECK OUT DEVICE - {}".format(e))
 

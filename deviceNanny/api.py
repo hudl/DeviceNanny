@@ -58,7 +58,7 @@ def checkout_device(filename, location, port):
     timer = multiprocessing.Process(target=usb_checkout.timeout, name="Timer", args=(30, port, device_id, device_name, filename))
     timer.start()
     user_info = usb_checkout.get_user_info(timer, port, device_id, device_name, filename)
-    db_actions.check_out(user_info, device_id)
+    db_actions.check_out(user_info['id'], device_id)
     slacker_nanny = NannySlacker()
     slacker_nanny.check_out_notice(user_info, device_name)
     return "DONE"
