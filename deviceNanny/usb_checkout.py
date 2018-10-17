@@ -319,8 +319,7 @@ def popups(msg, info):
     if msg == 'Name Error':
         text = "Not a valid name or ID. Would you like to add the user {} {}?".format(info['first_name'], info['last_name'])
         name_cmd = [
-            "zenity", "--question", "--title='ERROR'", "--text='{}'".format(text),
-            "--ok-label='Yes'", "--cancel-label='No'"
+            "zenity --question --title='ERROR' --text={} --ok-label='Yes' --cancel-label='No'".format(text)
         ]
         return dialog(name_cmd)
     elif msg == 'checkout':
