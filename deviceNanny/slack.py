@@ -29,7 +29,7 @@ class NannySlacker:
             "after taking a device.".format(device_name),
             as_user=False,
             username="DeviceNanny")
-        logging.debug("[slack][help_message] Help message sent.")
+        logging.debug("[help_message] Help message sent.")
 
     def user_reminder(self, slack_id, time_difference, device_name):
         """
@@ -45,9 +45,9 @@ class NannySlacker:
                 "to the device lab.".format(time_difference, device_name),
                 as_user=False,
                 username="DeviceNanny")
-            logging.debug("[slack][user_reminder] Reminder sent to user sent")
+            logging.debug("[user_reminder] Reminder sent to user sent")
         except Exception as e:
-            logging.warning("[slack][user_reminder] Incorrect Slack ID.")
+            logging.warning("[user_reminder] Incorrect Slack ID.")
 
     def check_out_notice(self, user_info, device):
         """
@@ -69,9 +69,9 @@ class NannySlacker:
                     user_info['first_name'], user_info['last_name'], device),
                 as_user=False,
                 username="DeviceNanny")
-            logging.debug("[slack][check_out_notice] Checkout message sent.")
+            logging.debug("[check_out_notice] Checkout message sent.")
         except Exception as e:
-            current_app.logger.debug("[slack][check_out_notice] Check out notice NOT sent. {}".format(e))
+            current_app.logger.debug("[check_out_notice] Check out notice NOT sent. {}".format(e))
 
     def check_in_notice(self, user_info, device):
         """
@@ -81,7 +81,7 @@ class NannySlacker:
         """
         try:
             if user_info["first_name"] != "Missing":
-                logging.debug("[slack][check_in_notice] SlackID from user_info: {}".format(
+                logging.debug("[check_in_notice] SlackID from user_info: {}".format(
                     user_info['SlackID']))
                 self.slack.chat.post_message(
                     user_info['SlackID'],
@@ -96,11 +96,11 @@ class NannySlacker:
                     as_user=False,
                     username="DeviceNanny")
                 logging.debug(
-                    "[slack][check_in_notice] {} {} just checked in {}".format(
+                    "[check_in_notice] {} {} just checked in {}".format(
                         user_info['first_name'],
                         user_info['LastName'], device))
         except Exception as e:
-            current_app.logger.debug("[slack][check_in_notice] Check in message not sent. {}".format(e))
+            current_app.logger.debug("[check_in_notice] Check in message not sent. {}".format(e))
 
     def post_to_channel(self, device_id, time_difference, firstname, lastname):
         """
@@ -116,7 +116,7 @@ class NannySlacker:
                 device_id, time_difference, firstname, lastname),
             as_user=False,
             username="DeviceNanny")
-        logging.debug("[slack][post_to_channel] Posted to channel.")
+        logging.debug("[post_to_channel] Posted to channel.")
 
     def nanny_check_in(self, device_name):
         """
@@ -129,7 +129,7 @@ class NannySlacker:
             "`{}` was checked in by the Nanny.".format(device_name),
             as_user=False,
             username="DeviceNanny")
-        logging.debug("[slack][nanny_check_in] Nanny check-in message sent.")
+        logging.debug("[nanny_check_in] Nanny check-in message sent.")
 
     def missing_device_message(self, device_name, time_difference):
         """
@@ -146,5 +146,5 @@ class NannySlacker:
             as_user=False,
             username="DeviceNanny")
         logging.info(
-            "[slack][missing_device_message] Slack reminder sent to team channel for {}".
+            "[missing_device_message] Slack reminder sent to team channel for {}".
             format(device_name))

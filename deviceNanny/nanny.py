@@ -76,8 +76,7 @@ def update_db(port):
             current_app.logger.info(
                 "[update_db] Device {} checked in.".format(device_id))
         else:
-            current_app.logger.debug("[update_db] Device {} isn't checked out.".
-                          format(device_id))
+            current_app.logger.debug("[update_db] Device {} isn't checked out.".format(device_id))
             verify_match(serial, location, port, device_id)
 
 
@@ -130,17 +129,17 @@ def is_device_checked_out(device_id):
     """
     checked_out_by = db.checked_out_by(device_id)
     if checked_out_by is 2:
-        current_app.logger.debug(
+        current_app.logger.info(
             "[is_device_checked_out] Device {} is registered as missing".
             format(device_id))
         return True
     elif checked_out_by is not 1:
-        current_app.logger.debug(
+        current_app.logger.info(
             "[is_device_checked_out] Device {} is checked out by {}".
             format(device_id, checked_out_by))
         return True
     else:
-        current_app.logger.debug(
+        current_app.logger.info(
             "[is_device_checked_out] Device {} is not checked out".
             format(device_id))
         return False

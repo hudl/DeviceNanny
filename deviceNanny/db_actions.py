@@ -8,7 +8,7 @@ def db_fetch(string):
         item = db.execute(string).fetchone()
         return item
     except Exception as e:
-        current_app.logger.error("[db_actions][db_fetch] Exception - {}".format(e))
+        current_app.logger.error("[db_fetch] Exception - {}".format(e))
 
 
 def db_fetch_all(string):
@@ -19,7 +19,7 @@ def db_fetch_all(string):
         return item
     except Exception as e:
         current_app.logger.error(
-            "[db_actions][db_fetch_all] Exception - {}".format(e))
+            "[db_fetch_all] Exception - {}".format(e))
 
 
 def db_commit(string):
@@ -28,7 +28,7 @@ def db_commit(string):
         db.execute(string)
         db.commit()
     except Exception as e:
-        current_app.logger.error("[db_actions][db_commit] Exception - {}".format(e))
+        current_app.logger.error("[db_commit] Exception - {}".format(e))
         print(e)
 
 
@@ -41,7 +41,7 @@ def new_device_id():
         id_number = last_id_num['device_id'] + 1
     except Exception as e:
         id_number = '0'
-        current_app.logger.debug("[db_actions][new_device_id] {}".format(id_number))
+        current_app.logger.debug("[new_device_id] {}".format(id_number))
         print(e)
     return id_number
 
@@ -60,7 +60,7 @@ def checked_out_by(device_id):
     :return: UserID
     """
     user_info = db_fetch("SELECT checked_out_by from devices WHERE device_id = {}".format(int(device_id)))
-    current_app.logger.debug("[db_actions][checked_out_by] device_id {} checked out by {}".format(
+    current_app.logger.debug("[checked_out_by] device_id {} checked out by {}".format(
         device_id, user_info["checked_out_by"]))
     return user_info["checked_out_by"]
 
@@ -76,7 +76,7 @@ def get_device_name(location, port):
         return device["device_name"]
     except Exception as e:
         current_app.logger.debug(
-            "[db_actions][get_device_name] Exception - {}".format(e))
+            "[get_device_name] Exception - {}".format(e))
         print(e)
 
 
@@ -86,16 +86,16 @@ def get_device_name_from_id(device_id):
     :return: device_name
     """
     # logging.debug(
-    #     "[db_actions][get_device_name_from_id] Device ID = {}, location = {}".
+    #     "[get_device_name_from_id] Device ID = {}, location = {}".
     #     format(device_id, location))
     location = current_app.config['location']
     try:
         device = db_fetch("SELECT device_name from devices WHERE device_id = '{}' AND location = '{}'"
                           .format(device_id, location))
-        current_app.logger.debug("[db_actions][get_device_name_from_id] Device Name: {}".format(device["device_name"]))
+        current_app.logger.debug("[get_device_name_from_id] Device Name: {}".format(device["device_name"]))
         return device["device_name"]
     except Exception as e:
-        current_app.logger.error("[db_actions][get_device_name_from_id] Exception - {}".format(e))
+        current_app.logger.error("[get_device_name_from_id] Exception - {}".format(e))
         print(e)
 
 
@@ -105,12 +105,12 @@ def get_device_id_from_port(location, port):
     :param location:
     :return: device_id
     """
-    current_app.logger.debug("[db_actions][get_device_id_from_port] Port: {} Location: {}".format(port, location))
+    current_app.logger.debug("[get_device_id_from_port] Port: {} Location: {}".format(port, location))
     device = db_fetch("SELECT device_id from devices WHERE location = '{}' AND port = '{}'".format(location, port))
     try:
         return device["device_id"]
     except Exception as e:
-        current_app.logger.debug("[db_actions][get_device_id_from_port] No device ID for port {}. {}".format(port, e))
+        current_app.logger.debug("[get_device_id_from_port] No device ID for port {}. {}".format(port, e))
         pass
 
 
@@ -123,7 +123,7 @@ def get_port_from_device_id(device_id):
         try:
             return port["port"]
         except Exception as e:
-            current_app.logger.debug("[db_actions][get_port_from_device_id] No port registered for device {}".format(device_id))
+            current_app.logger.debug("[get_port_from_device_id] No port registered for device {}".format(device_id))
             print(e)
 
 
@@ -136,7 +136,7 @@ def get_device_id_from_serial(serial):
     try:
         return device["device_id"]
     except TypeError as e:
-        current_app.logger.info("[db_actions][get_device_id_from_serial] "
+        current_app.logger.info("[get_device_id_from_serial] "
                                 "No device ID for serial {}: {}".format(serial, e))
 
 
@@ -149,14 +149,14 @@ def user_info(user_input):
     try:
         int(user_input[0])
         user_info = db_fetch("SELECT * FROM users WHERE id = {}".format(user_input[0]))
-        current_app.logger.info("[db_actions][user_info] id input. Checked out by {}".format(user_info))
+        current_app.logger.info("[user_info] id input. Checked out by {}".format(user_info))
         return user_info
     except Exception as e:
         try:
             user_info = db_fetch("SELECT * from users WHERE FirstName = '{}' AND LastName = '{}'"
                                  .format(str(user_input[0]), str(user_input[1])))
             print("Your id is: {}".format(user_info["id"]))
-            current_app.logger.info("[db_actions][user_info] User name input. Checked out by {}".format(user_info))
+            current_app.logger.info("[user_info] User name input. Checked out by {}".format(user_info))
             return user_info
         except Exception as e:
             print(e)
@@ -168,7 +168,7 @@ def update_time_reminded(device_name):
     :param device_name:
     """
     db_commit("UPDATE devices set last_reminded = unix_timestamp() where device_name = '{}'".format(device_name))
-    current_app.logger.info("[db_actions][update_time_reminded] last_reminded has been reset to current time.")
+    current_app.logger.info("[update_time_reminded] last_reminded has been reset to current time.")
 
 
 def clear_port(device_id):
@@ -200,7 +200,7 @@ def check_in(device_id, port):
     try:
         db_commit("UPDATE devices SET checked_out_by = '1', port = '{}' where device_id = {}".format(port, device_id))
     except Exception as e:
-        current_app.logger.debug("[db_actions][check_in] Exception - {}".format(e))
+        current_app.logger.debug("[check_in] Exception - {}".format(e))
         print(e)
 
 
@@ -214,7 +214,7 @@ def check_out(user_id, device_id):
         db_commit("UPDATE devices SET checked_out_by = {}, port = NULL, time_checked_out = strftime('%s', 'now'),"
                   "last_reminded = strftime('%s', 'now') where device_id = {}".format(user_id, device_id))
     except Exception as e:
-        current_app.logger.error("[db_actions][check_out] FAILED TO CHECK OUT DEVICE - {}".format(e))
+        current_app.logger.error("[check_out] FAILED TO CHECK OUT DEVICE - {}".format(e))
 
 
 def get_device_status(device_id):

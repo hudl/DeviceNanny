@@ -23,9 +23,7 @@ def devices():
 
 @bp.route('devices/detected', methods=['GET'])
 def device_detected():
-    # logging.debug("[usb_checkout] STARTED")
     location = current_app.config['location']
-    # logging.info("LOCATION: {}".format(location))
     port = usb_checkout.find_port()
     serial = usb_checkout.get_serial(port)
     device_id = db_actions.get_device_id_from_serial(serial)
@@ -47,13 +45,14 @@ def device_detected():
 
 @bp.route('devices/add', methods=['POST'])
 def add_device(serial, port, location, filename):
+    current_app.logger.info("[checkout_device] NEW DEVICE")
     usb_checkout.to_database(serial, port, location, filename)
     return "DONE"
 
 
 @bp.route('devices/checkout', methods=['PUT'])
 def checkout_device(filename, location, port):
-    current_app.logger.info("[usb_checkout][checkout_device] CHECK OUT")
+    current_app.logger.info("[checkout_device] CHECK OUT")
     device_id = db_actions.get_device_id_from_port(location, port)
     device_name = db_actions.get_device_name_from_id(device_id)
     timer = multiprocessing.Process(target=usb_checkout.timeout, name="Timer", args=(30, port, device_id, device_name, filename))
@@ -67,7 +66,7 @@ def checkout_device(filename, location, port):
 
 @bp.route('devices/check-in', methods=['PUT'])
 def check_in_device(device_id, port):
-    current_app.logger.info("[usb_checkout][check_in_device] CHECK IN")
+    current_app.logger.info("[check_in_device] CHECK IN")
     device_name = db_actions.get_device_name_from_id(device_id)
     user_info = usb_checkout.get_user_info_from_db(device_id)
     db_actions.check_in(device_id, port)
