@@ -296,7 +296,7 @@ def add_new_user_to_db(user_info):
     user_info['slack_id'] = get_slack_id(first_name + ' ' + last_name)
     user_info['location'] = current_app.config['location']
     current_app.logger.debug('[add_new_user_to_db] USER INFO: {}'.format(user_info))
-    db.add_user_to_database(user_info)
+    user_id = db.add_user_to_database(user_info)
     return user_info
 
 
@@ -306,7 +306,6 @@ def get_slack_id(name):
         current_app.logger.debug('[get_slack_id] Name: {}'.format(name))
         for user in nanny_slacker.slack.users.list().body['members']:
             if not user['deleted']:
-                current_app.logger.debug('[get_slack_id] Real Name: {}'.format(user['real_name']))
                 if user['real_name'] == name:
                     current_app.logger.info('[get_slack_id] Slack ID found: {}'.format(user['id']))
                     return user['id']
