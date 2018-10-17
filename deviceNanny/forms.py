@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, RadioField, SubmitField, FileField, SelectField
+from wtforms import StringField, RadioField, SubmitField, FileField, SelectField, TextAreaField
 from wtforms.validators import DataRequired
 
 
@@ -46,10 +46,9 @@ class SingleDeviceForm(FlaskForm):
 class SettingsForm(FlaskForm):
     slack_channel = StringField('Slack Channel')
     slack_team_channel = StringField('Slack Team Channel')
-    reminder_interval = StringField('Reminder Interval')
-    checkout_length = StringField('Checkout Length')
+    reminder_interval = StringField('Reminder Interval (hours)')
+    checkout_length = StringField('Checkout Length (hours)')
     office_location = StringField('Office Location')
-    message = StringField('Slack Message')
     update_submit = SubmitField('Update')
 
 
