@@ -204,7 +204,8 @@ def add_user_to_database(user_info):
         current_app.logger.debug('[add_user_to_database] Exception: {}'.format(e))
 
 
-def get_user_id()
+def get_user_id():
+    pass
 
 
 def check_in(device_id, port):
