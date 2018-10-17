@@ -294,7 +294,7 @@ def add_new_user_to_db(user_info):
     last_name = user_info['last_name']
     user_info['slack_id'] = get_slack_id(first_name + ' ' + last_name)
     user_info['location'] = current_app.config['location']
-    add_new_user_to_db(user_info)
+    db.add_user_to_database(user_info)
 
 
 def get_slack_id(name):
