@@ -280,7 +280,7 @@ def get_info_from_db(user_input, timer, port, device_id, device_name, filename):
         current_app.logger.info("[get_info_from_db] {} is not a valid ID or name".format(user_input))
         add_user = popups('Name Error', user_info)
         current_app.logger.info("[get_info_from_db] ADD USER RESPONSE: {}".format(add_user))
-        if add_user:
+        if add_user == 0:
             add_new_user_to_db(user_info)
         else:
             return get_user_info(timer, port, device_id, device_name, filename)
@@ -318,7 +318,7 @@ def popups(msg, info):
     if msg == 'Name Error':
         current_app.logger.debug('[popups] NAME ERROR')
         text = "Not a valid name or ID. Would you like to add the user {} {}?".format(info['first_name'], info['last_name'])
-        name_cmd = "zenity --question --title='ERROR' --text={} --ok-label='Yes' --cancel-label='No'".format(text)
+        name_cmd = "zenity --question --title ERROR --text {} --ok-label Yes --cancel-label No".format(text)
         return dialog(name_cmd)
     elif msg == 'checkout':
         text = "Enter your first and last name OR your user ID number:"
