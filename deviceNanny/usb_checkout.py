@@ -246,7 +246,6 @@ def get_user_info(timer, port, device_id, device_name, filename):
         timer.terminate()
         return get_info_from_db(user_input.rstrip('\n').split(' '), timer, port, device_id, device_name, filename)
     except Exception as e:
-        current_app.logger.debug("[get_user_info] {}".format(str(e)))
         current_app.logger.debug("[get_user_info] User cancelled name entry")
         timer.terminate()
         cancelled(port, device_id, device_name, filename)
