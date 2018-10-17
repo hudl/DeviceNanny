@@ -177,7 +177,7 @@ def dialog(popup):
     :param popup: Parameters set in popups()
     :return: user input from window, if needed
     """
-    if '--question' in popup[0]:
+    if '--question' in popup:
         output = os.system(popup)
         current_app.logger.debug('[dialog] Output: {}'.format(output))
     else:
