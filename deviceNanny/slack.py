@@ -41,6 +41,36 @@ class NannySlacker:
         :param time_difference: Time since device was checked out
         :param device_name: Name of expired device
         """
+        # try:
+        #     self.slack.chat.post_message(
+        #         slack_id,
+        #         text="It's been *{}* days since you checked out the {}.".format(time_difference, device_name),
+        #         attachments=[
+        #             {
+        #                 "title": "Would you like to extend checkout by 24 hours or return it to the nanny?",
+        #                 "callback_id": "user_reminder",
+        #                 "color": "#3AA3E3",
+        #                 "attachment_type": "default",
+        #                 "actions": [
+        #                     {
+        #                         "name": "extend",
+        #                         "text": "Extend",
+        #                         "type": "button",
+        #                         "value": "extend"
+        #                     },
+        #                     {
+        #                         "name": "return",
+        #                         "text": "Return",
+        #                         "type": "button",
+        #                         "value": "return"
+        #                     }
+        #                 ]
+        #             }
+        #         ]
+        #     )
+        #     logging.debug("[user_reminder] Reminder sent.")
+        # except Exception as e:
+        #     logging.warning("[user_reminder] Incorrect Slack ID. {}".format(e))
         try:
             text = "It's been *{}* since you checked out `{}`. Please renew your checkout online or return it " \
                    "to the device lab.".format(time_difference, device_name)
