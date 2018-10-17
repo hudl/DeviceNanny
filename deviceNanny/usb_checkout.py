@@ -113,7 +113,7 @@ def multiple_checkouts():
     :return: True or None
     """
     pid = get_pid("[s]tart_checkout")
-    if len(pid) > 1:
+    if pid:
         current_app.logger.debug(
             "[multiple_checkouts] Multiple checkouts in progress."
         )
@@ -150,9 +150,10 @@ def get_pid(string):
     :param string: [s]tart_checkout
     :return: process ID(s) as int
     """
-    pid = (subprocess.check_output(['pgrep', '-f', '{}'.format(string)])).decode('utf-8').splitlines()
-    current_app.logger.debug("[get_pid] PID(s): {}".format(pid))
-    return pid
+    pid = (subprocess.Popen(['pgrep', '-f', '{}'.format(string)]))
+    out, err = pid.communicate()
+    current_app.logger.debug("[get_pid] out: {} err: {}".format(out, err))
+    return out
 
 
 def kill(pgid):
