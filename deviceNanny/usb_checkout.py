@@ -300,9 +300,12 @@ def get_slack_id(name):
     nanny_slacker = NannySlacker()
     try:
         for user in nanny_slacker.slack.users.list().body['members']:
+            current_app.logger.debug('[get_slack_id] Name: {}'.format(user['name']))
             if user['name'] == name:
                 current_app.logger.info('[get_slack_id] Slack ID found: {}'.format(user['id']))
                 return user['id']
+            else:
+                current_app.logger.warn('[get_slack_id] No Slack ID for for {}'.format(name))
     except nanny_slacker.slack.Error:
         current_app.logger.error('[get_slack_id] Unable to connect to Slack')
 
