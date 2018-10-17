@@ -51,6 +51,7 @@ def add():
                 (device_id, device_name, serial_udid, manufacturer, model, device_type, os_version, location)
             )
             db.commit()
+            flash('Successfully added device with serial udid {}'.format(serial_udid))
             return redirect(url_for('devices.add'))
 
         flash(error)
@@ -70,6 +71,7 @@ def add():
                 cursor.execute(insert_query, device_data)
 
         db.commit()
+        flash('Successfully imported devices from csv')
         file.close()
 
     return render_template('add_devices.html',
