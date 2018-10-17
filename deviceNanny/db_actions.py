@@ -227,7 +227,7 @@ def check_out(first_name, last_name, device_id):
     :param user_id: User checking out device. Missing device ID is 2
     :param device_id: Device ID of device getting checked out
     """
-    current_app.logger.debug('[check_out] user_id: {} device_id: {}'.format(user_id, device_id))
+    current_app.logger.debug('[check_out] first_name: {} device_id: {}'.format(first_name, device_id))
     try:
         db_commit("UPDATE devices SET checked_out_by = {} {}, port = NULL, time_checked_out = strftime('%s', 'now'),"
                   "last_reminded = strftime('%s', 'now') where device_id = {}".format(first_name, last_name, device_id))
