@@ -150,8 +150,8 @@ def get_pid(string):
     :param string: [s]tart_checkout
     :return: process ID(s) as int
     """
-    pid = (subprocess.check_output(
-        ['pgrep', '-f', '{}'.format(string)])).decode('utf-8').splitlines()
+    pid = (subprocess.check_output(['pgrep', '-f', '{}'.format(string)], stderr=subprocess.STDOUT))\
+        .decode('utf-8').splitlines()
     current_app.logger.debug("[get_pid] PID(s): {}".format(pid))
     return pid
 
