@@ -14,7 +14,7 @@ class DeviceTable(Table):
     model = Col('Model')
     device_type = Col('Device Type')
     os_version = Col('OS Version')
-    checked_out_by = Col('Checked out by')
+    checked_out_user = Col('Checked out by')
     location = Col('Office Location')
 
     def get_tr_attrs(self, item):
@@ -28,7 +28,7 @@ class DeviceTable(Table):
 def home():
     db = get_db()
     rows = db.execute(
-        'SELECT id, device_id, device_name, manufacturer, model, device_type, os_version, checked_out_by, location FROM devices'
+        'SELECT id, device_id, device_name, manufacturer, model, device_type, os_version, checked_out_user, location FROM devices'
     ).fetchall()
     table = DeviceTable(rows)
 
