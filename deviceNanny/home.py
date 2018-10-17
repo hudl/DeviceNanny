@@ -10,7 +10,6 @@ class DeviceTable(Table):
     html_attrs = {'class': 'table table-hover'}
     device_id = Col('Device Id')
     device_name = Col('Device Name')
-    serial_udid = Col('Serial UDID')
     manufacturer = Col('Manufacture')
     model = Col('Model')
     device_type = Col('Device Type')
@@ -29,7 +28,7 @@ class DeviceTable(Table):
 def home():
     db = get_db()
     rows = db.execute(
-        'SELECT id, device_id, device_name, serial_udid, manufacturer, model, device_type, os_version, checked_out_by, location FROM devices'
+        'SELECT id, device_id, device_name, manufacturer, model, device_type, os_version, checked_out_by, location FROM devices'
     ).fetchall()
     table = DeviceTable(rows)
     return render_template('home.html', table=table)
