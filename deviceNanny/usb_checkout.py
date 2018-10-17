@@ -75,7 +75,7 @@ def check_for_tempfile(filename, device_name):
         return True
 
 
-def cancelled(port, device_id, device_name, filename):
+def cancelled(port, device_name, filename):
     """
     Called if user cancels checkout. If a user didn't plug the device back in before cancelling
     it will be checked out as missing. Also, if multiple devices were taken, cancelling one
@@ -83,13 +83,10 @@ def cancelled(port, device_id, device_name, filename):
     """
     nanny = NannySlacker()
     if not is_device_connected(port):
-        db.check_out('2', device_id)
         nanny.help_message(device_name)
     if multiple_checkouts():
         delete_tempfile(filename)
         current_app.logger.debug("[cancelled] FINISHED")
-    else:
-        current_app.logger.debug("[cancelled] This doesn't need to do anything")
 
 
 def is_device_connected(port):
@@ -131,7 +128,6 @@ def timeout(x, port, device_id, device_name, filename):
     """
     time.sleep(x)
     current_app.logger.warn("[timeout] TIMEOUT")
-    cancelled(port, device_id, device_name, filename)
 
 
 def stop_program_if_running():
@@ -249,6 +245,7 @@ def get_user_info(timer, port, device_id, device_name, filename):
         current_app.logger.debug("[get_user_info] Maybe user cancelled name entry: {}".format(e))
         timer.terminate()
         cancelled(port, device_id, device_name, filename)
+        return {'id': 2}
 
 
 def get_user_info_from_db(device_id):
@@ -378,7 +375,6 @@ def get_new_device_info(serial, filename):
             "[get_new_device_info] User cancelled new device entry. Exception: {}".format(e)
         )
         delete_tempfile(filename)
-        sys.exit()
 
 
 def to_database(serial, port, location, filename):
