@@ -296,7 +296,8 @@ def add_new_user_to_db(user_info):
     user_info['slack_id'] = get_slack_id(first_name + ' ' + last_name)
     user_info['location'] = current_app.config['location']
     current_app.logger.debug('[add_new_user_to_db] USER INFO: {}'.format(user_info))
-    user_id = db.add_user_to_database(user_info)
+    db.add_user_to_database(user_info)
+    user_info = db.user_info(first_name + ' ' + last_name)
     return user_info
 
 
