@@ -198,8 +198,8 @@ def add_user_to_database(user_info):
     :param user_info: List with first_name, last_name, slack_id, and location
     """
     try:
-        db_commit("INSERT INTO users(fisrt_name, last_name, slack_id, location) VALUES('{}', '{}', '{}', '{}')".format(
-            user_info[0], user_info[1], user_info[2], user_info[3]))
+        db_commit("INSERT INTO users(first_name,last_name,slack_id,location)VALUES('{}', '{}', '{}', '{}')".format(
+            user_info['first_name'], user_info['last_name'], user_info['slack_id'], user_info['location']))
     except Exception as e:
         current_app.logger.debug('[add_user_to_database] Exception: {}'.format(e))
 
