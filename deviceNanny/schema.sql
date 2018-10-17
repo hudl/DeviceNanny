@@ -12,6 +12,7 @@ CREATE TABLE devices (
     device_type TEXT NOT NULL,
     os_version TEXT NOT NULL,
     checked_out_by INTEGER,
+    checked_out_user TEXT,
     time_checked_out INTEGER,
     last_reminded INTEGER,
     location TEXT NOT NULL,
