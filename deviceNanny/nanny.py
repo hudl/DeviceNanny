@@ -152,7 +152,7 @@ def reminder_due(device_status):
     :param device_status: device_name, checked_out_by, time_checked_out, last_reminded, RFID
     :return: True or None depending on if a reminder is needed
     """
-    reminder_interval = 100000
+    reminder_interval = current_app.config['reminder_interval'] * 3600  # convert hours to seconds
     time_since_reminded = int(time.time()) - device_status["last_reminded"]
     current_app.logger.debug("[reminder_due] Last reminded {} seconds ago.".format(time_since_reminded))
 
@@ -179,7 +179,7 @@ def checkout_expired(device_status):
     :param device_status: device_name, checked_out_by, time_checked_out, last_reminded, RFID
     :return: True or None
     """
-    checkout_expires = 10000
+    checkout_expires = current_app.config['checkout_expires'] * 3600  # Convert hours to seconds
     if int(time.time()) - device_status["time_checked_out"] > int(checkout_expires):
         current_app.logger.debug("[checkout_expired] Checkout expired for device {}"
                                  .format(device_status['device_name']))

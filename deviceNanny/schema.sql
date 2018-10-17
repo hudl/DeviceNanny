@@ -32,12 +32,12 @@ CREATE TABLE settings (
     slack_channel TEXT,
     slack_team_channel TEXT,
     reminder_interval TEXT,
-    checkout_length TEXT,
+    checkout_expires TEXT,
     office_location TEXT
 );
 
-INSERT INTO settings (slack_channel, slack_team_channel, reminder_interval, checkout_length, office_location) VALUES
-('omananny', 'omananny', '5', '30', 'Omaha');
+INSERT INTO settings (slack_channel, slack_team_channel, reminder_interval, checkout_expires, office_location) VALUES
+('omananny', 'omananny', '4', '168', 'Omaha');
 
 INSERT INTO users (first_name, last_name) VALUES ('-', '-');
 

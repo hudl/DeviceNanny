@@ -44,7 +44,7 @@ class SettingsForm(FlaskForm):
     slack_channel = StringField('Slack Channel')
     slack_team_channel = StringField('Slack Team Channel')
     reminder_interval = StringField('Reminder Interval (hours)')
-    checkout_length = StringField('Checkout Length (hours)')
+    checkout_expires = StringField('Checkout Expires (hours)')
     office_location = StringField('Office Location')
     update_submit = SubmitField('Update')
 
