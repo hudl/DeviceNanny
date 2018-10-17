@@ -245,8 +245,8 @@ def get_user_info(timer, port, device_id, device_name, filename):
         user_input = popups('checkout', device_name).decode('utf-8')
         timer.terminate()
         return get_info_from_db(user_input.rstrip('\n').split(' '), timer, port, device_id, device_name, filename)
-    except Exception:
-        current_app.logger.debug("[get_user_info] User cancelled name entry")
+    except Exception as e:
+        current_app.logger.debug("[get_user_info] Maybe user cancelled name entry: {}".format(e))
         timer.terminate()
         cancelled(port, device_id, device_name, filename)
 
