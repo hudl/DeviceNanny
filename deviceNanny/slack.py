@@ -23,12 +23,15 @@ class NannySlacker:
         without being checked out.
         :param device_name: Name of device taken
         """
+        text = "`{}` was taken without being checked out! Please remember to enter your name or ID " \
+               "after taking a device.".format(device_name)
         self.slack.chat.post_message(
             self.channel,
-            "`{}` was taken without being checked out! Please remember to enter your name or ID "
-            "after taking a device.".format(device_name),
-            as_user=False,
-            username="DeviceNanny")
+            attachments=[{
+                "pretext": "Device Nanny",
+                "fallback": "Message from DeviceNanny",
+                "text": text
+            }])
         logging.debug("[help_message] Help message sent.")
 
     def user_reminder(self, slack_id, time_difference, device_name):
@@ -38,16 +41,19 @@ class NannySlacker:
         :param time_difference: Time since device was checked out
         :param device_name: Name of expired device
         """
+        text = "It's been *{}* since you checked out `{}`. Please renew your checkout online or return it " \
+               "to the device lab.".format(time_difference, device_name)
         try:
             self.slack.chat.post_message(
                 slack_id,
-                "It's been *{}* since you checked out `{}`. Please renew your checkout online or return it "
-                "to the device lab.".format(time_difference, device_name),
-                as_user=False,
-                username="DeviceNanny")
-            logging.debug("[user_reminder] Reminder sent to user sent")
+                attachments=[{
+                    "pretext": "Device Nanny",
+                    "fallback": "Message from DeviceNanny",
+                    "text": text
+                }])
+            logging.debug("[user_reminder] Reminder sent.")
         except Exception as e:
-            logging.warning("[user_reminder] Incorrect Slack ID.")
+            logging.warning("[user_reminder] Incorrect Slack ID. {}".format(e))
 
     def check_out_notice(self, user_info, device):
         """
