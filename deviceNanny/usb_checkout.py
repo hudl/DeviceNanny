@@ -178,8 +178,8 @@ def dialog(popup):
     :return: user input from window, if needed
     """
     if popup[1] == '--question':
-        output = subprocess.Popen(popup, stdout=subprocess.PIPE).poll()
-        current_app.logger.debug('[dialog] Output: {}'.format(str(output)))
+        output = os.system(popup)
+        current_app.logger.debug('[dialog] Output: {}'.format(output))
     else:
         output = subprocess.check_output(popup, timeout=120)
     return output
