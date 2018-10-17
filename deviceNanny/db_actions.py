@@ -136,9 +136,8 @@ def get_device_id_from_serial(serial):
     try:
         return device["device_id"]
     except TypeError as e:
-        current_app.logger.info("[db_actions][get_device_id_from_serial] Exception for serial {}: {}. Could "
-                                "be a checkout.".format(serial, e))
-        pass
+        current_app.logger.info("[db_actions][get_device_id_from_serial] "
+                                "No device ID for serial {}: {}".format(serial, e))
 
 
 def user_info(user_input):
