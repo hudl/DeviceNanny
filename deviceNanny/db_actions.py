@@ -192,6 +192,18 @@ def add_to_database(device_info):
                       device_info[5], device_info[6], device_info[7], device_info[8]))
 
 
+def add_user_to_database(user_info):
+    """
+    Adds a new user into the users database.
+    :param user_info: List with first_name, last_name, slack_id, and location
+    """
+    try:
+        db_commit("INSERT INTO users(fisrt_name, last_name, slack_id, location) VALUES('{}', '{}', '{}', '{}')".format(
+            user_info[0], user_info[1], user_info[2], user_info[3]))
+    except Exception as e:
+        current_app.logger.debug('[add_user_to_database] Exception: {}'.format(e))
+
+
 def check_in(device_id, port):
     """
     Updates database with check in info.

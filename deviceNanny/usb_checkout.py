@@ -292,8 +292,9 @@ def get_info_from_db(user_input, timer, port, device_id, device_name, filename):
 def add_new_user_to_db(user_info):
     first_name = user_info['first_name']
     last_name = user_info['last_name']
-    get_slack_id(first_name + ' ' + last_name)
-    current_app.logger.debug("YES")
+    user_info['slack_id'] = get_slack_id(first_name + ' ' + last_name)
+    user_info['location'] = current_app.config['location']
+    add_new_user_to_db(user_info)
 
 
 def get_slack_id(name):
