@@ -149,15 +149,15 @@ def user_info(user_input):
     try:
         int(user_input[0])
         user_info = db_fetch("SELECT * FROM users WHERE id = {}".format(user_input[0]))
-        current_app.logger.info("[user_info] id input. Checked out by {}".format(user_info))
-        return user_info
+        current_app.logger.info("[user_info] id input. Checked out by {}".format(user_info['first_name']))
+        return False, user_info
     except Exception as e:
         try:
             user_info = db_fetch("SELECT * from users WHERE first_name = '{}' AND last_name = '{}'"
                                  .format(str(user_input[0]), str(user_input[1])))
             print("Your id is: {}".format(user_info["id"]))
-            current_app.logger.info("[user_info] User name input. Checked out by {}".format(user_info))
-            return user_info
+            current_app.logger.info("[user_info] User name input. Checked out by {}".format(user_info['first_name']))
+            return False, user_info
         except Exception as e:
             current_app.logger.info('[user_info] User not found. {}'.format(e))
             return True, {'first_name': str(user_input[0]), 'last_name': str(user_input[1]), 'id': None}
@@ -190,6 +190,18 @@ def add_to_database(device_info):
               "VALUES('{}','{}','{}','{}','{}','{}','{}','{}','{}','0','0','40000')"
               .format(device_info[0], device_info[1], device_info[2], device_info[3], device_info[4].rstrip(),
                       device_info[5], device_info[6], device_info[7], device_info[8]))
+
+
+def add_user_to_database(user_info):
+    """
+    Adds a new user into the users database.
+    :param user_info: List with first_name, last_name, slack_id, and location
+    """
+    try:
+        db_commit("INSERT INTO users(first_name,last_name,slack_id,location)VALUES('{}', '{}', '{}', '{}')".format(
+            user_info['first_name'], user_info['last_name'], user_info['slack_id'], user_info['location']))
+    except Exception as e:
+        current_app.logger.debug('[add_user_to_database] Exception: {}'.format(e))
 
 
 def check_in(device_id, port):

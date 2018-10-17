@@ -89,10 +89,11 @@ class NannySlacker:
     def check_out_notice(self, user_info, device):
         """
         Sends a slack message confirming a device was checked out.
-        :param user_info: First Name, Last Name, SlackID, location of user who checked out device
+        :param user_info: First Name, Last Name, slack_id, location of user who checked out device
         :param device: Device taken
         """
         try:
+            current_app.logger.debug('[check_out_notice] User Info: {} Device: {}'.format(user_info, device))
             user_text = "You checked out `{}`. Checkout will expire after 3 days. Remember to plug the " \
                         "device back in when you return it to the lab. You can renew your checkout from " \
                         "the DeviceNanny web page.".format(device)
@@ -101,7 +102,7 @@ class NannySlacker:
                                                                   device)
 
             self.slack.chat.post_message(
-                user_info['SlackID'],
+                user_info['slack_id'],
                 attachments=[{
                     "pretext": "Device Checked Out",
                     "fallback": "Message from DeviceNanny",
@@ -121,7 +122,7 @@ class NannySlacker:
     def check_in_notice(self, user_info, device):
         """
         Sends a slack message confirming a device was checked in.
-        :param user_info: First Name, Last Name, SlackID, location of user who checked in device
+        :param user_info: First Name, Last Name, slack_id, location of user who checked in device
         :param device: Device returned
         """
         try:
@@ -130,10 +131,10 @@ class NannySlacker:
                                                                  device)
 
             if user_info["first_name"] != "Missing":
-                logging.debug("[check_in_notice] SlackID from user_info: {}".format(
-                    user_info['SlackID']))
+                logging.debug("[check_in_notice] slack_id from user_info: {}".format(
+                    user_info['slack_id']))
                 self.slack.chat.post_message(
-                    user_info['SlackID'],
+                    user_info['slack_id'],
                     attachments=[{
                         "pretext": "Device Checked In",
                         "fallback": "Message from DeviceNanny",
