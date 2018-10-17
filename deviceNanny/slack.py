@@ -142,8 +142,7 @@ class NannySlacker:
         self.slack.chat.post_message(
             self.team_channel,
             "`{}` has been missing from the device lab for `{}`. If you have it, please return the device to the lab "
-            "and check it out under your name.".format(device_name,
-                                                       time_difference),
+            "and check it out under your name.".format(device_name, time_difference),
             as_user=False,
             username="DeviceNanny")
         logging.info(

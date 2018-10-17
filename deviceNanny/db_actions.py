@@ -110,7 +110,7 @@ def get_device_id_from_port(location, port):
     try:
         return device["device_id"]
     except Exception as e:
-        current_app.logger.debug("[db_actions][get_device_id_from_port] Exception: {}".format(e))
+        current_app.logger.debug("[db_actions][get_device_id_from_port] No device ID for port {}. {}".format(port, e))
         pass
 
 
@@ -208,15 +208,14 @@ def check_in(device_id, port):
 def check_out(user_id, device_id):
     """
     Updates database with check out info.
-    :param user_id:
-    :param device_id:
+    :param user_id: User checking out device. Missing device ID is 2
+    :param device_id: Device ID of device getting checked out
     """
     try:
         db_commit("UPDATE devices SET checked_out_by = {}, port = NULL, time_checked_out = strftime('%s', 'now'),"
                   "last_reminded = strftime('%s', 'now') where device_id = {}".format(user_id, device_id))
     except Exception as e:
-        current_app.logger.debug("[db_actions][check_out] Exception in check_out - {}".format(e))
-        print(e)
+        current_app.logger.error("[db_actions][check_out] FAILED TO CHECK OUT DEVICE - {}".format(e))
 
 
 def get_device_status(device_id):
@@ -254,5 +253,8 @@ def get_serial_number_from_port(location, port):
     :param location:
     :return: Serial number
     """
-    serial = db_fetch("SELECT serial_udid FROM devices WHERE port = '{}' AND location = '{}'".format(port, location))
-    return serial["serial_udid"]
+    try:
+        serial = db_fetch("SELECT serial_udid FROM devices WHERE port = '{}' AND location = '{}'".format(port, location))
+        return serial["serial_udid"]
+    except Exception as e:
+        current_app.logger.debug('[get_serial_number_from_port] No serial for port {} - {}'.format(port, e))
