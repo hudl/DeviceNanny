@@ -131,8 +131,7 @@ class NannySlacker:
                                                                  device)
 
             if user_info["first_name"] != "Missing":
-                logging.debug("[check_in_notice] slack_id from user_info: {}".format(
-                    user_info['slack_id']))
+                current_app.logger.debug("[check_in_notice] slack_id from user_info: {}".format(user_info['slack_id']))
                 self.slack.chat.post_message(
                     user_info['slack_id'],
                     attachments=[{
@@ -147,10 +146,10 @@ class NannySlacker:
                         "fallback": "Message from DeviceNanny",
                         "text": channel_text
                     }])
-                logging.debug(
-                    "[check_in_notice] {} {} just checked in {}".format(
-                        user_info['first_name'],
-                        user_info['LastName'], device))
+                current_app.logger.debug("[check_in_notice] {} {} just checked in {}"
+                                         .format(user_info['first_name'], user_info['LastName'], device))
+            else:
+                current_app.logger.debug('[check_in_notice] Missing device - no check in message sent.')
         except Exception as e:
             current_app.logger.debug("[check_in_notice] Check in message not sent. {}".format(e))
 
