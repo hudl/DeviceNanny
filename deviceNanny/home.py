@@ -15,7 +15,20 @@ class DeviceTable(Table):
     device_type = Col('Device Type')
     os_version = Col('OS Version')
     user_name = Col('Checked Out By')
-    extend_checkout = LinkCol('Extend Checkout', 'home.extend_checkout', url_kwargs=dict(id='id'), anchor_attrs={'class': 'btn btn-primary btn-sm'})
+    extend_checkout = LinkCol('Extend Checkout',
+                              'home.extend_checkout',
+                              url_kwargs=dict(id='id'),
+                              anchor_attrs={'class': 'btn btn-primary btn-sm'},
+                              allow_sort=False)
+
+    allow_sort = True
+
+    def sort_url(self, col_key, reverse=False):
+        if reverse:
+            direction = 'desc'
+        else:
+            direction = 'asc'
+        return url_for('home.home', sort=col_key, direction=direction)
 
     def get_tr_attrs(self, item):
         if int(item['id']) % 2 == 0:
@@ -26,13 +39,18 @@ class DeviceTable(Table):
 
 @bp.route('/')
 def home():
-    db = get_db()
-    rows = db.execute(
-        "SELECT devices.id, devices.device_name, devices.manufacturer, devices.model, devices.device_type, devices.os_version, users.first_name || ' ' || users.last_name as user_name "
-        "FROM devices INNER JOIN users ON devices.checked_out_by=users.id"
-    ).fetchall()
+    sort = request.args.get('sort', 'id')
+    direction = request.args.get('direction')
+    reverse = (request.args.get('direction', 'asc') == 'desc')
+    query = "SELECT devices.id, devices.device_name, devices.manufacturer, devices.model, devices.device_type, devices.os_version, users.first_name || ' ' || users.last_name as user_name " \
+            "FROM devices INNER JOIN users ON devices.checked_out_by=users.id"
+    if direction:
+        query = "{} ORDER BY devices.{} {}".format(query, "device_name", request.args['direction'].upper())
 
-    table = DeviceTable(rows)
+    db = get_db()
+
+    rows = db.execute(query).fetchall()
+    table = DeviceTable(rows, sort_by=sort, sort_reverse=reverse)
 
     return render_template('home.html', table=table)
 
