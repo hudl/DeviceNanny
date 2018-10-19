@@ -72,5 +72,5 @@ def extend_checkout():
     upload_query = 'UPDATE devices SET time_checked_out = {} WHERE id = {}'
     db.execute(upload_query.format(new_time, request.args['id']))
     db.commit()
-    flash('Successfully extended your checkout time by 1 hour')
+    flash('Successfully extended your checkout time by 1 hour', 'alert alert-success')
     return redirect(url_for('home.home'))

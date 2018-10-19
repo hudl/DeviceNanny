@@ -59,7 +59,7 @@ def manage():
             flash('Successfully added user {} {}'.format(first_name, last_name), 'alert alert-success')
             return redirect(url_for('user.manage'))
         else:
-            flash(error, category='alert alert-danger')
+            flash(error, 'alert alert-danger')
             return redirect(url_for('user.manage'))
 
     if upload_file.upload_submit.data and upload_file.validate_on_submit():

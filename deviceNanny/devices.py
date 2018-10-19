@@ -60,10 +60,10 @@ def manage():
                 (device_id, device_name, serial_udid, manufacturer, model, device_type, os_version, location)
             )
             db.commit()
-            flash('Successfully added device with serial udid {}'.format(serial_udid))
+            flash('Successfully added device with serial udid {}'.format(serial_udid), 'alert alert-success')
             return redirect(url_for('devices.manage'))
         else:
-            flash(error)
+            flash(error, 'alert alert-danger')
 
     if upload_file.upload_submit.data and upload_file.validate_on_submit():
         file = upload_file.file.data
@@ -80,7 +80,7 @@ def manage():
                 cursor.execute(insert_query, device_data)
 
         db.commit()
-        flash('Successfully imported devices from csv')
+        flash('Successfully imported devices from csv', 'alert alert-success')
         file.close()
         return redirect(url_for('devices.manage'))
 
@@ -98,5 +98,6 @@ def delete_device():
     row = db.execute('SELECT device_name, serial_udid FROM devices WHERE id = {}'.format(device_id)).fetchone()
     db.execute('DELETE FROM devices WHERE id = {}'.format(device_id))
     db.commit()
-    flash("Successfully deleted device {} with serial udid {}".format(row['device_name'], row['serial_udid']))
+    flash("Successfully deleted device {} with serial udid {}".format(row['device_name'], row['serial_udid']),
+          'alert alert-success')
     return redirect(url_for('devices.manage'))
