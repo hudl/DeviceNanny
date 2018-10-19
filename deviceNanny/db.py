@@ -18,19 +18,22 @@ def init_db():
 
 
 def load_settings(app):
-    db = sqlite3.connect(
-        app.config['DATABASE'],
-        detect_types=sqlite3.PARSE_DECLTYPES
-    )
-    db.row_factory = sqlite3.Row
-    settings_data = db.execute(
-        'SELECT * FROM settings WHERE id = 1'
-    ).fetchone()
-    app.config['location'] = settings_data['office_location']
-    app.config['slack_channel'] = settings_data['slack_channel']
-    app.config['slack_team_channel'] = settings_data['slack_team_channel']
-    app.config['reminder_interval'] = settings_data['reminder_interval']
-    app.config['checkout_expires'] = settings_data['checkout_expires']
+    try:
+        db = sqlite3.connect(
+            app.config['DATABASE'],
+            detect_types=sqlite3.PARSE_DECLTYPES
+        )
+        db.row_factory = sqlite3.Row
+        settings_data = db.execute(
+            'SELECT * FROM settings WHERE id = 1'
+        ).fetchone()
+        app.config['location'] = settings_data['office_location']
+        app.config['slack_channel'] = settings_data['slack_channel']
+        app.config['slack_team_channel'] = settings_data['slack_team_channel']
+        app.config['reminder_interval'] = settings_data['reminder_interval']
+        app.config['checkout_expires'] = settings_data['checkout_expires']
+    except sqlite3.OperationalError:
+        return
 
 
 @click.command('init-db')
