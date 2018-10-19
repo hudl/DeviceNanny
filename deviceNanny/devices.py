@@ -68,7 +68,7 @@ def manage():
 
         if error is None:
             db.execute(
-            'INSERT INTO devices (device_id, device_name, serial_udid, manufacturer, model, device_type, os_version, location) VALUES (?,?,?,?,?,?,?,?)',
+            'INSERT INTO devices (device_id, device_name, serial_udid, manufacturer, model, device_type, os_version, location, checked_out_by) VALUES (?,?,?,?,?,?,?,?,1)',
                 (device_id, device_name, serial_udid, manufacturer, model, device_type, os_version, location)
             )
             db.commit()
