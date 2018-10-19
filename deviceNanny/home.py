@@ -31,9 +31,18 @@ class DeviceTable(Table):
         return url_for('home.home', sort=col_key, direction=direction)
 
     def get_tr_attrs(self, item):
-        if int(item['id']) % 2 == 0:
+        checked_out_by = item['user_name'].lower()
+        if checked_out_by != "- -" and checked_out_by != "missing device":
+            print("checked out")
+            return {'class': 'table-success'}
+        elif checked_out_by == "missing device":
+            print("missing")
+            return {'class': 'table-danger'}
+        elif int(item['id']) % 2 == 0:
+            print("primary")
             return {'class': 'table-primary'}
         else:
+            print("secondary")
             return {'class': 'table-secondary'}
 
 
