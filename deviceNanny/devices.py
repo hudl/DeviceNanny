@@ -1,6 +1,7 @@
 import csv
 
-from flask import Blueprint, render_template, redirect, url_for, flash
+from flask import Blueprint, render_template, redirect, url_for, flash, request
+from flask_table import Table, Col, LinkCol
 
 from deviceNanny.db import get_db
 from deviceNanny.forms import SingleDeviceForm, UploadFileForm
@@ -8,11 +9,31 @@ from deviceNanny.forms import SingleDeviceForm, UploadFileForm
 bp = Blueprint('devices', __name__, url_prefix='/devices')
 
 
-@bp.route('/add', methods=('GET', 'POST'))
-def add():
+class DevicesTable(Table):
+    html_attrs = {'class': 'table table-hover'}
+    device_name = Col("Device Name")
+    serial_udid = Col("Serial UDID")
+    delete_device = LinkCol('Delete Device',
+                            'devices.delete_device',
+                            url_kwargs=dict(id='id'),
+                            anchor_attrs={'class': 'btn btn-danger btn-sm'},
+                            allow_sort=False)
+
+    def get_tr_attrs(self, item):
+        if int(item['id']) % 2 == 0:
+            return {'class': 'table-primary'}
+        else:
+            return {'class': 'table-secondary'}
+
+
+@bp.route('/manage', methods=('GET', 'POST'))
+def manage():
     add_single_device = SingleDeviceForm()
     upload_file = UploadFileForm()
     db = get_db()
+    device_data = db.execute("SELECT id, device_name, substr(serial_udid, 1, 7) || '...' as serial_udid FROM devices").fetchall()
+    table = DevicesTable(device_data)
+
     if add_single_device.validate_on_submit():
         device_id = add_single_device.device_id.data
         device_name = add_single_device.device_name.data
@@ -52,7 +73,7 @@ def add():
             )
             db.commit()
             flash('Successfully added device with serial udid {}'.format(serial_udid))
-            return redirect(url_for('devices.add'))
+            return redirect(url_for('devices.manage'))
 
         flash(error)
 
@@ -73,8 +94,21 @@ def add():
         db.commit()
         flash('Successfully imported devices from csv')
         file.close()
+        return redirect(url_for('devices.manage'))
 
-    return render_template('add_devices.html',
-                           title="Add Devices",
+    return render_template('manage_devices.html',
+                           title="Manage Devices",
+                           table=table,
                            add_single_device=add_single_device,
                            upload_file=upload_file)
+
+
+@bp.route('/delete_device')
+def delete_device():
+    db = get_db()
+    device_id = request.args['id']
+    row = db.execute('SELECT device_name, serial_udid FROM devices WHERE id = {}'.format(device_id)).fetchone()
+    db.execute('DELETE FROM devices WHERE id = {}'.format(device_id))
+    db.commit()
+    flash("Successfully deleted device {} with serial udid {}".format(row['device_name'], row['serial_udid']))
+    return redirect(url_for('devices.manage'))

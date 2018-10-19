@@ -1,17 +1,17 @@
 {% extends 'home.html' %}
 
 {% block header %}
-  <h1>{% block title %}Add Device{% endblock %}</h1>
+  <h1>{% block title %}Manage Device{% endblock %}</h1>
 {% endblock %}
 
 {% block page_header %}
-  <h2>Add Devices</h2>
 {% endblock %}
 
 {% block content %}
   <div class="bs-docs-section">
     <div class="row">
       <div class="col-lg-4">
+        <h2>Add Devices</h2>
         <form method="post">
           {{ add_single_device.hidden_tag() }}
           <fieldset class="form-group">
@@ -42,6 +42,10 @@
               {{ add_single_device.submit(class="btn btn-primary") }}
           </fieldset>
         </form>
+      </div>
+      <div class="col=lg-4 offset-lg-2">
+        <h2>Devices</h2>
+        {{ table }}
       </div>
     </div>
   </div>

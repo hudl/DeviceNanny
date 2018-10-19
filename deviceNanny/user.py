@@ -16,7 +16,7 @@ class UsersTable(Table):
     delete_user = LinkCol('Delete User',
                           'user.delete_user',
                           url_kwargs=dict(id='id'),
-                          anchor_attrs={'class': 'btn btn-primary btn-sm'},
+                          anchor_attrs={'class': 'btn btn-danger btn-sm'},
                           allow_sort=False)
 
     def get_tr_attrs(self, item):

@@ -18,7 +18,7 @@ class DeviceTable(Table):
     extend_checkout = LinkCol('Extend Checkout',
                               'home.extend_checkout',
                               url_kwargs=dict(id='id'),
-                              anchor_attrs={'class': 'btn btn-primary btn-sm'},
+                              anchor_attrs={'class': 'btn btn-warning btn-sm'},
                               allow_sort=False)
 
     allow_sort = True
