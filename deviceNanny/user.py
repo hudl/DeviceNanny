@@ -5,6 +5,7 @@ from flask_table import Table, Col, LinkCol
 
 from deviceNanny.db import get_db
 from deviceNanny.forms import SingleUserForm, UploadFileForm
+from deviceNanny.usb_checkout import get_slack_id
 
 bp = Blueprint('user', __name__, url_prefix='/user')
 
@@ -38,7 +39,7 @@ def manage():
     if add_single_user.validate_on_submit():
         first_name = add_single_user.first_name.data
         last_name = add_single_user.last_name.data
-        slack_id = add_single_user.slack_id.data
+        slack_id = get_slack_id(first_name + ' ' + last_name)
 
         error = None
 
@@ -47,7 +48,7 @@ def manage():
         elif not last_name:
             error = 'Last name is required'
         elif not slack_id:
-            error = 'Slack id is required'
+            error = 'Unable to find user in Slack'
         elif db.execute(
             'SELECT id FROM users WHERE first_name = ? AND last_name = ?', (first_name, last_name)
         ).fetchone() is not None:
@@ -55,9 +56,8 @@ def manage():
 
         if error is None:
             db.execute(
-            'INSERT INTO users (first_name, last_name, slack_id, location) VALUES (?,?,?,?)',
-                (first_name, last_name, slack_id, current_app.config['location'])
-            )
+                'INSERT INTO users (first_name, last_name, slack_id, location) VALUES (?,?,?,?)',
+                (first_name, last_name, slack_id, current_app.config['location']))
             db.commit()
             flash('Successfully added user {} {}'.format(first_name, last_name))
             return redirect(url_for('user.manage'))
