@@ -10,12 +10,12 @@ class SingleUserForm(FlaskForm):
 
 
 class SingleDeviceForm(FlaskForm):
-    device_name = StringField('Device Name')
-    serial_udid = StringField('Serial UDID')
-    manufacturer = StringField('Manufacturer')
-    model = StringField('Model')
-    device_type = StringField('Device Type')
-    os_version = StringField('OS Version')
+    device_name = StringField('Device Name', validators=[DataRequired()])
+    serial_udid = StringField('Serial UDID', validators=[DataRequired()])
+    manufacturer = StringField('Manufacturer', validators=[DataRequired()])
+    model = StringField('Model', validators=[DataRequired()])
+    device_type = StringField('Device Type', validators=[DataRequired()])
+    os_version = StringField('OS Version', validators=[DataRequired()])
     submit = SubmitField('Add')
 
 

@@ -43,11 +43,7 @@ def manage():
 
         error = None
 
-        if not first_name:
-            error = 'First name is required'
-        elif not last_name:
-            error = 'Last name is required'
-        elif db.execute(
+        if db.execute(
             'SELECT id FROM users WHERE first_name = ? AND last_name = ?', (first_name, last_name)
         ).fetchone() is not None:
             error = 'User {} {} is already in DeviceNanny'.format(first_name, last_name)

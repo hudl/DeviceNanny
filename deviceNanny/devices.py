@@ -37,7 +37,7 @@ def manage():
     device_data = db.execute("SELECT id, device_name, manufacturer, model FROM devices").fetchall()
     table = DevicesTable(device_data)
 
-    if add_single_device.validate_on_submit():
+    if add_single_device.submit.data and add_single_device.validate_on_submit():
         device_id = new_device_id()
         device_name = add_single_device.device_name.data
         serial_udid = add_single_device.serial_udid.data
@@ -48,23 +48,8 @@ def manage():
         location = current_app.config['location']
 
         error = None
-        if not device_id:
-            error = 'Device ID is required'
-        elif not device_name:
-            error = 'Device name is required'
-        elif not serial_udid:
-            error = 'Serial UDID id is required'
-        elif not manufacturer:
-            error = 'Manufacturer is required'
-        elif not model:
-            error = 'Model is required'
-        elif not device_type:
-            error = 'Type is required'
-        elif not os_version:
-            error = 'OS Version is required'
-        elif not location:
-            error = 'Office location is required'
-        elif db.execute(
+
+        if db.execute(
             'SELECT id FROM devices WHERE serial_udid = ?', (serial_udid,)
         ).fetchone() is not None:
             error = 'Device with udid {} is already in DeviceNanny'.format(serial_udid)
@@ -77,10 +62,10 @@ def manage():
             db.commit()
             flash('Successfully added device with serial udid {}'.format(serial_udid))
             return redirect(url_for('devices.manage'))
+        else:
+            flash(error)
 
-        flash(error)
-
-    if upload_file.validate_on_submit():
+    if upload_file.upload_submit.data and upload_file.validate_on_submit():
         file = upload_file.file.data
         content = file.read().decode('utf-8')
 
