@@ -36,10 +36,10 @@ def manage():
     user_data = db.execute('SELECT id, first_name, last_name FROM users WHERE id != 1 AND id != 2')
     table = UsersTable(user_data)
 
-    if add_single_user.validate_on_submit():
+    if add_single_user.submit.data and add_single_user.validate_on_submit():
         first_name = add_single_user.first_name.data
         last_name = add_single_user.last_name.data
-        slack_id = get_slack_id(first_name + ' ' + last_name)
+
 
         error = None
 
@@ -47,13 +47,12 @@ def manage():
             error = 'First name is required'
         elif not last_name:
             error = 'Last name is required'
-        elif not slack_id:
-            error = 'Unable to find user in Slack'
         elif db.execute(
             'SELECT id FROM users WHERE first_name = ? AND last_name = ?', (first_name, last_name)
         ).fetchone() is not None:
             error = 'User {} {} is already in DeviceNanny'.format(first_name, last_name)
 
+        slack_id = get_slack_id(first_name + ' ' + last_name)
         if error is None:
             db.execute(
                 'INSERT INTO users (first_name, last_name, slack_id, location) VALUES (?,?,?,?)',
@@ -61,10 +60,11 @@ def manage():
             db.commit()
             flash('Successfully added user {} {}'.format(first_name, last_name))
             return redirect(url_for('user.manage'))
+        else:
+            flash(error)
+            return redirect(url_for('user.manage'))
 
-        flash(error)
-
-    if upload_file.validate_on_submit():
+    if upload_file.upload_submit.data and upload_file.validate_on_submit():
         file = upload_file.file.data
 
         content = file.read().decode('utf-8')
