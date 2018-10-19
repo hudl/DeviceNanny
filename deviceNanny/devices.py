@@ -14,7 +14,8 @@ bp = Blueprint('devices', __name__, url_prefix='/devices')
 class DevicesTable(Table):
     html_attrs = {'class': 'table table-hover'}
     device_name = Col("Device Name")
-    serial_udid = Col("Serial UDID")
+    manufacturer = Col("Manufacturer")
+    model = Col("Model")
     delete_device = LinkCol('Delete Device',
                             'devices.delete_device',
                             url_kwargs=dict(id='id'),
@@ -33,7 +34,7 @@ def manage():
     add_single_device = SingleDeviceForm()
     upload_file = UploadFileForm()
     db = get_db()
-    device_data = db.execute("SELECT id, device_name, substr(serial_udid, 1, 7) || '...' as serial_udid FROM devices").fetchall()
+    device_data = db.execute("SELECT id, device_name, manufacturer, model FROM devices").fetchall()
     table = DevicesTable(device_data)
 
     if add_single_device.validate_on_submit():
