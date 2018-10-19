@@ -5,6 +5,7 @@ from flask_table import Table, Col, LinkCol
 
 from deviceNanny.db import get_db
 from deviceNanny.forms import SingleUserForm, UploadFileForm
+from deviceNanny.usb_checkout import get_slack_id
 
 bp = Blueprint('user', __name__, url_prefix='/user')
 
@@ -38,7 +39,7 @@ def manage():
     if add_single_user.validate_on_submit():
         first_name = add_single_user.first_name.data
         last_name = add_single_user.last_name.data
-        slack_id = add_single_user.slack_id.data
+        slack_id = get_slack_id(first_name + ' ' + last_name)
 
         error = None
 
