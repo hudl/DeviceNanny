@@ -1,7 +1,7 @@
 import csv
 
-from flask import Blueprint, render_template, redirect, url_for, flash, current_app
-from flask_table import Table, Col
+from flask import Blueprint, render_template, redirect, url_for, flash, current_app, request
+from flask_table import Table, Col, LinkCol
 
 from deviceNanny.db import get_db
 from deviceNanny.forms import SingleUserForm, UploadFileForm
@@ -13,6 +13,11 @@ class UsersTable(Table):
     html_attrs = {'class': 'table table-hover'}
     first_name = Col('First Name')
     last_name = Col('Last Name')
+    delete_user = LinkCol('Delete User',
+                          'user.delete_user',
+                          url_kwargs=dict(id='id'),
+                          anchor_attrs={'class': 'btn btn-primary btn-sm'},
+                          allow_sort=False)
 
     def get_tr_attrs(self, item):
         if int(item['id']) % 2 == 0:
@@ -21,8 +26,8 @@ class UsersTable(Table):
             return {'class': 'table-secondary'}
 
 
-@bp.route('/add', methods=('GET', 'POST'))
-def add():
+@bp.route('/manage', methods=('GET', 'POST'))
+def manage():
     add_single_user = SingleUserForm()
     upload_file = UploadFileForm()
     db = get_db()
@@ -55,7 +60,7 @@ def add():
             )
             db.commit()
             flash('Successfully added user {} {}'.format(first_name, last_name))
-            return redirect(url_for('user.add'))
+            return redirect(url_for('user.manage'))
 
         flash(error)
 
@@ -77,10 +82,21 @@ def add():
         db.commit()
         flash('Successfully imported users from csv')
         file.close()
-        return redirect(url_for('user.add'))
+        return redirect(url_for('user.manage'))
 
-    return render_template('add_user.html',
-                           title='Add Users',
+    return render_template('manage_user.html',
+                           title='Manage Users',
                            table=table,
                            add_single_user=add_single_user,
                            upload_file=upload_file)
+
+
+@bp.route('/delete_user')
+def delete_user():
+    db = get_db()
+    user_id = request.args['id']
+    row = db.execute("SELECT first_name || ' ' || last_name as user_name FROM users WHERE id = {}".format(user_id)).fetchone()
+    db.execute('DELETE FROM users WHERE id = {}'.format(user_id))
+    db.commit()
+    flash("Successfully deleted user {}".format(row['user_name']))
+    return redirect(url_for('user.manage'))
