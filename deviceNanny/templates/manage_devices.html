@@ -16,28 +16,22 @@
           {{ add_single_device.hidden_tag() }}
           <fieldset class="form-group">
             <div class="form-group">
-              {{ add_single_device.device_id.label }} {{ add_single_device.device_id(class="form-control") }}
-            </div>
-            <div class="form-group">
               {{ add_single_device.device_name.label }} {{ add_single_device.device_name(class="form-control") }}
             </div>
             <div class="form-group">
               {{ add_single_device.serial_udid.label }} {{ add_single_device.serial_udid(class="form-control") }}
             </div>
             <div class="form-group">
-              {{ add_single_device.manufacturer.label }} {{ add_single_device.manufacturer }}
+              {{ add_single_device.manufacturer.label }} {{ add_single_device.manufacturer(class="form-control") }}
             </div>
             <div class="form-group">
-              {{ add_single_device.model.label }} {{ add_single_device.model }}
+              {{ add_single_device.model.label }} {{ add_single_device.model(class="form-control") }}
             </div>
             <div class="form-group">
-              {{ add_single_device.device_type.label }} {{ add_single_device.device_type }}
+              {{ add_single_device.device_type.label }} {{ add_single_device.device_type(class="form-control") }}
             </div>
             <div class="form-group">
               {{ add_single_device.os_version.label }} {{ add_single_device.os_version(class="form-control") }}
-            </div>
-            <div class="form-group">
-              {{ add_single_device.location.label }} {{ add_single_device.location }}
             </div>
               {{ add_single_device.submit(class="btn btn-primary") }}
           </fieldset>

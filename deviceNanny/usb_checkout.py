@@ -361,9 +361,7 @@ def get_new_device_info(serial, filename):
     :return: Device info from user
     """
     try:
-        current_app.logger.info(
-            "[get_new_device_info] New device. Serial: {}".
-            format(serial))
+        current_app.logger.info("[get_new_device_info] New device. Serial: {}".format(serial))
         return popups('New Device', 'None').decode('utf-8').split('|')
     # except Exception as e:
     except subprocess.CalledProcessError as e:

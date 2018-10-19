@@ -1,10 +1,12 @@
 import csv
 
-from flask import Blueprint, render_template, redirect, url_for, flash, request
+from flask import Blueprint, render_template, redirect, url_for, flash, request, current_app
 from flask_table import Table, Col, LinkCol
 
 from deviceNanny.db import get_db
 from deviceNanny.forms import SingleDeviceForm, UploadFileForm
+from deviceNanny.db_actions import new_device_id
+
 
 bp = Blueprint('devices', __name__, url_prefix='/devices')
 
@@ -35,14 +37,14 @@ def manage():
     table = DevicesTable(device_data)
 
     if add_single_device.validate_on_submit():
-        device_id = add_single_device.device_id.data
+        device_id = new_device_id()
         device_name = add_single_device.device_name.data
         serial_udid = add_single_device.serial_udid.data
         manufacturer = add_single_device.manufacturer.data
         model = add_single_device.model.data
         os_version = add_single_device.os_version.data
         device_type = add_single_device.device_type.data
-        location = add_single_device.location.data
+        location = current_app.config['location']
 
         error = None
         if not device_id:
