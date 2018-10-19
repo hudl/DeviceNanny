@@ -40,7 +40,6 @@ def manage():
         first_name = add_single_user.first_name.data
         last_name = add_single_user.last_name.data
 
-
         error = None
 
         if db.execute(
@@ -49,15 +48,18 @@ def manage():
             error = 'User {} {} is already in DeviceNanny'.format(first_name, last_name)
 
         slack_id = get_slack_id(first_name + ' ' + last_name)
+        if slack_id is None:
+            error = 'No Slack user found for {} {}'.format(first_name, last_name)
+
         if error is None:
             db.execute(
                 'INSERT INTO users (first_name, last_name, slack_id, location) VALUES (?,?,?,?)',
                 (first_name, last_name, slack_id, current_app.config['location']))
             db.commit()
-            flash('Successfully added user {} {}'.format(first_name, last_name))
+            flash('Successfully added user {} {}'.format(first_name, last_name), 'alert alert-success')
             return redirect(url_for('user.manage'))
         else:
-            flash(error)
+            flash(error, category='alert alert-danger')
             return redirect(url_for('user.manage'))
 
     if upload_file.upload_submit.data and upload_file.validate_on_submit():
@@ -76,7 +78,7 @@ def manage():
                 cursor.execute(insert_query, user_data)
 
         db.commit()
-        flash('Successfully imported users from csv')
+        flash('Successfully imported users from csv', 'alert alert-success')
         file.close()
         return redirect(url_for('user.manage'))
 
@@ -94,5 +96,5 @@ def delete_user():
     row = db.execute("SELECT first_name || ' ' || last_name as user_name FROM users WHERE id = {}".format(user_id)).fetchone()
     db.execute('DELETE FROM users WHERE id = {}'.format(user_id))
     db.commit()
-    flash("Successfully deleted user {}".format(row['user_name']))
+    flash("Successfully deleted user {}".format(row['user_name']), 'alert alert-success')
     return redirect(url_for('user.manage'))
