@@ -34,13 +34,13 @@ class DeviceTable(Table):
         checked_out_by = item['user_name'].lower()
         if checked_out_by != "- -" and checked_out_by != "missing device":
             print("checked out")
-            return {'class': 'table-success'}
+            return {'class': 'table-primary'}
         elif checked_out_by == "missing device":
             print("missing")
-            return {'class': 'table-danger'}
+            return {'class': 'table-primary'}
         elif int(item['id']) % 2 == 0:
             print("primary")
-            return {'class': 'table-primary'}
+            return {'class': 'table-secondary'}
         else:
             print("secondary")
             return {'class': 'table-secondary'}
