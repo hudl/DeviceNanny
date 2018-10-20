@@ -1,4 +1,5 @@
 import csv
+import os
 
 from flask import Blueprint, render_template, redirect, url_for, flash, request, current_app
 from flask_table import Table, Col, LinkCol
@@ -100,4 +101,20 @@ def delete_device():
     db.commit()
     flash("Successfully deleted device {} with serial udid {}".format(row['device_name'], row['serial_udid']),
           'alert alert-success')
+    return redirect(url_for('devices.manage'))
+
+
+@bp.route('/export_devices')
+def export_devices():
+    db = get_db()
+    cursor = db.cursor()
+    cursor.execute('SELECT device_id, device_name, serial_udid, manufacturer, model, device_type, os_version, checked_out_by, time_checked_out, last_reminded, location, port FROM devices')
+
+    with open(os.path.join(current_app.instance_path, 'devices.csv'), "w", newline='') as csv_file:
+        csv_writer = csv.writer(csv_file)
+        csv_writer.writerow([i[0] for i in cursor.description])
+        csv_writer.writerows(cursor)
+
+    flash('Exported devices to {}'.format(os.path.join(current_app.instance_path, 'devices.csv')), 'alert alert-success')
+
     return redirect(url_for('devices.manage'))

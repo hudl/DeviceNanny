@@ -1,4 +1,5 @@
 import csv
+import os
 
 from flask import Blueprint, render_template, redirect, url_for, flash, current_app, request
 from flask_table import Table, Col, LinkCol
@@ -31,6 +32,7 @@ class UsersTable(Table):
 def manage():
     add_single_user = SingleUserForm()
     upload_file = UploadFileForm()
+
     db = get_db()
 
     user_data = db.execute('SELECT id, first_name, last_name FROM users WHERE id != 1 AND id != 2')
@@ -97,4 +99,20 @@ def delete_user():
     db.execute('DELETE FROM users WHERE id = {}'.format(user_id))
     db.commit()
     flash("Successfully deleted user {}".format(row['user_name']), 'alert alert-success')
+    return redirect(url_for('user.manage'))
+
+
+@bp.route('/export_users')
+def export_users():
+    db = get_db()
+    cursor = db.cursor()
+    cursor.execute('SELECT first_name, last_name, slack_id, location FROM users')
+
+    with open(os.path.join(current_app.instance_path, 'users.csv'), "w", newline='') as csv_file:
+        csv_writer = csv.writer(csv_file)
+        csv_writer.writerow([i[0] for i in cursor.description])
+        csv_writer.writerows(cursor)
+
+    flash('Exported users to {}'.format(os.path.join(current_app.instance_path, 'users.csv')), 'alert alert-success')
+
     return redirect(url_for('user.manage'))

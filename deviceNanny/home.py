@@ -20,7 +20,6 @@ class DeviceTable(Table):
                               url_kwargs=dict(id='id'),
                               anchor_attrs={'class': 'btn btn-warning btn-sm'},
                               allow_sort=False)
-
     allow_sort = True
 
     def sort_url(self, col_key, reverse=False):
@@ -33,16 +32,12 @@ class DeviceTable(Table):
     def get_tr_attrs(self, item):
         checked_out_by = item['user_name'].lower()
         if checked_out_by != "- -" and checked_out_by != "missing device":
-            print("checked out")
-            return {'class': 'table-primary'}
+            return {'class': 'table-success'}
         elif checked_out_by == "missing device":
-            print("missing")
-            return {'class': 'table-primary'}
+            return {'class': 'table-danger'}
         elif int(item['id']) % 2 == 0:
-            print("primary")
-            return {'class': 'table-secondary'}
+            return {'class': 'table-primary'}
         else:
-            print("secondary")
             return {'class': 'table-secondary'}
 
 
