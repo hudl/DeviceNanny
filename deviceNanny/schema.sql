@@ -16,6 +16,7 @@ CREATE TABLE devices (
     last_reminded INTEGER,
     location TEXT NOT NULL,
     port INTEGER,
+    requested_by TEXT,
     FOREIGN KEY (checked_out_by) REFERENCES users (id)
 );
 

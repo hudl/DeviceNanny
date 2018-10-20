@@ -19,7 +19,13 @@ class DeviceTable(Table):
                               'home.extend_checkout',
                               url_kwargs=dict(id='id'),
                               anchor_attrs={'class': 'btn btn-warning btn-sm'},
-                              allow_sort=False)
+                              allow_sort=False),
+    requested_by = LinkCol('Request Device',
+                           'home.request_device',
+                           url_kwargs=dict(id='id'),
+                           anchor_attrs={'class': 'btn btn-warning btn-sm'},
+                           allow_sort=False)
+
     allow_sort = True
 
     def sort_url(self, col_key, reverse=False):
@@ -46,7 +52,8 @@ def home():
     sort = request.args.get('sort', 'id')
     direction = request.args.get('direction')
     reverse = (request.args.get('direction', 'asc') == 'desc')
-    query = "SELECT devices.id, devices.device_name, devices.manufacturer, devices.model, devices.device_type, devices.os_version, users.first_name || ' ' || users.last_name as user_name " \
+    query = "SELECT devices.id, devices.device_name, devices.manufacturer, devices.model, devices.device_type, " \
+            "devices.os_version, users.first_name || ' ' || users.last_name as user_name, devices.requested_by " \
             "FROM devices INNER JOIN users ON devices.checked_out_by=users.id"
     if direction:
         query = "{} ORDER BY devices.{} {}".format(query, "device_name", request.args['direction'].upper())
@@ -68,4 +75,15 @@ def extend_checkout():
     db.execute(upload_query.format(new_time, request.args['id']))
     db.commit()
     flash('Successfully extended your checkout time by 1 hour', 'alert alert-success')
+    return redirect(url_for('home.home'))
+
+
+@bp.route('/request_device')
+def requested_by():
+    db = get_db()
+    user = 'Hard Coded'
+    upload_query = 'UPDATE devices SET requested_by = {} WHERE id = {}'
+    db.execute(upload_query.format(user, request.args['id']))
+    db.commit()
+    flash('Successfully requested the device.', 'alert alert-success')
     return redirect(url_for('home.home'))
