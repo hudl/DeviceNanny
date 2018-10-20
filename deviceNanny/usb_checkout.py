@@ -224,8 +224,7 @@ def get_serial(port):
         with open("/sys/bus/usb/devices/{}/serial".format(port)) as f:
             for line in f:
                 serial = line.rstrip()
-        current_app.logger.debug("[get_serial] Serial number of device: {}".
-                      format(serial))
+        current_app.logger.debug("[get_serial] Serial number of device: {}".format(serial))
         return serial
     except:
         current_app.logger.debug("[get_serial] Serial number not found.")
@@ -353,6 +352,26 @@ def popups(msg, info):
             "--add-entry='OS ex: Android 6'"
         ]
         return dialog(new_cmd)
+    elif msg == 'Request Device':
+        text = "Enter your first and last name or ID number:"
+        request_cmd = [
+            "zenity", "--entry", "--title='Request Device'", "--text='{}'".format(text)
+        ]
+        dialog(request_cmd)
+
+
+def get_user_info_from_popup(popup_type):
+    user_input = popups(popup_type, None).split()
+    first_name = user_input.pop(0)
+    last_name = ' '.join(user_input)
+    full_name = [first_name, last_name]
+    current_app.logger.debug('[user_input_from_popup] User Input: {}'.format(user_input))
+    try:
+        user_info = db.db_fetch("SELECT * from users WHERE first_name = '{}' AND last_name = '{}'"
+                                .format(full_name[0], full_name[1]))
+        return user_info
+    except Exception as e:
+        current_app.logger.debug('[get_user_info_from_popup] Exception: {}'.format(e))
 
 
 def get_new_device_info(serial, filename):

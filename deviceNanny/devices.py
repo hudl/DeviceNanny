@@ -57,7 +57,8 @@ def manage():
 
         if error is None:
             db.execute(
-            'INSERT INTO devices (device_id, device_name, serial_udid, manufacturer, model, device_type, os_version, location, checked_out_by) VALUES (?,?,?,?,?,?,?,?,1)',
+            'INSERT INTO devices (device_id, device_name, serial_udid, manufacturer, model, device_type, os_version, '
+            'location, checked_out_by) VALUES (?,?,?,?,?,?,?,?,1)',
                 (device_id, device_name, serial_udid, manufacturer, model, device_type, os_version, location)
             )
             db.commit()
@@ -108,7 +109,8 @@ def delete_device():
 def export_devices():
     db = get_db()
     cursor = db.cursor()
-    cursor.execute('SELECT device_id, device_name, serial_udid, manufacturer, model, device_type, os_version, checked_out_by, time_checked_out, last_reminded, location, port FROM devices')
+    cursor.execute('SELECT device_id, device_name, serial_udid, manufacturer, model, device_type, os_version, '
+                   'checked_out_by, time_checked_out, last_reminded, location, port FROM devices')
 
     with open(os.path.join(current_app.instance_path, 'devices.csv'), "w", newline='') as csv_file:
         csv_writer = csv.writer(csv_file)

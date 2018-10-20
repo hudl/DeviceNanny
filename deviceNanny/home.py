@@ -3,6 +3,7 @@ from flask_table import Table, Col, LinkCol
 from werkzeug.utils import redirect
 
 from deviceNanny.db import get_db
+from deviceNanny.usb_checkout import get_user_info_from_popup
 
 bp = Blueprint('home', __name__, url_prefix='/')
 
@@ -15,16 +16,17 @@ class DeviceTable(Table):
     device_type = Col('Device Type')
     os_version = Col('OS Version')
     user_name = Col('Checked Out By')
+    requested_by = Col('Requested By')
     extend_checkout = LinkCol('Extend Checkout',
                               'home.extend_checkout',
                               url_kwargs=dict(id='id'),
                               anchor_attrs={'class': 'btn btn-warning btn-sm'},
-                              allow_sort=False),
-    requested_by = LinkCol('Request Device',
-                           'home.request_device',
-                           url_kwargs=dict(id='id'),
-                           anchor_attrs={'class': 'btn btn-warning btn-sm'},
-                           allow_sort=False)
+                              allow_sort=False)
+    requested_device = LinkCol('Request Device',
+                               'home.request_device',
+                               url_kwargs=dict(id='id'),
+                               anchor_attrs={'class': 'btn btn-info btn-sm'},
+                               allow_sort=False)
 
     allow_sort = True
 
@@ -79,11 +81,11 @@ def extend_checkout():
 
 
 @bp.route('/request_device')
-def requested_by():
+def request_device():
     db = get_db()
-    user = 'Hard Coded'
+    user = get_user_info_from_popup('Request Device')
     upload_query = 'UPDATE devices SET requested_by = {} WHERE id = {}'
-    db.execute(upload_query.format(user, request.args['id']))
+    db.execute(upload_query.format(user['id'], request.args['id']))
     db.commit()
-    flash('Successfully requested the device.', 'alert alert-success')
+    flash('Successfully requested the device', 'alert alert-success')
     return redirect(url_for('home.home'))
