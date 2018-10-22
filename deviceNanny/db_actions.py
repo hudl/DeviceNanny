@@ -185,7 +185,7 @@ def add_to_database(device_info):
     """
     db_commit("INSERT INTO devices(device_name,manufacturer,model,device_type,os_version,location,device_id,serial_udid,port,"
               "checked_out_by,time_checked_out,last_reminded)"
-              "VALUES('{}','{}','{}','{}','{}','{}','{}','{}','{}','0','0','40000')"
+              "VALUES('{}','{}','{}','{}','{}','{}','{}','{}','{}','1','0','40000')"
               .format(device_info[0], device_info[1], device_info[2], device_info[3], device_info[4].rstrip(),
                       device_info[5], device_info[6], device_info[7], device_info[8]))
 
