@@ -6,17 +6,12 @@ from flask import Flask
 from deviceNanny.config import Config
 
 
-def create_app(test_config=None):
+def create_app(config_class=Config):
     app = Flask(__name__, instance_relative_config=True)
     app.config.from_mapping(
         DATABASE=os.path.join(app.instance_path, 'deviceNanny.sqlite')
     )
-    app.config.from_object(Config)
-
-    if test_config is None:
-        app.config.from_pyfile('config.py', silent=True)
-    else:
-        app.config.from_mapping(test_config)
+    app.config.from_object(config_class)
 
     try:
         os.makedirs(app.instance_path)
