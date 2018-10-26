@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, url_for, current_app
+from flask import Blueprint, render_template, url_for, current_app, flash
 from werkzeug.utils import redirect
 
 from deviceNanny.db import get_db
@@ -44,6 +44,7 @@ def update():
             db.execute(update_query.format('office_location', office_location))
 
         db.commit()
+        flash('Successfully updated DeviceNanny Settings', 'alert alert-success')
         return redirect(url_for('settings.update'))
 
     return render_template('settings.html',
