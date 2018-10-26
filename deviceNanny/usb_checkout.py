@@ -10,10 +10,7 @@ from deviceNanny.slack import NannySlacker
 import deviceNanny.db_actions as db
 from flask import current_app
 import subprocess
-import requests
-import socket
 import time
-import sys
 import os
 import re
 

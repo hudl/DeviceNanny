@@ -10,8 +10,6 @@ from deviceNanny.slack import NannySlacker
 from datetime import datetime, timedelta
 import deviceNanny.db_actions as db
 from flask import current_app
-import configparser
-import subprocess
 import time
 import os
 import re
