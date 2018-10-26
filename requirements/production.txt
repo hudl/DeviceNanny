@@ -1,0 +1,3 @@
+# Requirements for running DeviceNannny
+-r requirements/common.txt
+gunicorn

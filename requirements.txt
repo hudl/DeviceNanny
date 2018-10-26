@@ -1,6 +1,2 @@
-slacker
-Flask
-click
-flask-table
-flask_wtf
-python-dotenv
+# Production dependencies
+-r requirements/production.txt

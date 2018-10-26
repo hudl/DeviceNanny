@@ -1,0 +1,7 @@
+# Requirements for DeviceNanny development
+slacker
+Flask
+click
+flask-table
+flask_wtf
+python-dotenv

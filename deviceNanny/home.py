@@ -43,7 +43,7 @@ class DeviceTable(Table):
             return {'class': 'table-success'}
         elif checked_out_by == "missing device":
             return {'class': 'table-danger'}
-        elif int(item['id']) % 2 == 0:
+        elif int(item['row_number']) % 2 == 0:
             return {'class': 'table-primary'}
         else:
             return {'class': 'table-secondary'}
@@ -58,12 +58,34 @@ def home():
             "devices.os_version, users.first_name || ' ' || users.last_name as user_name, devices.requested_by " \
             "FROM devices INNER JOIN users ON devices.checked_out_by=users.id"
     if direction:
-        query = "{} ORDER BY devices.{} {}".format(query, "device_name", request.args['direction'].upper())
+        if sort == "user_name":
+            sort = "user_name"
+        else:
+            sort = "devices.{}".format(sort)
 
+        query = "{} ORDER BY {} {}".format(query, sort, request.args['direction'].upper())
+    else:
+        query = "{} ORDER BY devices.checked_out_by, devices.device_type, devices.os_version, devices.manufacturer, devices.model".format(query)
+
+    print(query)
     db = get_db()
 
     rows = db.execute(query).fetchall()
-    table = DeviceTable(rows, sort_by=sort, sort_reverse=reverse)
+
+    data_row = []
+    for idx, r in enumerate(rows):
+        data = {}
+        data['id'] = r['id']
+        data['device_name'] = r['device_name']
+        data['manufacturer'] = r['manufacturer']
+        data['model'] = r['model']
+        data['device_type'] = r['device_type']
+        data['os_version'] = r['os_version']
+        data['user_name'] = r['user_name']
+        data['row_number'] = idx
+        data_row.append(data)
+
+    table = DeviceTable(data_row, sort_by=sort, sort_reverse=reverse)
 
     return render_template('home.html', table=table)
 
