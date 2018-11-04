@@ -207,3 +207,36 @@ class NannySlacker:
         logging.info(
             "[missing_device_message] Slack reminder sent to team channel for {}".
             format(device_name))
+
+    def requested_device(self, user_info, device_name):
+        """
+        Sends a message to the user who has a device checked out that it has been requested by someone else.
+        :param user_info:
+        :return:
+        """
+        text = "`{}` has been requested by {}. If you're finished, please return it."
+        self.slack.chat.post_message(
+            user_info['slack_id'],
+            attachments=[{
+                "pretext": "Device Requested",
+                "fallback": "Message from DeviceNanny",
+                "text": text
+            }])
+        logging.debug("[requested_device] Posted to user.")
+
+    def requested_device_checked_in(self, user_info, device_name):
+        """
+        Sends a message to the user who requested a device that it has been checked back in.
+        :param user_info:
+        :param device_name:
+        :return:
+        """
+        text = "`{}` is available for checkout!".format(device_name)
+        self.slack.chat.post_message(
+            user_info['slack_id'],
+            attachments=[{
+                "pretext": "Device Returned",
+                "fallback": "Message from DeviceNanny",
+                "text": text
+            }])
+        logging.debug("[requested_device_checked_in] Posted to user.")

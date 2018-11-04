@@ -65,6 +65,24 @@ def checked_out_by(device_id):
     return user_info["checked_out_by"]
 
 
+def get_device_info_from_id(device_id):
+    """
+    :param device_id:
+    :return:
+    """
+    device_info = db_fetch("SELECT * from devices WHERE device_id = {}".format('device_id'))
+    return device_info
+
+
+def get_user_info_from_id(user_id):
+    """"
+    :param user_id:
+    :return:
+    """
+    user_info = db_fetch("SELECT * from users WHERE id = {}".format('user_id'))
+    return user_info
+
+
 def get_device_name(location, port):
     """
     :param port: USB port
@@ -202,10 +220,6 @@ def add_user_to_database(user_info):
         current_app.logger.debug('[add_user_to_database] Exception: {}'.format(e))
 
 
-def get_user_id():
-    pass
-
-
 def check_in(device_id, port):
     """
     Updates database with check in info.
@@ -213,7 +227,7 @@ def check_in(device_id, port):
     :param port:
     """
     try:
-        db_commit("UPDATE devices SET checked_out_by = '1', port = '{}' where device_id = {}".format(port, device_id))
+        db_commit("UPDATE devices SET checked_out_by = '1', port = '{}', requested_by = Null, where device_id = {}".format(port, device_id))
     except Exception as e:
         current_app.logger.debug("[check_in] Exception - {}".format(e))
         print(e)

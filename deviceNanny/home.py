@@ -3,6 +3,7 @@ from flask_table import Table, Col, LinkCol
 from werkzeug.utils import redirect
 
 from deviceNanny.db import get_db
+from deviceNanny.slack import NannySlacker
 from deviceNanny.usb_checkout import get_user_info_from_popup
 
 bp = Blueprint('home', __name__, url_prefix='/')
@@ -16,7 +17,6 @@ class DeviceTable(Table):
     device_type = Col('Device Type')
     os_version = Col('OS Version')
     user_name = Col('Checked Out By')
-    requested_by = Col('Requested By')
     extend_checkout = LinkCol('Extend Checkout',
                               'home.extend_checkout',
                               url_kwargs=dict(id='id'),
@@ -105,9 +105,12 @@ def extend_checkout():
 @bp.route('/request_device')
 def request_device():
     db = get_db()
-    user = get_user_info_from_popup('Request Device')
+    user_info = get_user_info_from_popup('Request Device')
     upload_query = 'UPDATE devices SET requested_by = {} WHERE id = {}'
     db.execute(upload_query.format(user['id'], request.args['id']))
     db.commit()
+    device_name = db.fetchone("SELECT device_name from devices WHERE device_id = '{}'".format(request.args['id']))
+    slack = NannySlacker()
+    slack.requested_device(user_info, device_name)
     flash('Successfully requested the device', 'alert alert-success')
     return redirect(url_for('home.home'))
