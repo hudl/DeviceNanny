@@ -89,18 +89,3 @@ def run_nanny():
         current_app.logger.info('[run_nanny] Checkout currently in progress - skip.')
     return "NANNY DONE"
 
-
-@bp.route('/device/<int:device_id>/extend_checkout/<int:time>', methods=['PUT'])
-def extent_checkout(device_id, time):
-    db = get_db()
-    row = db.execute('SELECT time_checked_out FROM devices WHERE id = {}'.format(device_id)).fetchone()
-    new_time = row['time_checked_out'] + time
-    upload_query = 'UPDATE devices SET time_checked_out = {} WHERE id = {}'
-    db.execute(upload_query.format(new_time, device_id))
-    db.commit()
-
-    device_data = {'device_id': device_id,
-                   'old_time': row['time_checked_out'],
-                   'new_time': new_time}
-
-    return jsonify({"checkout_times": device_data})

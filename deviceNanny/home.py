@@ -67,7 +67,6 @@ def home():
     else:
         query = "{} ORDER BY devices.checked_out_by, devices.device_type, devices.os_version, devices.manufacturer, devices.model".format(query)
 
-    print(query)
     db = get_db()
 
     rows = db.execute(query).fetchall()
