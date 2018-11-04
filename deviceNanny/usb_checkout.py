@@ -359,7 +359,10 @@ def popups(msg, info):
 
 def get_user_info_from_popup(popup_type):
     user_input = popups(popup_type, None).split()
+    print('[get_user_input_from_popup] Input: {}'.format(user_input))
     first_name = user_input.pop(0)
+    print('[get_user_input_from_popup] First: {}'.format(first_name))
+    print('[get_user_input_from_popup] Rest: {}'.format(user_input))
     last_name = ' '.join(user_input)
     full_name = [first_name, last_name]
     current_app.logger.debug('[user_input_from_popup] User Input: {}'.format(user_input))
