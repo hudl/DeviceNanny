@@ -354,13 +354,11 @@ def popups(msg, info):
         request_cmd = [
             "zenity", "--entry", "--title='Request Device'", "--text='{}'".format(text)
         ]
-        dialog(request_cmd)
+        return dialog(request_cmd)
 
 
 def get_user_info_from_popup(popup_type):
-    user_input = popups(popup_type, None)
-    print('[get_user_input_from_popup] Input: {}'.format(user_input))
-    user_input = user_input.split()
+    user_input = popups(popup_type, None).split()
     first_name = user_input.pop(0)
     last_name = ' '.join(user_input)
     full_name = [first_name, last_name]
