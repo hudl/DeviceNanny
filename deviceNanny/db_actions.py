@@ -38,7 +38,7 @@ def new_device_id():
     """
     try:
         last_id_num = db_fetch("SELECT device_id from devices where device_id=(SELECT max(device_id) FROM devices)")
-        id_number = last_id_num['device_id'] + 1
+        id_number = int(last_id_num['device_id']) + 1
     except Exception as e:
         id_number = '0'
         current_app.logger.debug("[new_device_id] {}".format(id_number))
