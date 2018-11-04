@@ -190,7 +190,7 @@ class NannySlacker:
             attachments=[{
                 "pretext": "Device Requested",
                 "fallback": "Message from DeviceNanny",
-                "text": text
+                "text": text.format(device_name, user_info['first_name'])
             }])
         logging.debug("[requested_device] Posted to user.")
 

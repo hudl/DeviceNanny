@@ -106,7 +106,7 @@ def request_device():
     db = get_db()
     user_info = get_user_info_from_popup('Request Device')
     upload_query = 'UPDATE devices SET requested_by = {} WHERE id = {}'
-    db.execute(upload_query.format(user['id'], request.args['id']))
+    db.execute(upload_query.format(user_info['id'], request.args['id']))
     db.commit()
     device_name = db.fetchone("SELECT device_name from devices WHERE device_id = '{}'".format(request.args['id']))
     slack = NannySlacker()
