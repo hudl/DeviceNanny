@@ -32,7 +32,7 @@ class DeviceTable(Table):
     def get_tr_attrs(self, item):
         checked_out_by = item['user_name'].lower()
         if checked_out_by != "- -" and checked_out_by != "missing device":
-            return {'class': 'table-success'}
+            return {'class': 'table-dark'}
         elif checked_out_by == "missing device":
             return {'class': 'table-danger'}
         elif int(item['row_number']) % 2 == 0:

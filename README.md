@@ -60,72 +60,85 @@ Required packages if not using Debian Jessie:
 
 NOTE: You might need to disable ModemManager as well, if you're using a different Linux distro.
 
-6. Install MySQL server:
-    - `sudo apt-get install mysql-server -y`
-    - Create password for root user when prompted
-
-7. Install PyMySQL:
-    - `sudo pip3 install PyMySQL`
-
-8. Install Apache2:
-    - `sudo apt-get install apache2 php5 libapache2-mod-php5 -y`
-
-9. Install PHPMyAdmin:
-    - `sudo apt-get install phpmyadmin -y`
-    - Select Apache2 as the server to use
-    - Select Yes to configure database to PHPMyAdmin
-    - Enter the root password entered for MySQL
-    - Enter a password for PHPMyAdmin
-
-10. Edit Apache to include PHPMyAdmin:
-    - `sudo nano /etc/apache2/apache2.conf`
-    - At the bottom of the file, add `Include /etc/phpmyadmin/apache.conf` then save and exit
-    - Restart apache2 `sudo /etc/init.d/apache2 restart`
-    
-11. Test PHPMyAdmin:
-    - Go to http://localhost/phpmyadmin
-    - You should reach the login page where you can login as root
-   
-
-**Create Database and Web User**
-
-1. Log in to http://localhost/phpmyadmin
-
-2. Create a new database called `DeviceNanny`
-
-3. Create a new user for web front end with read only privileges
-    - Go to the Privileges tab
-    - Click Add User
-    - Create a new user with at least `Select` and `Update` privileges under Data
-
 **Download and Configure DeviceNanny**
-
-1. Clone the repo to your home directory (/home/pi/)
+1. Install necessary dependencies.
+    - `sudo pip3 install virtualenv`
+    - `sudo apt-get install nginx`
+    
+2. Clone the repo to your home directory (/home/pi/)
     - Go to the home directory: `cd`
     - Clone the repo: `git clone https://github.com/hudl/DeviceNanny`
 
-2. Install requirements:
-    - `sudo pip3 install -r ~/DeviceNanny/requirements.txt`
+3. Create virtualenv and install requirements.
+    - `cd DeviceNanny && virtualenv venv`
+    - `source venv/bin/activate`
+    - `sudo pip install -r ~/DeviceNanny/requirements.txt`
+    
+4. Create .env file for secret tokens.
+    - `nano deviceNanny/.env`
+        ```bash
+        SECRET_KEY=<some_secret_key>
+        SLACK_API_KEY=<slack_api_key>
+        ```
+5. Create db and necessary tables
+    - `export FLASK_APP=deviceNanny && export FLASK_ENV=production && flask init-db`
+    
+6. Create a systemd service unit file. By creating a systemd unit file it will allow the init system to automatically start Gunicorn and serve the Device Nanny application whenever the server boots.
+   - `sudo nano /etc/systemd/system/devicenanny.service`
+   ```bash
+    [Unit]
+    Description=Gunicorn instance to serve DeviceNanny
+    After=network.target
 
-2. Copy file config/DeviceNanny.ini.template:
-    - Paste and rename without .template extension
-    - Add your database password
-    - Add your Slack api key
-    - Add your Slack device room ID
+    [Service]
+    User=<user> # Update to your user
+    Group=www-data
+    WorkingDirectory=/<location to DeviceNanny> # Location to root directory of Device Nanny download
+    Environment="PATH=/<location to DeviceNanny>/venv/bin"
+    ExecStart=/<location to DeviceNanny>/venv/bin/gunicorn --workers 1 --bind unix:devicenanny.sock -m 007 "deviceNanny:create_app()"
     
-3. Copy file web/secretInfo.php.template:
-    - Paste and rename without .template extension
-    - Add the username and password for the web user
-    
-4. Copy file start_checkout.sh.template:
-    - Paste and rename without .template extension
-    - Change the path to your DeviceNanny/usb_checkout.py location
-    
-5. Import tables into database:
-    - Login to `http://localhost/phpmyadmin`
-    - Click into the DeviceNanny database
-    - Go to the Import tab and choose to import `DeviceNannyDB.sql` in the `/resources` directory
+    [Install]
+    WantedBy=multi-user.target
+   ```
+   - Test systemd service file by starting and checking the status.
+   
+        `sudo systemctl start devicenanny && sudo systemctl status devicenanny`
 
+7. Create a new server block configuration file in Nginx's site-available directory.
+    - `sudo nano /etc/nginx/sites-available/devicenanny`
+    ```bash
+    server {
+    listen 80;
+    server_name devicenanny;
+
+    location / {
+        include proxy_params;
+        proxy_pass http://unix:/<location to DeviceNanny>/devicenanny.sock;
+       }
+    }
+    ```
+    - Enable by symlinking to the site-enabled directory.
+    
+        `sudo ln -s /etc/nginx/sites-available/devicenanny /etc/nginx/sites-enabled`
+    - Rename the default ngnix conf.
+    
+        `sudo mv /etc/nginx/sites-available/default /etc/nginx/sites-available/default.txt`
+    - Restart the Nginx process.
+     
+        `sudo systemctl restart nginx`
+    - If you encounter any errors, look under these logs.
+    
+        ```bash
+        sudo less /var/log/nginx/error.log: checks the Nginx error logs.
+        sudo less /var/log/nginx/access.log: checks the Nginx access logs.
+        sudo journalctl -u nginx: checks the Nginx process logs.
+        sudo journalctl -u devicenanny: checks your DeviceNannny Gunicorn logs
+        ```
+8. Open browser and naviate to http://yourpihostnamehere/
+9. Go to settings page and update all fields with appropriate values.
+10. Enjoy the greatest hardware managagment system in the world .
+
+ 
 **Add UDEV Rule and Cron Job**
 
 1. Copy file /resources/device_nanny.rules.template
@@ -139,34 +152,4 @@ NOTE: You might need to disable ModemManager as well, if you're using a differen
     - If promted, choose your favorite text editor
     - Add `*/1 * * * * cd /YOUR/PATH/TO/DeviceNanny/ && ./nanny.py` to the end of the file
     - Save and exit
-    
-**Enable Front-End**
 
-1. Apache2 changes:
-    - Open file `sudo nano /etc/apache2/sites-available/000-default.conf`
-    - Change DocumentRoot to `/YOUR/PATH/TO/DeviceNanny/web/pages`
-    - On the line under DocumentRoot add `DirectoryIndex devicenanny.php`
-    - Save and exit
-    - Open file `sudo nano /etc/apache2/apache2.conf`
-    - Scroll down to the `<Directory>` section and add this below the last `</Directory>`
-MAKE SURE TO CHANGE THE PATH
-```
-<Directory /PATH/TO/YOUR/DeviceNanny/web/pages/>
-    Options FollowSymLinks
-    AllowOverride None
-    Require all granted
-</Directory>
-```
-
-2. Restart apache2 `sudo systemctl apache2 restart`
-
-
-**Add Users**
-
-1. Login at http://localhost/phpmyadmin
-
-2. Manually input users to the Users table
-    
-    
-
-**Reboot and Configuration is COMPLETE**
