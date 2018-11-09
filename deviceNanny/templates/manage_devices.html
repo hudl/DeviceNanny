@@ -12,41 +12,6 @@
     <div class="row">
       <div class="col-lg-4">
         <h2>Add Devices</h2>
-        <form method="post">
-          {{ add_single_device.hidden_tag() }}
-          <fieldset class="form-group">
-            <div class="form-group">
-              {{ add_single_device.device_name.label }} {{ add_single_device.device_name(class="form-control") }}
-            </div>
-            <div class="form-group">
-              {{ add_single_device.serial_udid.label }} {{ add_single_device.serial_udid(class="form-control") }}
-            </div>
-            <div class="form-group">
-              {{ add_single_device.manufacturer.label }} {{ add_single_device.manufacturer(class="form-control") }}
-            </div>
-            <div class="form-group">
-              {{ add_single_device.model.label }} {{ add_single_device.model(class="form-control") }}
-            </div>
-            <div class="form-group">
-              {{ add_single_device.device_type.label }} {{ add_single_device.device_type(class="form-control") }}
-            </div>
-            <div class="form-group">
-              {{ add_single_device.os_version.label }} {{ add_single_device.os_version(class="form-control") }}
-            </div>
-              {{ add_single_device.submit(class="btn btn-primary") }}
-          </fieldset>
-        </form>
-      </div>
-      <div class="col=lg-4 offset-lg-2">
-        <h2>Devices</h2>
-        {{ table }}
-        <a class="" href="{{ url_for('devices.export_devices') }}">Export users as csv</a>
-      </div>
-    </div>
-  </div>
-  <div class="bs-docs-section">
-    <div class="row">
-      <div class="col-lg-4">
         <form action="" method=post enctype=multipart/form-data>
           {{ add_single_device.hidden_tag() }}
           <fieldset class="form-group">
@@ -56,7 +21,51 @@
             {{ upload_file.upload_submit(class="btn btn-primary") }}
           </fieldset>
         </form>
+        <!--<form method="post">-->
+          <!--{{ add_single_device.hidden_tag() }}-->
+          <!--<fieldset class="form-group">-->
+            <!--<div class="form-group">-->
+              <!--{{ add_single_device.device_name.label }} {{ add_single_device.device_name(class="form-control") }}-->
+            <!--</div>-->
+            <!--<div class="form-group">-->
+              <!--{{ add_single_device.serial_udid.label }} {{ add_single_device.serial_udid(class="form-control") }}-->
+            <!--</div>-->
+            <!--<div class="form-group">-->
+              <!--{{ add_single_device.manufacturer.label }} {{ add_single_device.manufacturer(class="form-control") }}-->
+            <!--</div>-->
+            <!--<div class="form-group">-->
+              <!--{{ add_single_device.model.label }} {{ add_single_device.model(class="form-control") }}-->
+            <!--</div>-->
+            <!--<div class="form-group">-->
+              <!--{{ add_single_device.device_type.label }} {{ add_single_device.device_type(class="form-control") }}-->
+            <!--</div>-->
+            <!--<div class="form-group">-->
+              <!--{{ add_single_device.os_version.label }} {{ add_single_device.os_version(class="form-control") }}-->
+            <!--</div>-->
+              <!--{{ add_single_device.submit(class="btn btn-primary") }}-->
+          <!--</fieldset>-->
+        <!--</form>-->
+      </div>
+      <div class="col=lg-4 offset-lg-2">
+        <h2>Devices</h2>
+        {{ table }}
+        <a class="" href="{{ url_for('devices.export_devices') }}">Export users as csv</a>
       </div>
     </div>
   </div>
+  <!--<div class="bs-docs-section">-->
+    <!--<div class="row">-->
+      <!--<div class="col-lg-4">-->
+        <!--<form action="" method=post enctype=multipart/form-data>-->
+          <!--{{ add_single_device.hidden_tag() }}-->
+          <!--<fieldset class="form-group">-->
+            <!--<div class="form-group">-->
+              <!--{{ upload_file.file.label }} {{ upload_file.file }}-->
+            <!--</div>-->
+            <!--{{ upload_file.upload_submit(class="btn btn-primary") }}-->
+          <!--</fieldset>-->
+        <!--</form>-->
+      <!--</div>-->
+    <!--</div>-->
+  <!--</div>-->
 {% endblock %}

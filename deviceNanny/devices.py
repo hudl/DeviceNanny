@@ -38,33 +38,33 @@ def manage():
     device_data = db.execute("SELECT id, device_name, manufacturer, model FROM devices").fetchall()
     table = DevicesTable(device_data)
 
-    if add_single_device.submit.data and add_single_device.validate_on_submit():
-        device_id = new_device_id()
-        device_name = add_single_device.device_name.data
-        serial_udid = add_single_device.serial_udid.data
-        manufacturer = add_single_device.manufacturer.data
-        model = add_single_device.model.data
-        os_version = add_single_device.os_version.data
-        device_type = add_single_device.device_type.data
-        location = current_app.config['location']
-
-        error = None
-
-        if db.execute(
-            'SELECT id FROM devices WHERE serial_udid = ?', (serial_udid,)
-        ).fetchone() is not None:
-            error = 'Device with udid {} is already in DeviceNanny'.format(serial_udid)
-
-        if error is None:
-            db.execute(
-            'INSERT INTO devices (device_id, device_name, serial_udid, manufacturer, model, device_type, os_version, location, checked_out_by) VALUES (?,?,?,?,?,?,?,?,1)',
-                (device_id, device_name, serial_udid, manufacturer, model, device_type, os_version, location)
-            )
-            db.commit()
-            flash('Successfully added device with serial udid {}'.format(serial_udid), 'alert alert-success')
-            return redirect(url_for('devices.manage'))
-        else:
-            flash(error, 'alert alert-danger')
+    # if add_single_device.submit.data and add_single_device.validate_on_submit():
+    #     device_id = new_device_id()
+    #     device_name = add_single_device.device_name.data
+    #     serial_udid = add_single_device.serial_udid.data
+    #     manufacturer = add_single_device.manufacturer.data
+    #     model = add_single_device.model.data
+    #     os_version = add_single_device.os_version.data
+    #     device_type = add_single_device.device_type.data
+    #     location = current_app.config['location']
+    #
+    #     error = None
+    #
+    #     if db.execute(
+    #         'SELECT id FROM devices WHERE serial_udid = ?', (serial_udid,)
+    #     ).fetchone() is not None:
+    #         error = 'Device with udid {} is already in DeviceNanny'.format(serial_udid)
+    #
+    #     if error is None:
+    #         db.execute(
+    #         'INSERT INTO devices (device_id, device_name, serial_udid, manufacturer, model, device_type, os_version, location, checked_out_by) VALUES (?,?,?,?,?,?,?,?,1)',
+    #             (device_id, device_name, serial_udid, manufacturer, model, device_type, os_version, location)
+    #         )
+    #         db.commit()
+    #         flash('Successfully added device with serial udid {}'.format(serial_udid), 'alert alert-success')
+    #         return redirect(url_for('devices.manage'))
+    #     else:
+    #         flash(error, 'alert alert-danger')
 
     if upload_file.upload_submit.data and upload_file.validate_on_submit():
         file = upload_file.file.data
@@ -72,7 +72,7 @@ def manage():
 
         reader = csv.reader(content.splitlines(), delimiter=',')
         columns = next(reader)
-        insert_query = 'INSERT INTO devices({}) VALUES ({})'.format(','.join(columns), ','.join('?' * len(columns)))
+        insert_query = 'INSERT INTO devices({},checked_out_by) VALUES ({},"1")'.format(','.join(columns), ','.join('?' * len(columns)))
         select_query = 'SELECT serial_udid FROM devices WHERE serial_udid = ?'
         cursor = db.cursor()
         for device_data in reader:
