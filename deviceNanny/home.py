@@ -1,10 +1,41 @@
 from flask import Blueprint, render_template, request, url_for, flash
 from flask_table import Table, Col, LinkCol
+from flask_table.html import element
 from werkzeug.utils import redirect
 
 from deviceNanny.db import get_db
 
 bp = Blueprint('home', __name__, url_prefix='/')
+
+
+# Subclass the LinkCol class to override anchor attrs
+class ExtendCol(LinkCol):
+
+    def __init__(self, name, endpoint, attr=None, attr_list=None,
+                 url_kwargs=None, url_kwargs_extra=None,
+                 anchor_attrs=None, text_fallback=None, **kwargs):
+        super(LinkCol, self).__init__(
+            name,
+            attr=attr,
+            attr_list=attr_list,
+            **kwargs)
+        self.endpoint = endpoint
+        self._url_kwargs = url_kwargs or {}
+        self._url_kwargs_extra = url_kwargs_extra or {}
+        self.text_fallback = text_fallback
+        self.anchor_attrs = anchor_attrs or {}
+
+    def td_contents(self, item, attr_list):
+        class_name = 'btn btn-warning btn-sm'
+        attrs = dict(href=self.url(item))
+        if item['user_name'].lower() == "- -":
+            self.anchor_attrs = {'class': '{} disabled'.format(class_name)}
+        else:
+            self.anchor_attrs = {'class': class_name}
+
+        attrs.update(self.anchor_attrs)
+        text = self.td_format(self.text(item, attr_list))
+        return element('a', attrs=attrs, content=text, escape_content=False)
 
 
 class DeviceTable(Table):
@@ -15,10 +46,9 @@ class DeviceTable(Table):
     device_type = Col('Device Type')
     os_version = Col('OS Version')
     user_name = Col('Checked Out By')
-    extend_checkout = LinkCol('Extend Checkout',
-                              'home.extend_checkout',
+    extend_checkout = ExtendCol(name='Extend Checkout',
+                              endpoint='home.extend_checkout',
                               url_kwargs=dict(id='id'),
-                              anchor_attrs={'class': 'btn btn-warning btn-sm'},
                               allow_sort=False)
     allow_sort = True
 
