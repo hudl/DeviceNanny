@@ -42,7 +42,7 @@ def update():
         if office_location:
             current_app.config['location'] = settings_data['office_location']
             db.execute(update_query.format('office_location', office_location))
-            db.execute('UPDATE users SET location = "{}" WHERE id != 1 AND id != 2'.format(office_location))  # Update location for all users
+            db.execute('UPDATE users SET location = {}'.format(office_location))  # Update location for all users
 
         db.commit()
         flash('Successfully updated DeviceNanny Settings', 'alert alert-success')
