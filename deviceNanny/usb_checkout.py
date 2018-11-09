@@ -42,8 +42,10 @@ def create_tempfile(port, device_name):
     """
     filename = '/tmp/{}.nanny'.format(port)
     if check_for_tempfile(filename, device_name):
+        current_app.logger.debug("[create_tempfile] Temp file already exists: {}".format(filename))
         return
     with open(filename, 'w+b'):
+        current_app.logger.debug("[create_tempfile] Temp file created: {}".format(filename))
         return filename
 
 
