@@ -24,7 +24,7 @@ class NannySlacker:
         :param device_name: Name of device taken
         """
         text = "`{}` was taken without being checked out! Please remember to enter your name" \
-               "after taking a device.".format(device_name)
+               " when taking a device.".format(device_name)
         self.slack.chat.post_message(
             self.channel,
             attachments=[{
@@ -118,8 +118,14 @@ class NannySlacker:
                     }])
                 current_app.logger.debug("[check_in_notice] {} {} just checked in {}"
                                          .format(user_info['first_name'], user_info['LastName'], device))
-            else:
-                current_app.logger.debug('[check_in_notice] Missing device - no check in message sent.')
+            elif user_info["first_name"] == "Missing":
+                self.slack.chat.post_message(
+                    self.channel,
+                    attachments=[{
+                        "pretext": "Device Checked In",
+                        "fallback": "Message from DeviceNanny",
+                        "text": "Missing device {} has been returned to the lab.".format(device)
+                    }])
         except Exception as e:
             current_app.logger.debug("[check_in_notice] Check in message not sent. {}".format(e))
 
