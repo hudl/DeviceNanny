@@ -72,6 +72,7 @@ def get_device_name(location, port):
     :param location: location
     :return: device_name
     """
+    location = current_app.config['location']
     try:
         device = db_fetch("SELECT device_name from devices WHERE port = '{}' AND location = '{}'".format(port, location))
         return device["device_name"]

@@ -87,7 +87,7 @@ class NannySlacker:
                 }])
             logging.debug("[check_out_notice] Checkout message sent.")
         except Exception as e:
-            current_app.logger.debug("[check_out_notice] Check out notice NOT sent. {}".format(e))
+            current_app.logger.debug("[check_out_notice] Check out notice NOT sent. {} CHANNEL: {}".format(e, self.channel))
 
     def check_in_notice(self, user_info, device):
         """
