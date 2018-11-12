@@ -23,7 +23,7 @@ class NannySlacker:
         without being checked out.
         :param device_name: Name of device taken
         """
-        text = "`{}` was taken without being checked out! Please remember to enter your name or ID " \
+        text = "`{}` was taken without being checked out! Please remember to enter your name" \
                "after taking a device.".format(device_name)
         self.slack.chat.post_message(
             self.channel,
@@ -64,9 +64,9 @@ class NannySlacker:
         """
         try:
             current_app.logger.debug('[check_out_notice] User Info: {} Device: {}'.format(user_info, device))
-            user_text = "You checked out `{}`. Checkout will expire after 3 days. Remember to plug the " \
-                        "device back in when you return it to the lab. You can renew your checkout from " \
-                        "the DeviceNanny web page.".format(device)
+            user_text = "You checked out `{}`. Checkout will expire after {} hours. Remember to plug the " \
+                        "device back in when you return it to the lab. You can extend your checkout from " \
+                        "the DeviceNanny web page.".format(device, current_app.config['checkout_expires'])
 
             channel_text = "*{} {}* just checked out `{}`".format(user_info['first_name'], user_info['last_name'],
                                                                   device)
@@ -123,15 +123,15 @@ class NannySlacker:
         except Exception as e:
             current_app.logger.debug("[check_in_notice] Check in message not sent. {}".format(e))
 
-    def post_to_channel(self, device_id, time_difference, firstname, lastname):
+    def post_to_channel(self, device_id, time_difference, first_name, last_name):
         """
         Sends a slack message to the device checkout channel with an update for an expired checkout.
         :param device_id: Device ID of device taken
         :param time_difference: Time since device was checked out
-        :param firstname: First name of user with expired checkout
-        :param lastname: Last name of user with expired checkout
+        :param first_name: First name of user with expired checkout
+        :param last_name: Last name of user with expired checkout
         """
-        text = '`{}` was checked out *{}* ago by *{} {}*'.format(device_id, time_difference, firstname, lastname)
+        text = '`{}` was checked out *{}* ago by *{} {}*'.format(device_id, time_difference, first_name, last_name)
         self.slack.chat.post_message(
             self.channel,
             attachments=[{
