@@ -1,7 +1,7 @@
-{% extends 'home.html' %}
-
-{% block header %}
-  <h1>{% block title %}Settings{% endblock %}</h1>
+{% extends 'base.html' %}
+{% block title %}Settings{% endblock %}
+{% block head %}
+  {{ super() }}
 {% endblock %}
 
 {% block page_header %}
